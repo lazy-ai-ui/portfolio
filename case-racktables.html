@@ -141,12 +141,16 @@
 
     <div class="anno" id="anno">
       <div class="anno__stage" id="annoStage">
-        <img src="assets/img/case-dashboard-annotated.webp" alt="Аннотированный главный экран RackTables" loading="lazy">
+        <div class="anno__frame">
+          <img src="assets/img/case-dashboard-annotated.webp" alt="Главный экран RackTables с аннотациями"
+               width="2200" height="1564" decoding="async">
+        </div>
       </div>
 
       <div class="anno__bar">
-        <p class="anno__hint" id="annoHint">1 / 4</p>
+        <p class="anno__hint" id="annoHint">4 аннотации</p>
         <div class="anno__nav">
+          <button type="button" id="annoFull" class="is-wide">Развернуть ⤢</button>
           <button type="button" id="annoPrev">← Назад</button>
           <button type="button" id="annoNext">Вперёд →</button>
         </div>

@@ -98,28 +98,61 @@
 }
 
 /* ---------- аннотированный экран ---------- */
-.anno{margin:0}
-.anno__stage{position:relative;border-radius:16px;overflow:hidden;background:var(--surface);
-  border:1px solid var(--hair);box-shadow:0 18px 44px rgba(11,11,12,.08)}
-.anno__stage img{width:100%;height:auto;display:block}
+/* пропорция макета дашборда: 2200x1564 ≈ 1.4066 */
+.anno{--shot-w:2200;--shot-h:1564;--shot-fit:62vh;margin:0}
+
+/* Сцена не обрезает содержимое — иначе точки у краёв и выноски срезаются.
+   Скругление и тень живут на внутренней рамке. */
+.anno__stage{position:relative;
+  /* держим высоту в пределах экрана, чтобы кнопки перелистывания и весь макет были видны */
+  aspect-ratio:var(--shot-w) / var(--shot-h);
+  max-width:min(100%, calc(var(--shot-fit) * 1.4066));
+  margin-inline:auto}
+.anno__frame{position:absolute;inset:0;border-radius:16px;overflow:hidden;
+  background:var(--surface);border:1px solid var(--hair);
+  box-shadow:0 18px 44px rgba(11,11,12,.08)}
+.anno__frame img{width:100%;height:100%;object-fit:cover;display:block}
 
 .hs{position:absolute;width:30px;height:30px;border-radius:50%;transform:translate(-50%,-50%);
   border:0;cursor:pointer;padding:0;
   font-family:var(--mono);font-size:12px;font-weight:400;
-  background:var(--surface);color:var(--ink);
-  box-shadow:0 2px 10px rgba(11,11,12,.22), 0 0 0 4px rgba(255,255,255,.5);
-  transition:background .2s ease,color .2s ease,box-shadow .2s ease;z-index:3}
-.hs:hover{background:var(--ink);color:var(--on-dark)}
-.hs.on{background:var(--accent);color:#fff;
-  box-shadow:0 2px 12px rgba(228,87,58,.5), 0 0 0 5px rgba(228,87,58,.16)}
+  background:var(--accent);color:#fff;
+  box-shadow:0 2px 10px rgba(11,11,12,.28), 0 0 0 3px rgba(255,255,255,.75);
+  animation:hsPulse 2.8s ease-in-out infinite;
+  transition:background .2s ease,color .2s ease,transform .2s ease;z-index:3}
+.hs:nth-of-type(2){animation-delay:.35s}
+.hs:nth-of-type(3){animation-delay:.7s}
+.hs:nth-of-type(4){animation-delay:1.05s}
+.hs:hover{transform:translate(-50%,-50%) scale(1.12)}
+.hs.on{background:var(--ink);color:var(--on-dark);animation:none;
+  box-shadow:0 2px 12px rgba(11,11,12,.4), 0 0 0 4px rgba(255,255,255,.9)}
 .hs::after{content:"";position:absolute;inset:-9px;border-radius:50%}
 
+/* медленная пульсация: видно, что точка есть и на неё можно нажать */
+@keyframes hsPulse{
+  0%,100%{box-shadow:0 2px 10px rgba(11,11,12,.28), 0 0 0 3px rgba(255,255,255,.75), 0 0 0 3px rgba(228,87,58,.45)}
+  55%{box-shadow:0 2px 10px rgba(11,11,12,.28), 0 0 0 3px rgba(255,255,255,.75), 0 0 0 13px rgba(228,87,58,0)}
+}
+@media (prefers-reduced-motion: reduce){
+  .hs{animation:none}
+}
+
+/* Выноска не «появляется готовой»: сначала прилетают квадратики,
+   и уже из них собирается карточка с текстом. */
 .tip{position:absolute;z-index:4;width:min(330px,72vw);
-  background:var(--surface);border:1px solid var(--hair);border-radius:14px;
-  box-shadow:0 20px 50px rgba(11,11,12,.20);padding:20px;
-  opacity:0;visibility:hidden;transform:translateY(6px);
-  transition:opacity .22s ease,transform .22s ease,visibility .22s}
-.tip.on{opacity:1;visibility:visible;transform:translateY(0)}
+  background:transparent;border:1px solid transparent;border-radius:14px;
+  box-shadow:none;padding:20px;
+  opacity:0;visibility:hidden;
+  transition:opacity .18s ease,visibility .18s,
+    background .3s ease,border-color .3s ease,box-shadow .3s ease}
+.tip.on{opacity:1;visibility:visible}
+.tip.shown{background:var(--surface);border-color:var(--hair);
+  box-shadow:0 20px 50px rgba(11,11,12,.20)}
+/* холст, на котором выноска собирается из квадратиков */
+.tip__fx{position:absolute;inset:0;width:100%;height:100%;display:block;
+  pointer-events:none;border-radius:14px;z-index:2}
+.tip__body{position:relative;z-index:1;opacity:0;transition:opacity .24s ease}
+.tip.shown .tip__body{opacity:1}
 .tip__k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--accent);margin:0 0 8px}
 .tip__t{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 16px;text-wrap:pretty}
@@ -135,14 +168,25 @@
   color:var(--ink-2);cursor:pointer;transition:border-color .2s,color .2s}
 .anno__nav button:hover:not(:disabled){border-color:var(--ink-3);color:var(--ink)}
 .anno__nav button:disabled{opacity:.4;cursor:default}
+.anno__nav .is-wide{border-color:var(--ink-3);color:var(--ink)}
+
+/* ---- полноэкранный просмотр макета ---- */
+.anno:fullscreen{background:var(--bg);padding:24px;display:flex;flex-direction:column;
+  justify-content:center;gap:0}
+.anno:fullscreen{--shot-fit:84vh}
+.anno:fullscreen .anno__bar{max-width:min(100%, calc(var(--shot-fit) * 1.4066));
+  margin-inline:auto;width:100%}
+.anno:fullscreen .anno__mobile{display:none}
 
 /* мобильный режим: выноска не поверх, а под картинкой */
 .anno__mobile{display:none;margin-top:16px}
 @media (max-width:760px){
+  .anno{--shot-fit:52vh}
   .tip{display:none}
   .anno__mobile{display:block}
-  .anno__mobile .tip{display:block;position:static;opacity:1;visibility:visible;transform:none;
-    width:auto;box-shadow:none}
+  .anno__mobile .tip{display:block;position:static;width:auto}
+  .anno__mobile .tip.shown{box-shadow:none}
+  .anno__mobile .tip:not(.on){display:none}
   .hs{width:26px;height:26px;font-size:11px}
 }
 
