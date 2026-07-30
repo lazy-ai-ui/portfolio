@@ -8,6 +8,7 @@
 index.html               — главная
 case-racktables.html      — кейс RackTables
 css/
+  fonts.css               — локальные @font-face (Geist/Geist Mono, latin+cyrillic)
   tokens.css              — дизайн-токены (цвета, шрифты)
   base.css                — навбар, разделители, общие классы
   index.css               — стили главной
@@ -20,7 +21,7 @@ js/
   section-nav.js           — нижняя навигация по разделам кейса
 assets/
   img/                    — изображения
-  fonts/                  — локальные шрифты (пока не подключены, см. START_HERE.md)
+  fonts/                  — Geist/Geist Mono woff2, только latin+cyrillic (~60KB суммарно)
 ```
 
 ## Локальная разработка
