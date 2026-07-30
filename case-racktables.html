@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<meta name="theme-color" content="#F6F4F1">
+<title>RackTables — дашборд для управления IT-инфраструктурой</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/case.css">
+</head>
+<body>
+
+<div class="navbar" id="navbar">
+  <nav class="nav">
+    <a class="back" href="index.html">← Портфолио</a>
+    <div class="nav__l">
+      <a href="https://t.me/deadlif1" target="_blank" rel="noopener">Telegram</a>
+      <a href="mailto:new.boxmail666@gmail.com">Email</a>
+    </div>
+  </nav>
+</div>
+
+<div class="spacer" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <header class="chead">
+    <h1 class="chead__title">RackTables — дашборд для управления IT-инфраструктурой</h1>
+
+    <div class="pills">
+      <span class="pill">Тестовое для Яндекса</span>
+      <span class="pill">Gravity UI</span>
+      <span class="pill">2026</span>
+    </div>
+
+    <div class="brief">
+      <div>
+        <p class="brief__k">Задача</p>
+        <p class="brief__t">Главный экран отражал структуру системы, но не отвечал на вопрос, с которым в неё заходят: <b>что происходит и всё ли хорошо.</b></p>
+      </div>
+      <div>
+        <p class="brief__k">Что получилось</p>
+        <p class="brief__t brief__t--dim">Экран стал давать оценку состояния дата-центра, показывать активные проблемы и позволять перейти к действию, не уходя в разделы.</p>
+      </div>
+    </div>
+
+    <dl class="meta">
+      <div>
+        <dt>Роль</dt>
+        <dd>Продуктовый дизайнер<br>Один, весь цикл</dd>
+      </div>
+      <div>
+        <dt>Срок</dt>
+        <dd>7 дней<br>от брифа до прототипа</dd>
+      </div>
+      <div>
+        <dt>Что делал</dt>
+        <dd>Интервью, конкурентный<br>анализ, сценарии, UI</dd>
+      </div>
+      <div>
+        <dt>Инструменты</dt>
+        <dd>Figma, Gravity UI<br>Интерактивный прототип</dd>
+      </div>
+    </dl>
+  </header>
+
+  <!-- ОБЗОР -->
+  <section id="overview">
+    <div class="labelrow"><p class="sect__label">Обзор решения</p><hr class="rule"></div>
+
+    <div class="ov">
+      <div class="ov__shots">
+        <div class="shot shot--wide">
+          <img src="assets/img/case-overview-light.webp" alt="Главный экран RackTables — светлая тема" loading="lazy">
+        </div>
+        <div class="shot shot--wide shot--empty"><span>тот же экран в тёмной теме</span></div>
+      </div>
+
+      <div class="facts">
+        <div class="fact">
+          <p class="fact__k">Главный экран</p>
+          <p class="fact__v"><small>12 →</small> 1</p>
+          <p class="fact__d">Вместо каталога из 12 разделов — один экран с оценкой состояния.</p>
+        </div>
+        <div class="fact">
+          <p class="fact__k">Конфликт IP-адреса</p>
+          <p class="fact__v">3 <small>клика</small></p>
+          <p class="fact__d">Разрешение прямо из алерта на главной, без перехода в разделы.</p>
+        </div>
+        <div class="fact">
+          <p class="fact__k">Основа требований</p>
+          <p class="fact__v">2 <small>интервью</small></p>
+          <p class="fact__d">Dev-ops инженер и системный администратор — на их барьерах построено решение.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="note"><b>Важно.</b> Цифры описывают спроектированное решение, а не измеренный эффект: это тестовое задание, продукт не выходил в прод. Всё, что можно проверить — интервью и макеты.</p>
+  </section>
+
+  <!-- ИССЛЕДОВАНИЕ -->
+  <section id="research">
+    <div class="labelrow"><p class="sect__label">Как я к этому шёл</p><hr class="rule"></div>
+    <div class="phases">
+      <div>
+        <p class="phase__n">01</p>
+        <h2 class="phase__t">Разобрался, кто и зачем сюда заходит</h2>
+        <p class="phase__d">Два глубинных интервью — с <b>dev-ops инженером</b> и <b>системным администратором</b>. Разбор четырёх аналогов: NetBox, Device42, Nautobot, Proxmox.</p>
+      </div>
+      <div>
+        <p class="phase__n">02</p>
+        <h2 class="phase__t">Понял, где именно люди спотыкаются</h2>
+        <p class="phase__d">JTBD по четырём ситуациям, требования к продукту и гипотезы. Каждый сценарий разложил на шаги и <b>барьеры</b>.</p>
+      </div>
+      <div>
+        <p class="phase__n">03</p>
+        <h2 class="phase__t">Спроектировал и проверил на прототипе</h2>
+        <p class="phase__d">Дашборд состояния и два флоу: разрешение конфликта IP и смена статуса устройства. Собрано на токенах Gravity UI, <b>интерактивный прототип</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЗАГЛУШКИ -->
+  <section id="problems">
+    <div class="labelrow"><p class="sect__label">Проблемы</p><hr class="rule"></div>
+    <div class="stub">
+      <h2 class="stub__t">Четыре инсайта из интервью</h2>
+      <p class="stub__d">Собираем следующим шагом.</p>
+    </div>
+  </section>
+
+  <section id="solution">
+    <div class="labelrow"><p class="sect__label">Решение</p><hr class="rule"></div>
+
+    <h2 class="stub__t">Главный экран отвечает на четыре вопроса, с которыми в систему заходят</h2>
+    <p class="phase__d" style="max-width:64ch;margin:0 0 36px">Каждый блок дашборда закрывает конкретный барьер из интервью. Ткни в точку на экране, чтобы посмотреть какой.</p>
+
+    <div class="anno" id="anno">
+      <div class="anno__stage" id="annoStage">
+        <img src="assets/img/case-dashboard-annotated.webp" alt="Аннотированный главный экран RackTables" loading="lazy">
+      </div>
+
+      <div class="anno__bar">
+        <p class="anno__hint" id="annoHint">1 / 4</p>
+        <div class="anno__nav">
+          <button type="button" id="annoPrev">← Назад</button>
+          <button type="button" id="annoNext">Вперёд →</button>
+        </div>
+      </div>
+
+      <div class="anno__mobile" id="annoMobile"></div>
+    </div>
+
+    <div class="claim">
+      <p class="claim__k">Что это даёт</p>
+      <p class="claim__t">Оценка состояния, активные проблемы и переход к действию — <b>на одном экране, без походов в разделы.</b> Конфликт IP-адреса разрешается в три клика прямо из алерта.</p>
+      <div class="caveat" id="caveat">
+        <button class="caveat__btn" type="button" id="caveatBtn" aria-expanded="false" aria-controls="caveatBody">
+          Что ещё стоит проверить
+        </button>
+        <div class="caveat__body" id="caveatBody">
+          <p>Это свойства спроектированного решения — их видно по макетам и прототипу. Действительно ли они ускоряют реакцию на инцидент, покажут только UX-тесты на реальных инженерах: продукт не выходил в прод, замеров нет.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="result">
+    <div class="labelrow"><p class="sect__label">Итог</p><hr class="rule"></div>
+    <div class="stub">
+      <h2 class="stub__t">Как решение отвечает на исходную задачу</h2>
+      <p class="stub__d">Собираем следующим шагом.</p>
+    </div>
+  </section>
+
+  <div class="tail"></div>
+</div>
+
+<div class="secnav">
+  <div class="secnav__in" id="secnav">
+    <a href="#overview">Обзор</a>
+    <a href="#research">Процесс</a>
+    <a href="#problems">Проблемы</a>
+    <a href="#solution">Решение</a>
+    <a href="#result">Итог</a>
+  </div>
+</div>
+
+<script src="js/navbar.js"></script>
+<script src="js/section-nav.js"></script>
+<script src="js/annotations.js"></script>
+</body>
+</html>

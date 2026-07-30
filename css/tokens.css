@@ -1,0 +1,17 @@
+:root{
+  --bg:#F6F4F1;
+  --ink:#0B0B0C;
+  --ink-2:rgba(11,11,12,.58);
+  --ink-3:rgba(11,11,12,.30);
+  --hair:rgba(11,11,12,.12);
+  --surface:#FFFFFF;
+  --dark:#0F1113;
+  --on-dark:#EDEBE8;
+  --on-dark-2:rgba(237,235,232,.56);
+  --on-dark-3:rgba(237,235,232,.32);
+  --accent:#E4573A;
+
+  --display:"Geist","Inter",system-ui,sans-serif;
+  --body:"Geist","Inter",system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,monospace;
+}

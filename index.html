@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light">
+<meta name="theme-color" content="#F6F4F1">
+<title>Фирдавс — продуктовый дизайнер</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+<div class="wrap">
+  <div class="navbar" id="navbar">
+    <nav class="nav">
+      <p class="nav__m">Фирдавс</p>
+      <div class="nav__l">
+        <a href="#work">Проекты</a><a href="#about">Обо мне</a><a href="#contact">Контакты</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="spacer" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="col">
+      <div class="ava">
+        <img src="" alt="Фирдавс" onerror="this.style.display='none'">
+      </div>
+      <p class="fact">
+        Продуктовый<br>дизайнер<br>
+        <span>Самара · 25 лет</span>
+      </p>
+      <p class="status"><i class="dot" aria-hidden="true"></i>открыт к работе</p>
+      <a class="cta" href="#work">Проекты →</a>
+    </div>
+
+    <div class="stage">
+      <canvas id="fig" aria-label="Интерактивная графика: элементы собираются в схему интерфейса"></canvas>
+    </div>
+
+    <div class="col col--r">
+      <p class="note">Превращаю сложные сценарии в&nbsp;понятные интерфейсы — через интервью, сценарии и&nbsp;прототипы.</p>
+    </div>
+  </header>
+
+  <section class="work" id="work">
+    <div class="labelrow"><p class="work__label">Проекты</p><hr class="rule"></div>
+
+    <article class="project">
+      <a class="project__media" href="case-racktables.html" aria-label="Открыть кейс RackTables">
+        <div class="fan" aria-hidden="true">
+          <div class="sheet sheet--dark"><img src="" alt="" onerror="this.style.display='none'"></div>
+          <div class="sheet sheet--light"><img src="" alt="" onerror="this.style.display='none'"></div>
+        </div>
+      </a>
+      <div class="project__body">
+        <p class="project__idx">01</p>
+        <p class="project__tags">B2B · дашборд · мониторинг</p>
+        <h2 class="project__title">RackTables</h2>
+        <p class="project__sub">Переработка главного экрана системы управления дата-центром: от каталога разделов к оценке состояния инфраструктуры и переходу к действию.</p>
+        <a class="project__cta" href="case-racktables.html">Читать кейс →</a>
+      </div>
+    </article>
+
+    <article class="project project--flip">
+      <div class="project__media">
+        <div class="fan fan--empty" aria-hidden="true">
+          <canvas id="soonfig"></canvas>
+          <p class="soon">не собрано</p>
+        </div>
+      </div>
+      <div class="project__body">
+        <p class="project__idx">02</p>
+        <p class="project__tags">скоро</p>
+        <h2 class="project__title project__title--muted">Следующий проект</h2>
+        <p class="project__sub">Здесь будет второй кейс — сейчас в работе.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="about" id="about">
+    <div class="labelrow"><p class="about__label">Обо мне</p><hr class="rule"></div>
+    <div class="about__grid">
+      <div class="about__photo">
+        <img src="" alt="Фирдавс" onerror="this.style.display='none'">
+      </div>
+      <div class="about__text">
+        <p>Здесь один абзац о том, как ты пришёл в дизайн и что тебя в нём держит. Пара живых деталей — почему именно сложные системы, а не лендинги.</p>
+        <p class="dim">Второй абзац о том, как ты работаешь: что делаешь до того, как открыть Фигму, как проверяешь решения, что считаешь своей сильной стороной. Без списка навыков — они видны из кейса.</p>
+        <p class="dim">Третий, короткий и человеческий: чем занят помимо работы. Это то, что запоминают.</p>
+
+        <dl class="about__meta">
+          <div>
+            <dt>Инструменты</dt>
+            <dd>Figma<br>Framer<br>Gravity UI</dd>
+          </div>
+          <div>
+            <dt>Методы</dt>
+            <dd>Интервью<br>JTBD<br>Прототипы</dd>
+          </div>
+          <div>
+            <dt>Языки</dt>
+            <dd>Русский<br>English</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <p class="contact__k">Контакты</p>
+    <h2 class="contact__t">Открыт к предложениям и просто к разговору</h2>
+    <div class="contact__links">
+      <a href="https://t.me/deadlif1" target="_blank" rel="noopener">Telegram</a>
+      <a href="mailto:new.boxmail666@gmail.com">Email</a>
+      <a href="#" target="_blank" rel="noopener">Behance</a>
+    </div>
+    <div class="contact__foot">
+      <p>Фирдавс · 2026</p>
+      <p>Самара</p>
+    </div>
+  </section>
+</div>
+
+<script src="js/hero-canvas.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/soon-canvas.js"></script>
+</body>
+</html>
