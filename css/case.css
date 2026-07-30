@@ -171,13 +171,26 @@
 .anno__nav button:disabled{opacity:.4;cursor:default}
 .anno__nav .is-wide{border-color:var(--ink-3);color:var(--ink)}
 
-/* ---- полноэкранный просмотр макета ---- */
-.anno:fullscreen{background:var(--bg);padding:24px;display:flex;flex-direction:column;
-  justify-content:center;gap:0}
-.anno:fullscreen{--shot-fit:84vh}
-.anno:fullscreen .anno__bar{max-width:min(100%, calc(var(--shot-fit) * 1.4066));
+/* ---- увеличенный просмотр макета (своя модалка, не нативный фулскрин) ---- */
+.shade{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:rgba(11,11,12,.66);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s}
+.shade.on{opacity:1;visibility:visible}
+/* .anno переезжает внутрь как есть — точки, выноски и кнопки едут с ним */
+.shade > .anno{width:100%;--shot-fit:78vh}
+.shade .anno__bar{max-width:min(100%, calc(var(--shot-fit) * 1.4066));
   margin-inline:auto;width:100%}
-.anno:fullscreen .anno__mobile{display:none}
+.shade .anno__mobile{display:none}
+/* на тёмной подложке шкала надписей меняется */
+.shade .anno__hint{color:var(--on-dark-3)}
+.shade .anno__nav button{color:var(--on-dark-2);border-color:rgba(237,235,232,.26)}
+.shade .anno__nav button:hover:not(:disabled){color:var(--on-dark);border-color:var(--on-dark-3)}
+.shade .anno__nav .is-wide{color:var(--on-dark);border-color:var(--on-dark-3)}
+body.shade-open{overflow:hidden}
+/* на узком экране макет всё равно упирается в ширину — отдаём ему поля */
+@media (max-width:760px){ .shade{padding:12px} }
+@media (prefers-reduced-motion: reduce){ .shade{transition:none} }
 
 /* мобильный режим: выноска не поверх, а под картинкой */
 .anno__mobile{display:none;margin-top:16px}

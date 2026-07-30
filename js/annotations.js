@@ -18,7 +18,7 @@
 
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var ASSEMBLE=620, DISASSEMBLE=420, HANDOFF=220;
+  var ASSEMBLE=540, DISASSEMBLE=365, HANDOFF=190;
 
   var DATA=[
     { x:27, y:20,
@@ -268,7 +268,7 @@
 
     /* сначала уводим текст, карточка пока стоит */
     tip.classList.remove('shown');
-    tip._showT=setTimeout(function(){
+    tip._showT=setTimeout(function(){   /* столько же, сколько длится уход текста */
       tip._showT=0;
       var a=anchorOf(tip,side);
       /* рисуем плитку и в тот же кадр гасим фон — карточка «становится»
@@ -280,7 +280,7 @@
         tip.classList.remove('on');
         if(after) after();
       });
-    },200);
+    },170);
   }
 
   function setHint(){
@@ -330,31 +330,79 @@
 
   /* клик по любой свободной области — свернуть */
   document.addEventListener('click',function(){ close(); });
-  document.addEventListener('keydown',function(e){
-    if(e.key==='Escape' && cur>-1 && !document.fullscreenElement) close();
-  });
 
-  /* ---------- полноэкранный просмотр ---------- */
-  if(full){
-    var canFs = anno && (anno.requestFullscreen||anno.webkitRequestFullscreen);
-    if(!canFs){ full.hidden=true; }
-    else{
-      full.addEventListener('click',function(e){
-        e.stopPropagation();
-        if(document.fullscreenElement||document.webkitFullscreenElement){
-          (document.exitFullscreen||document.webkitExitFullscreen).call(document);
-        } else {
-          (anno.requestFullscreen||anno.webkitRequestFullscreen).call(anno);
-        }
-      });
-      document.addEventListener('fullscreenchange',function(){
-        var on=!!document.fullscreenElement;
-        full.textContent = on ? 'Свернуть ⤡' : 'Развернуть ⤢';
-        /* размеры выноски меняются вместе со сценой — холст пересоберём заново */
-        if(cur>-1){ var t=activeTip(cur); t._fx.stop(); t._fx.clear(); }
-      });
+  /* ---------- увеличенный просмотр макета ---------- */
+  /* Своя модалка, а не Fullscreen API: нативный режим разворачивает всё окно
+     браузера и вешает системную плашку про Esc — не то, что нужно. */
+  var shade=null, slot=null, modalOpen=false;
+
+  /* сбрасываем открытый инсайт без анимации: при смене размера сцены
+     холст выноски всё равно пришлось бы пересобирать */
+  function dropOpen(){
+    if(cur>-1){
+      spots[cur].classList.remove('on');
+      spots[cur].setAttribute('aria-expanded','false');
+      cur=-1;
     }
+    tips.forEach(reset); reset(mobTip);
+    setHint();
   }
+
+  function makeShade(){
+    shade=document.createElement('div');
+    shade.className='shade';
+    document.body.appendChild(shade);
+    shade.addEventListener('click',function(e){
+      /* клик по самой картинке или по панели кнопок модалку не закрывает */
+      if(e.target.closest('.anno__stage')||e.target.closest('.anno__bar')) return;
+      /* если открыт инсайт — этот клик тратится на него (закроет обработчик
+         на document), картинка закроется следующим */
+      if(cur>-1) return;
+      closeModal();
+    });
+  }
+
+  function openModal(){
+    if(modalOpen) return;
+    if(!shade) makeShade();
+    dropOpen();
+    slot=document.createComment('anno');
+    anno.parentNode.insertBefore(slot,anno);
+    shade.appendChild(anno);
+    document.body.classList.add('shade-open');
+    /* синхронно прогоняем стили, чтобы переход отработал: на rAF полагаться
+       нельзя — в фоновой вкладке он не идёт, и подложка осталась бы скрытой */
+    void shade.offsetHeight;
+    shade.classList.add('on');
+    modalOpen=true;
+    full.textContent='Свернуть ⤡';
+  }
+
+  function closeModal(){
+    if(!modalOpen) return;
+    dropOpen();
+    shade.classList.remove('on');
+    slot.parentNode.insertBefore(anno,slot);
+    slot.parentNode.removeChild(slot);
+    slot=null;
+    document.body.classList.remove('shade-open');
+    modalOpen=false;
+    full.textContent='Развернуть ⤢';
+  }
+
+  if(full){
+    full.addEventListener('click',function(e){
+      e.stopPropagation();
+      modalOpen ? closeModal() : openModal();
+    });
+  }
+
+  /* Escape: сначала инсайт, потом картинка */
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Escape') return;
+    if(cur>-1){ close(); return; }
+    if(modalOpen) closeModal();
+  });
 
   setHint();
 })();
