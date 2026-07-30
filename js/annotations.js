@@ -1,6 +1,10 @@
 /* Аннотации на макете.
    Словарь тот же, что в хиро: квадрат, шаг сетки, коралловый акцент.
-   Выноска собирается из частиц вокруг пульсирующей точки и разбирается обратно. */
+
+   Принцип бесшовности взят оттуда же: частицы не «дорисовываются» к готовой
+   карточке, а САМИ становятся ею. К концу сборки они вырастают до размера
+   ячейки, смыкаются без зазоров и белеют до цвета --surface — в этот момент
+   под ними включается настоящий фон выноски, и подмена не видна. */
 (function(){
   var stage=document.getElementById('annoStage');
   if(!stage) return;
@@ -13,6 +17,8 @@
   var anno=document.getElementById('anno');
 
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var ASSEMBLE=620, DISASSEMBLE=420, HANDOFF=220;
 
   var DATA=[
     { x:27, y:20,
@@ -48,13 +54,13 @@
     this.cv=document.createElement('canvas');
     this.cv.className='tip__fx';
     this.cv.setAttribute('aria-hidden','true');
-    tip.appendChild(this.cv);
+    tip.insertBefore(this.cv,tip.firstChild);
     this.ctx=this.cv.getContext('2d');
-    this.raf=0;
+    this.raf=0; this.guard=0; this.W=0; this.H=0; this.P=[];
   }
 
-  /* сетка частиц по площади выноски + точка вылета со стороны хотспота */
-  Fx.prototype.build=function(fromX,fromY){
+  /* сетка частиц по площади выноски; облако вылета смещено к хотспоту */
+  Fx.prototype.build=function(anchorX,anchorY){
     var r=this.tip.getBoundingClientRect();
     var W=Math.max(1,r.width), H=Math.max(1,r.height);
     var dpr=Math.min(window.devicePixelRatio||1,2);
@@ -63,23 +69,28 @@
     this.ctx.setTransform(dpr,0,0,dpr,0,0);
     this.W=W; this.H=H;
 
-    var step=Math.max(13,Math.round(W/24));
-    var cx=Math.max(1,Math.floor(W/step)), cy=Math.max(1,Math.floor(H/step));
+    var step=Math.max(14,Math.round(W/20));
+    var cx=Math.max(1,Math.round(W/step)), cy=Math.max(1,Math.round(H/step));
     var sx=W/cx, sy=H/cy;
+    /* +1px перекрытия, чтобы в собранном виде не было швов между плитками */
+    var full=Math.ceil(Math.max(sx,sy))+1;
+
+    /* центр облака сдвинут к точке, из которой «вылетает» выноска */
+    var ox=W/2+(anchorX-W/2)*0.55;
+    var oy=H/2+(anchorY-H/2)*0.55;
 
     var P=[];
     for(var i=0;i<cx;i++)for(var j=0;j<cy;j++){
       var a=Math.random()*Math.PI*2;
-      var rad=Math.pow(Math.random(),0.55);
+      var rad=Math.pow(Math.random(),0.62);
       P.push({
         tx:sx*(i+0.5), ty:sy*(j+0.5),
-        /* стартуют россыпью вокруг точки, из которой «вылетает» выноска */
-        fx:fromX+Math.cos(a)*rad*W*0.42,
-        fy:fromY+Math.sin(a)*rad*H*0.5,
-        rot:(Math.random()-0.5)*Math.PI,
-        sz:Math.max(3,step*(0.42+Math.random()*0.34)),
-        accent:Math.random()<0.09,
-        d:Math.random()*0.32          /* разнобой во времени вылета */
+        fx:ox+Math.cos(a)*rad*W*0.62,
+        fy:oy+Math.sin(a)*rad*H*0.72,
+        rot:(Math.random()-0.5)*1.1,
+        sz0:full*(0.3+Math.random()*0.22), sz1:full,
+        accent:Math.random()<0.08,
+        d:Math.random()*0.22          /* лёгкий разнобой во времени вылета */
       });
     }
     this.P=P;
@@ -95,9 +106,54 @@
     if(this.W) this.ctx.clearRect(0,0,this.W,this.H);
   };
 
+  /* g: 0 — россыпь, 1 — собранная плитка цвета карточки */
+  Fx.prototype.draw=function(gOf){
+    var ctx=this.ctx, P=this.P;
+    ctx.clearRect(0,0,this.W,this.H);
+
+    for(var i=0;i<P.length;i++){
+      var q=P[i];
+      var g=gOf(q);
+      if(g<=0.001) continue;
+
+      var x=q.fx+(q.tx-q.fx)*g;
+      var y=q.fy+(q.ty-q.fy)*g;
+      var sz=q.sz0+(q.sz1-q.sz0)*g;
+      var rot=q.rot*(1-g);
+      var alpha=0.5+0.5*g;
+
+      /* цвет ведём от тёплой серой россыпи к белому фону карточки,
+         коралловые квадраты белеют только на финише */
+      var cr,cg,cb;
+      if(q.accent){
+        var m=Math.max(0,(g-0.5)*2);
+        cr=228+(255-228)*m; cg=87+(255-87)*m; cb=58+(255-58)*m;
+      } else {
+        cr=214+41*g; cg=211+44*g; cb=207+48*g;
+      }
+
+      ctx.fillStyle='rgba('+(cr|0)+','+(cg|0)+','+(cb|0)+','+alpha.toFixed(3)+')';
+
+      if(Math.abs(rot)<0.02){
+        ctx.fillRect(x-sz/2,y-sz/2,sz,sz);
+      } else {
+        ctx.save();
+        ctx.translate(x,y);
+        ctx.rotate(rot);
+        ctx.fillRect(-sz/2,-sz/2,sz,sz);
+        ctx.restore();
+      }
+    }
+  };
+
+  /* полностью собранное состояние — сплошная плитка цвета карточки */
+  Fx.prototype.drawSolid=function(){
+    this.draw(function(){ return 1; });
+  };
+
   /* dir: 1 — собирается, -1 — разбирается */
   Fx.prototype.run=function(dir,dur,done){
-    var self=this, P=this.P, ctx=this.ctx;
+    var self=this;
     var t0=null, finished=false;
     this.stop();
 
@@ -105,7 +161,6 @@
       if(finished) return;
       finished=true;
       self.stop();
-      ctx.clearRect(0,0,self.W,self.H);
       if(done) done();
     }
     /* rAF не идёт в фоновой вкладке — подстраховываем, чтобы состояние
@@ -117,30 +172,12 @@
     function frame(ts){
       if(t0===null) t0=ts;
       var p=Math.min(1,(ts-t0)/dur);
-      ctx.clearRect(0,0,self.W,self.H);
 
-      for(var i=0;i<P.length;i++){
-        var q=P[i];
-        /* каждая частица стартует со своей задержкой */
+      self.draw(function(q){
         var lp=Math.min(1,Math.max(0,(p-q.d)/(1-q.d)));
         var k=ease(lp);
-        var g=(dir>0)?k:1-k;      /* при разборе идём обратно */
-
-        var x=q.fx+(q.tx-q.fx)*g;
-        var y=q.fy+(q.ty-q.fy)*g;
-        var rot=q.rot*(1-g);
-        var alpha=(dir>0? g : g)*0.85;
-        if(alpha<0.02) continue;
-
-        ctx.save();
-        ctx.translate(x,y);
-        if(Math.abs(rot)>0.02) ctx.rotate(rot);
-        ctx.fillStyle=q.accent
-          ? 'rgba(228,87,58,'+Math.min(0.95,alpha+0.12).toFixed(3)+')'
-          : 'rgba(11,11,12,'+(alpha*0.55).toFixed(3)+')';
-        ctx.fillRect(-q.sz/2,-q.sz/2,q.sz,q.sz);
-        ctx.restore();
-      }
+        return dir>0 ? k : 1-k;
+      });
 
       if(p<1){ self.raf=requestAnimationFrame(frame); }
       else{ self.raf=0; finish(); }
@@ -185,100 +222,106 @@
   mobTip._fx=new Fx(mobTip);
 
   function isMobile(){ return window.matchMedia('(max-width:760px)').matches; }
-
-  /* какая выноска сейчас на экране: боковая или нижняя */
   function activeTip(i){ return isMobile() ? mobTip : tips[i]; }
 
-  /* отложенное появление карточки нужно снимать при закрытии,
-     иначе таймер дорисует фон уже закрытой выноске */
-  function clearShow(tip){
+  /* точка, из которой вылетают частицы: угол выноски со стороны хотспота */
+  function anchorOf(tip,side){
+    var r=tip.getBoundingClientRect();
+    if(isMobile()) return [r.width/2,0];
+    return [side.indexOf('r')>-1?r.width:0, side.indexOf('b')>-1?r.height:0];
+  }
+
+  function clearTimers(tip){
     if(tip._showT){ clearTimeout(tip._showT); tip._showT=0; }
+    if(tip._clearT){ clearTimeout(tip._clearT); tip._clearT=0; }
+  }
+
+  function reset(tip){
+    clearTimers(tip);
+    tip._fx.stop(); tip._fx.clear();
+    tip.classList.remove('on','solid','shown');
   }
 
   function openTip(tip,side){
-    clearShow(tip);
+    clearTimers(tip);
     tip.classList.add('on');
-    if(reduce){ tip.classList.add('shown'); return; }
+    if(reduce){ tip.classList.add('solid','shown'); return; }
 
-    /* точка вылета: угол выноски, обращённый к хотспоту */
-    var r=tip.getBoundingClientRect();
-    var fromX = side.indexOf('r')>-1 ? r.width : 0;
-    var fromY = side.indexOf('b')>-1 ? r.height : 0;
-    if(isMobile()){ fromX=r.width/2; fromY=0; }
-
-    tip._fx.build(fromX,fromY).run(1,560,null);
-    tip._showT=setTimeout(function(){ tip._showT=0; tip.classList.add('shown'); },230);
-  }
-
-  function closeTip(tip,side,after){
-    clearShow(tip);
-    if(reduce){
-      tip.classList.remove('shown','on');
-      if(after) after();
-      return;
-    }
-    var r=tip.getBoundingClientRect();
-    var fromX = side.indexOf('r')>-1 ? r.width : 0;
-    var fromY = side.indexOf('b')>-1 ? r.height : 0;
-    if(isMobile()){ fromX=r.width/2; fromY=0; }
-
-    tip.classList.remove('shown');
-    tip._fx.build(fromX,fromY).run(-1,360,function(){
-      tip.classList.remove('on');
-      if(after) after();
+    var a=anchorOf(tip,side);
+    tip._fx.build(a[0],a[1]).run(1,ASSEMBLE,function(){
+      /* частицы уже сомкнулись в белую плитку — включаем фон и текст
+         под ней, цвет тот же, поэтому стыка не видно */
+      tip.classList.add('solid','shown');
+      tip._clearT=setTimeout(function(){
+        tip._clearT=0; tip._fx.clear();
+      },HANDOFF);
     });
   }
 
+  function closeTip(tip,side,after){
+    clearTimers(tip);
+    if(reduce){
+      tip.classList.remove('solid','shown','on');
+      if(after) after();
+      return;
+    }
+
+    /* сначала уводим текст, карточка пока стоит */
+    tip.classList.remove('shown');
+    tip._showT=setTimeout(function(){
+      tip._showT=0;
+      var a=anchorOf(tip,side);
+      /* рисуем плитку и в тот же кадр гасим фон — карточка «становится»
+         частицами, а не исчезает под ними */
+      tip._fx.build(a[0],a[1]).drawSolid();
+      tip.classList.remove('solid');
+      tip._fx.run(-1,DISASSEMBLE,function(){
+        tip._fx.clear();
+        tip.classList.remove('on');
+        if(after) after();
+      });
+    },200);
+  }
+
   function setHint(){
-    hint.textContent = (cur<0)
-      ? DATA.length+' аннотации'
-      : (cur+1)+' / '+DATA.length;
+    hint.textContent = (cur<0) ? DATA.length+' аннотации' : (cur+1)+' / '+DATA.length;
   }
 
   function close(){
     if(cur<0) return;
-    var i=cur, tip=activeTip(i);
-    var side=tips[i].dataset.side;
+    var i=cur, tip=activeTip(i), side=tips[i].dataset.side;
     cur=-1;
     spots[i].classList.remove('on');
     spots[i].setAttribute('aria-expanded','false');
     closeTip(tip,side);
-    /* вторую (скрытую по медиа-запросу) выноску просто гасим */
-    var other = (tip===mobTip)?tips[i]:mobTip;
-    clearShow(other);
-    other.classList.remove('on','shown');
-    other._fx.stop(); other._fx.clear();
+    reset((tip===mobTip)?tips[i]:mobTip);   /* вторую, скрытую по медиа-запросу, гасим */
     setHint();
   }
 
   function go(i){
     i=(i+DATA.length)%DATA.length;
 
-    /* если что-то открыто — сначала убираем это, без ожидания */
     if(cur>-1 && cur!==i){
-      var p=cur, ptip=activeTip(p);
+      var p=cur;
       spots[p].classList.remove('on');
       spots[p].setAttribute('aria-expanded','false');
-      clearShow(ptip);
-      ptip._fx.stop();
-      ptip.classList.remove('on','shown');
-      ptip._fx.clear();
-      var pother=(ptip===mobTip)?tips[p]:mobTip;
-      clearShow(pother);
-      pother.classList.remove('on','shown');
+      reset(activeTip(p));
+      reset((activeTip(p)===mobTip)?tips[p]:mobTip);
     }
 
     cur=i;
     spots[i].classList.add('on');
     spots[i].setAttribute('aria-expanded','true');
 
-    if(isMobile()) mobTip.innerHTML=bodyHTML(DATA[i]);
-    if(!isMobile()){ mobTip.classList.remove('on','shown'); }
-    else { tips.forEach(function(t){ t.classList.remove('on','shown'); }); }
+    if(isMobile()){
+      mobTip.innerHTML=bodyHTML(DATA[i]);
+      mobTip.insertBefore(mobTip._fx.cv,mobTip.firstChild);
+      tips.forEach(reset);
+    } else {
+      reset(mobTip);
+    }
 
-    var tip=activeTip(i);
-    if(tip===mobTip){ mobTip._fx=mobTip._fx||new Fx(mobTip); mobTip.appendChild(mobTip._fx.cv); }
-    openTip(tip,tips[i].dataset.side);
+    openTip(activeTip(i),tips[i].dataset.side);
     setHint();
   }
 
@@ -307,7 +350,7 @@
       document.addEventListener('fullscreenchange',function(){
         var on=!!document.fullscreenElement;
         full.textContent = on ? 'Свернуть ⤡' : 'Развернуть ⤢';
-        /* размеры выноски меняются вместе со сценой */
+        /* размеры выноски меняются вместе со сценой — холст пересоберём заново */
         if(cur>-1){ var t=activeTip(cur); t._fx.stop(); t._fx.clear(); }
       });
     }
