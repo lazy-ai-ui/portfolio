@@ -136,11 +136,27 @@
 /* цитата — голосом респондента, поэтому крупнее и не приглушённая */
 .tbl__quote td{font-family:var(--display);font-weight:500;font-size:17px;line-height:1.45;
   letter-spacing:-.015em;color:var(--ink)}
-/* инсайт — то, ради чего интервью и проводилось */
-.tbl__insight td{color:var(--ink)}
-.tbl__insight .tbl__k{color:var(--accent)}
 
 .iv__note{margin-top:52px}
+
+/* ---------- конкурентный анализ ---------- */
+/* Четыре системы рядом — колонок больше, поэтому кегль и отбивки плотнее,
+   но сетка и разделители те же, что у остальных таблиц. */
+/* левая колонка та же, что в остальных таблицах, — текст во всех начинается
+   с одной вертикали */
+.tbl--market{--label-col:132px}
+.tbl--market thead th:first-child,.tbl--market th[scope=row]{width:var(--label-col)}
+.tbl--market td{width:calc((100% - var(--label-col)) / 4);font-size:14px;line-height:1.6}
+.tbl--market th,.tbl--market td{padding:22px 24px 24px}
+.tbl--market th:first-child,.tbl--market td:first-child{padding-left:0}
+.tbl--market th:last-child,.tbl--market td:last-child{padding-right:0}
+.tbl--market .tbl__who{display:block;font-family:var(--display);font-weight:500;font-size:16px;
+  letter-spacing:-.015em;color:var(--ink);text-transform:none}
+
+@media (max-width:1100px){
+  .tbl--market td{font-size:13px}
+  .tbl--market th,.tbl--market td{padding:20px 12px 22px}
+}
 
 @media (max-width:760px){
   .tbl--q{margin-bottom:48px}
@@ -149,17 +165,8 @@
   .tbl th,.tbl td{padding:20px 14px 22px}
   .tbl caption{padding-bottom:20px}
   .iv__note{margin-top:36px}
-
-  /* узкий экран: таблица сравнения разворачивается в карточки */
-  .tbl--cmp table,.tbl--cmp tbody,.tbl--cmp tr,.tbl--cmp th,.tbl--cmp td{display:block;width:auto}
-  .tbl--cmp thead{display:none}
-  .tbl--cmp tbody tr{padding:20px 0 24px}
-  .tbl--cmp th[scope=row]{width:auto;padding:0 0 14px}
-  .tbl--cmp td{padding:0 0 18px}
-  .tbl--cmp td:last-child{padding-bottom:0}
-  .tbl--cmp td::before{content:attr(data-col);display:block;
-    font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink-3);margin-bottom:7px}
+  .tbl--market td{font-size:15px}
+  .tbl--market .tbl__who{font-size:17px}
 }
 
 /* ---------- сравнение «было / стало» ---------- */
