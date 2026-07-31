@@ -77,7 +77,12 @@
         <div class="shot shot--wide">
           <img src="assets/img/case-overview-light.webp" alt="Главный экран RackTables — светлая тема" loading="lazy">
         </div>
-        <div class="shot shot--wide shot--empty"><span>тот же экран в тёмной теме</span></div>
+        <div class="shot shot--wide">
+          <img src="assets/img/case-dashboard-dark.webp" alt="Тот же экран в тёмной теме"
+               width="2200" height="1564" loading="lazy" decoding="async"
+               onerror="this.closest('.shot').classList.add('shot--empty');this.remove()">
+          <span>тот же экран в тёмной теме</span>
+        </div>
       </div>
 
       <div class="facts">
@@ -135,6 +140,30 @@
 
   <section id="solution">
     <div class="labelrow"><p class="sect__label">Решение</p><hr class="rule"></div>
+
+    <h2 class="stub__t">Что было на главном экране до</h2>
+    <p class="phase__d" style="max-width:64ch;margin:0 0 28px">Экран открывался каталогом разделов: чтобы понять, всё ли в порядке, нужно было выбрать раздел и уйти вглубь. Оценки состояния на входе не было вообще. Потяните ползунок.</p>
+
+    <div class="cmp" id="cmp">
+      <div class="cmp__stage">
+        <img src="assets/img/case-overview-light.webp" alt="Главный экран после редизайна"
+             width="2200" height="1564" loading="lazy" decoding="async">
+        <div class="cmp__before">
+          <img src="assets/img/racktables-before.png" alt="Главный экран RackTables до редизайна"
+               loading="lazy" decoding="async"
+               onerror="this.closest('.cmp__before').classList.add('is-missing');this.remove()">
+          <span>скриншот «до» не подложен</span>
+        </div>
+        <span class="cmp__tag cmp__tag--before">Было</span>
+        <span class="cmp__tag cmp__tag--after">Стало</span>
+        <button class="cmp__bar" id="cmpBar" type="button" role="slider"
+                aria-label="Сравнение экрана до и после редизайна"
+                aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <span aria-hidden="true">↔</span>
+        </button>
+      </div>
+      <p class="cmp__hint">Тяните ползунок · стрелки ← → с клавиатуры</p>
+    </div>
 
     <h2 class="stub__t">Главный экран отвечает на четыре вопроса, с которыми в систему заходят</h2>
     <p class="phase__d" style="max-width:64ch;margin:0 0 36px">Каждый блок дашборда закрывает конкретный барьер из интервью. Ткни в точку на экране, чтобы посмотреть какой.</p>
@@ -196,6 +225,7 @@
 
 <script src="js/navbar.js"></script>
 <script src="js/section-nav.js"></script>
+<script src="js/compare.js"></script>
 <script src="js/annotations.js"></script>
 </body>
 </html>
