@@ -77,11 +77,14 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 .tbl thead th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-3);padding-top:0;padding-bottom:18px}
 
-/* разделитель строк — тот же словарь, что у .rule */
+/* Разделитель строк — тот же род, но на ступень тише секционного .rule:
+   квадраты 5px с шагом 12 → штрихи 2px с шагом 7, высота 5px → 1px,
+   плотность .30 → .16. Секцию делит крупный пунктир, строку внутри — мелкий,
+   поэтому таблица не разваливается на отдельные блоки. */
 .tbl tbody tr{
   background-image:repeating-linear-gradient(to right,
-    rgba(11,11,12,.26) 0 5px, transparent 5px 12px);
-  background-size:100% 5px;background-position:left bottom;background-repeat:repeat-x}
+    rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
+  background-size:100% 1px;background-position:left bottom;background-repeat:repeat-x}
 .tbl tbody tr:last-child{background-image:none}
 
 .tbl td{font-size:15px;line-height:1.62;color:var(--ink-2);text-wrap:pretty}

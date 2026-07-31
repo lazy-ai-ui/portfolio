@@ -60,6 +60,19 @@
 .phase__d{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0;text-wrap:pretty}
 .phase__d b{color:var(--ink);font-weight:500}
 
+/* ---- инсайты: те же мини-блоки, что и фазы, но в два ряда ---- */
+.insights{display:grid;grid-template-columns:repeat(2,1fr);gap:52px 64px}
+.insight__n{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--accent);
+  margin:0 0 16px}
+.insight__t{font-family:var(--display);font-weight:500;font-size:clamp(18px,1.6vw,22px);
+  line-height:1.24;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance}
+.insight__d{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0;text-wrap:pretty}
+.insight__d b{color:var(--ink);font-weight:500}
+
+@media (max-width:900px){
+  .insights{grid-template-columns:1fr;gap:36px}
+}
+
 /* ---- заглушки будущих разделов ---- */
 .stub{padding:0}
 .stub__t{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.8vw,36px);
@@ -195,8 +208,9 @@
 .cmp__bar:focus-visible{outline:none}
 .cmp__bar:focus-visible span{outline:2px solid var(--ink);outline-offset:3px}
 
-.cmp__hint{font-family:var(--mono);font-size:11px;letter-spacing:.1em;
-  color:var(--ink-3);margin:16px 0 0;text-align:center}
+/* Вводная строка раздела: держим в одну строку на десктопе,
+   поэтому без ограничения по ширине — текст короткий сам по себе. */
+.lead{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0 0 32px;text-wrap:pretty}
 
 @media (max-width:760px){
   .cmp{--shot-fit:42vh}
