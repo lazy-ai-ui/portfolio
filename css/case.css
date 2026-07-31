@@ -103,10 +103,12 @@
 /* ---------- блок «Интервью» ---------- */
 .iv__intro{max-width:64ch;margin:0 0 44px}
 
-/* таблица вопросов: узкий столбец с номером + сам вопрос */
-.tbl--q{max-width:900px;margin-bottom:64px}
-.tbl--q td{font-size:16px;color:var(--ink)}
-.tbl--q th{width:74px;padding-top:20px}
+/* Таблица вопросов идёт по той же сетке, что и «что ответили»:
+   одинаковая ширина левой колонки и одинаковая длина строки, поэтому
+   текст в обеих таблицах начинается и переносится одинаково. */
+.tbl--q{margin-bottom:76px}
+.tbl--q th{width:132px;padding-top:24px}
+.tbl--q td{font-size:17px;line-height:1.58;color:var(--ink)}
 
 /* сравнение респондентов: два столбца, поля построчно */
 .tbl--cmp thead th{padding-bottom:18px}
@@ -125,13 +127,15 @@
 .tbl__insight td{color:var(--ink)}
 .tbl__insight .tbl__k{color:var(--accent)}
 
-.iv__note{margin-top:34px}
+.iv__note{margin-top:52px}
 
 @media (max-width:760px){
-  .tbl--q{margin-bottom:44px}
-  .tbl--q th{width:52px}
-  .tbl--q td{font-size:15px}
-  .tbl th,.tbl td{padding:18px 14px 20px}
+  .tbl--q{margin-bottom:48px}
+  .tbl--q th{width:56px}
+  .tbl--q td{font-size:16px}
+  .tbl th,.tbl td{padding:20px 14px 22px}
+  .tbl caption{padding-bottom:20px}
+  .iv__note{margin-top:36px}
 
   /* узкий экран: таблица сравнения разворачивается в карточки */
   .tbl--cmp table,.tbl--cmp tbody,.tbl--cmp tr,.tbl--cmp th,.tbl--cmp td{display:block;width:auto}
@@ -317,6 +321,10 @@ body.shade-open{overflow:hidden}
 .claim__t{font-family:var(--display);font-weight:500;font-size:clamp(17px,1.6vw,21px);
   line-height:1.45;letter-spacing:-.01em;margin:0;text-wrap:pretty}
 .claim__t b{color:var(--accent);font-weight:500}
+/* пояснение под утверждением: отдельным абзацем, а не хвостом в одну строку */
+.claim__d{font-size:15px;line-height:1.62;color:var(--ink-2);margin:14px 0 0;max-width:72ch;
+  text-wrap:pretty}
+.claim__d b{font-weight:500;color:var(--ink)}
 .caveat{margin:18px 0 0}
 .caveat__btn{display:inline-flex;align-items:center;gap:8px;background:transparent;
   border:1px dashed var(--ink-3);border-radius:999px;padding:8px 14px;cursor:pointer;

@@ -62,42 +62,39 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
    становится белой, квадрат заливается акцентом.
    Класс общий, рассчитан и на кейсы, и на главную. */
 .tbl{margin:0;overflow-x:auto}
-.tbl table{width:100%;border-collapse:collapse;text-align:left}
-.tbl caption{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--ink-3);padding:0 0 20px}
+/* fixed — чтобы заданная ширина левой колонки соблюдалась точно и текст
+   во всех таблицах начинался с одной вертикали */
+.tbl table{width:100%;border-collapse:collapse;text-align:left;table-layout:fixed}
+/* заголовок таблицы — на одной ступени с метками секций (.sect__label) */
+.tbl caption{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-2);padding:0 0 28px}
 
-.tbl th,.tbl td{vertical-align:top;padding:22px 22px 24px;font-weight:400}
+.tbl th,.tbl td{vertical-align:top;padding:26px 24px 28px;font-weight:400}
 .tbl th:first-child,.tbl td:first-child{padding-left:0}
 .tbl th:last-child,.tbl td:last-child{padding-right:0}
 
 /* шапка: только мелкая моно-подпись, без заливки */
 .tbl thead th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);padding-top:0;padding-bottom:14px}
+  color:var(--ink-3);padding-top:0;padding-bottom:18px}
 
 /* разделитель строк — тот же словарь, что у .rule */
 .tbl tbody tr{
   background-image:repeating-linear-gradient(to right,
     rgba(11,11,12,.26) 0 5px, transparent 5px 12px);
-  background-size:100% 5px;background-position:left bottom;background-repeat:repeat-x;
-  transition:background-color .22s ease}
+  background-size:100% 5px;background-position:left bottom;background-repeat:repeat-x}
 .tbl tbody tr:last-child{background-image:none}
-.tbl tbody tr:hover{background-color:rgba(255,255,255,.72)}
 
 .tbl td{font-size:15px;line-height:1.62;color:var(--ink-2);text-wrap:pretty}
 .tbl td b{font-weight:500;color:var(--ink)}
+/* колонка держит комфортную длину строки, а не всю ширину таблицы */
+.tbl__txt{margin:0;max-width:62ch;text-wrap:pretty}
 
 /* номер строки — квадрат из общего словаря */
 .tbl__n{display:inline-flex;align-items:center;justify-content:center;
-  width:32px;height:32px;border-radius:7px;flex:none;
+  width:34px;height:34px;border-radius:7px;flex:none;
   font-family:var(--mono);font-size:12px;line-height:1;
-  color:var(--accent);border:1px solid rgba(228,87,58,.42);background:transparent;
-  transition:background .22s ease,color .22s ease,border-color .22s ease}
-.tbl tbody tr:hover .tbl__n{background:var(--accent);color:#fff;border-color:var(--accent)}
+  color:var(--accent);border:1px solid rgba(228,87,58,.42);background:transparent}
 
 /* подпись строки слева */
 .tbl__k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ink-3);white-space:nowrap}
-
-@media (prefers-reduced-motion: reduce){
-  .tbl tbody tr,.tbl__n{transition:none}
-}
