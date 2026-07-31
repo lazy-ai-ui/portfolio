@@ -116,6 +116,9 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
   .tbl.tbl--stack table,.tbl.tbl--stack tbody,.tbl.tbl--stack tr,
   .tbl.tbl--stack th,.tbl.tbl--stack td{display:block;width:auto}
   .tbl.tbl--stack thead{display:none}
+  /* у table:display:block подпись перестаёт наследовать ширину таблицы
+     и сжимается по содержимому — рвётся на слова при пустом месте справа */
+  .tbl.tbl--stack caption{display:block;width:auto}
   .tbl.tbl--stack tbody tr{padding:20px 0 24px}
   .tbl.tbl--stack th[scope=row]{width:auto;padding:0 0 14px}
   .tbl.tbl--stack td{padding:0 0 18px}

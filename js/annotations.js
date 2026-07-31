@@ -327,10 +327,21 @@
 
     var TOP=88;      /* плавающий навбар сверху */
     var BOTTOM=96;   /* навигация по разделам снизу */
+    var free=window.innerHeight-TOP-BOTTOM;
     if(r.top>=TOP && r.bottom<=window.innerHeight-BOTTOM) return;
 
-    var y=window.pageYOffset+r.top-TOP-16;
-    window.scrollTo({top:Math.max(0,y), behavior:how});
+    /* Двигаем на минимум: ровно настолько, чтобы выноска влезла снизу.
+       Так макет и кнопки перелистывания остаются на экране — иначе после
+       клика теряется то, ради чего аннотацию и открывали. */
+    var delta;
+    if(r.height<=free){
+      delta = (r.bottom>window.innerHeight-BOTTOM)
+        ? r.bottom-(window.innerHeight-BOTTOM)+12
+        : r.top-TOP-12;
+    } else {
+      delta = r.top-TOP-12;      /* целиком не помещается — ставим верх под навбар */
+    }
+    window.scrollTo({top:Math.max(0,window.pageYOffset+delta), behavior:how});
   }
 
   function close(){

@@ -97,7 +97,7 @@
 /* ---- заглушки будущих разделов ---- */
 .stub{padding:0}
 .stub__t{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.8vw,36px);
-  letter-spacing:-.03em;margin:0 0 12px}
+  letter-spacing:-.03em;margin:0 0 12px;text-wrap:balance}
 .stub__d{font-size:15px;color:var(--ink-3);margin:0}
 
 .tail{height:180px}
@@ -238,7 +238,9 @@
 
 /* Вводная строка раздела: держим в одну строку на десктопе,
    поэтому без ограничения по ширине — текст короткий сам по себе. */
-.lead{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0 0 32px;text-wrap:pretty}
+/* balance, а не pretty: выравнивает строки между собой, поэтому на узком
+   экране не остаётся короткого «хвоста» в две трети строки */
+.lead{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0 0 32px;text-wrap:balance}
 
 @media (max-width:760px){
   .cmp{--shot-fit:42vh}
