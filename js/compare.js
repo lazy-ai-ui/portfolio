@@ -12,7 +12,7 @@
 
   function set(p){
     pos=Math.max(0,Math.min(100,p));
-    box.style.setProperty('--pos',pos+'%');
+    box.style.setProperty('--pos',pos.toFixed(2)+'%');
     bar.setAttribute('aria-valuenow',Math.round(pos));
   }
 

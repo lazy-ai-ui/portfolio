@@ -4,3 +4,5 @@ node_modules/
 *.log
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+# исходники картинок до пережатия в webp — в деплой не нужны
+assets/img/_src/
