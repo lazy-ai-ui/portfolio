@@ -292,11 +292,14 @@
 .tip__t2{font-size:14px;line-height:1.55;color:var(--ink-2);margin:0;text-wrap:pretty}
 
 .anno__bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 0}
-.anno__hint{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-3);margin:0}
+.anno__hint{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-3);margin:0;
+  white-space:nowrap}
 .anno__nav{display:flex;gap:8px}
+/* стрелка не должна отрываться от слова — иначе кнопка ломается на две строки */
 .anno__nav button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
   background:transparent;border:1px solid var(--hair);border-radius:999px;padding:9px 14px;
-  color:var(--ink-2);cursor:pointer;transition:border-color .2s,color .2s}
+  color:var(--ink-2);cursor:pointer;white-space:nowrap;
+  transition:border-color .2s,color .2s}
 .anno__nav button:hover:not(:disabled){border-color:var(--ink-3);color:var(--ink)}
 .anno__nav button:disabled{opacity:.4;cursor:default}
 .anno__nav .is-wide{border-color:var(--ink-3);color:var(--ink)}
@@ -311,15 +314,23 @@
 .shade > .anno{width:100%;--shot-fit:78vh}
 .shade .anno__bar{max-width:min(100%, calc(var(--shot-fit) * 1.4066));
   margin-inline:auto;width:100%}
-.shade .anno__mobile{display:none}
+/* На широком экране выноска всплывает прямо на макете, нижняя не нужна.
+   На узком — она единственный способ прочитать аннотацию, поэтому внутри
+   модалки её обязательно оставляем (раньше пряталась и клик «не работал»). */
+@media (min-width:761px){ .shade .anno__mobile{display:none} }
 /* на тёмной подложке шкала надписей меняется */
 .shade .anno__hint{color:var(--on-dark-3)}
 .shade .anno__nav button{color:var(--on-dark-2);border-color:rgba(237,235,232,.26)}
 .shade .anno__nav button:hover:not(:disabled){color:var(--on-dark);border-color:var(--on-dark-3)}
 .shade .anno__nav .is-wide{color:var(--on-dark);border-color:var(--on-dark-3)}
 body.shade-open{overflow:hidden}
-/* на узком экране макет всё равно упирается в ширину — отдаём ему поля */
-@media (max-width:760px){ .shade{padding:12px} }
+/* На узком экране макет упирается в ширину, а под ним ещё выноска —
+   поэтому подложка прокручивается, а не центрирует и обрезает. */
+@media (max-width:760px){
+  .shade{padding:12px;align-items:flex-start;overflow-y:auto;
+    -webkit-overflow-scrolling:touch}
+  .shade > .anno{margin:auto 0}
+}
 @media (prefers-reduced-motion: reduce){ .shade{transition:none} }
 
 /* мобильный режим: выноска не поверх, а под картинкой */
@@ -327,6 +338,12 @@ body.shade-open{overflow:hidden}
 @media (max-width:760px){
   .anno{--shot-fit:52vh}
   .tip{display:none}
+  /* кнопки в одну строку под подписью, стрелки не отрываются */
+  .anno__bar{flex-direction:column;align-items:stretch;gap:12px}
+  .anno__nav{order:1;gap:6px}
+  .anno__nav button{flex:1 1 0;padding:11px 8px;font-size:10px;letter-spacing:.06em;
+    text-align:center}
+  .anno__hint{order:2;text-align:center}
   .anno__mobile{display:block}
   .anno__mobile .tip{display:block;position:static;width:auto}
   .anno__mobile .tip.solid{box-shadow:none}

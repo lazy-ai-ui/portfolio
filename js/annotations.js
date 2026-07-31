@@ -287,6 +287,29 @@
     hint.textContent = (cur<0) ? DATA.length+' аннотации' : (cur+1)+' / '+DATA.length;
   }
 
+  /* Клик по точке должен давать видимый результат: если выноска оказалась
+     за пределами экрана (на мобилке она под картинкой), подводим к ней.
+     Уже видимую не дёргаем — прокрутка без причины раздражает. */
+  function reveal(tip){
+    var how = reduce ? 'auto' : 'smooth';
+    var r = tip.getBoundingClientRect();
+    if(!r.height) return;
+
+    if(modalOpen && shade){
+      var sr=shade.getBoundingClientRect();
+      if(r.bottom<=sr.bottom-12 && r.top>=sr.top+12) return;
+      shade.scrollTo({top:shade.scrollTop+(r.top-sr.top)-16, behavior:how});
+      return;
+    }
+
+    var TOP=88;      /* плавающий навбар сверху */
+    var BOTTOM=96;   /* навигация по разделам снизу */
+    if(r.top>=TOP && r.bottom<=window.innerHeight-BOTTOM) return;
+
+    var y=window.pageYOffset+r.top-TOP-16;
+    window.scrollTo({top:Math.max(0,y), behavior:how});
+  }
+
   function close(){
     if(cur<0) return;
     var i=cur, tip=activeTip(i), side=tips[i].dataset.side;
@@ -321,7 +344,9 @@
       reset(mobTip);
     }
 
-    openTip(activeTip(i),tips[i].dataset.side);
+    var tip=activeTip(i);
+    openTip(tip,tips[i].dataset.side);
+    reveal(tip);
     setHint();
   }
 
