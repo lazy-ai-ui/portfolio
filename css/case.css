@@ -100,6 +100,51 @@
   .tail{height:120px}
 }
 
+/* ---------- блок «Интервью» ---------- */
+.iv__intro{max-width:64ch;margin:0 0 44px}
+
+/* таблица вопросов: узкий столбец с номером + сам вопрос */
+.tbl--q{max-width:900px;margin-bottom:64px}
+.tbl--q td{font-size:16px;color:var(--ink)}
+.tbl--q th{width:74px;padding-top:20px}
+
+/* сравнение респондентов: два столбца, поля построчно */
+.tbl--cmp thead th{padding-bottom:18px}
+.tbl--cmp thead th:first-child{width:132px}
+.tbl--cmp .tbl__who{display:block;font-family:var(--display);font-weight:500;font-size:17px;
+  letter-spacing:-.015em;color:var(--ink);text-transform:none}
+.tbl--cmp .tbl__who small{display:block;margin-top:6px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;color:var(--ink-3)}
+.tbl--cmp th[scope=row]{width:132px}
+.tbl--cmp td{width:calc((100% - 132px) / 2)}
+
+/* цитата — голосом респондента, поэтому крупнее и не приглушённая */
+.tbl__quote td{font-family:var(--display);font-weight:500;font-size:17px;line-height:1.45;
+  letter-spacing:-.015em;color:var(--ink)}
+/* инсайт — то, ради чего интервью и проводилось */
+.tbl__insight td{color:var(--ink)}
+.tbl__insight .tbl__k{color:var(--accent)}
+
+.iv__note{margin-top:34px}
+
+@media (max-width:760px){
+  .tbl--q{margin-bottom:44px}
+  .tbl--q th{width:52px}
+  .tbl--q td{font-size:15px}
+  .tbl th,.tbl td{padding:18px 14px 20px}
+
+  /* узкий экран: таблица сравнения разворачивается в карточки */
+  .tbl--cmp table,.tbl--cmp tbody,.tbl--cmp tr,.tbl--cmp th,.tbl--cmp td{display:block;width:auto}
+  .tbl--cmp thead{display:none}
+  .tbl--cmp tbody tr{padding:20px 0 24px}
+  .tbl--cmp th[scope=row]{width:auto;padding:0 0 14px}
+  .tbl--cmp td{padding:0 0 18px}
+  .tbl--cmp td:last-child{padding-bottom:0}
+  .tbl--cmp td::before{content:attr(data-col);display:block;
+    font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-3);margin-bottom:7px}
+}
+
 /* ---------- сравнение «было / стало» ---------- */
 .cmp{--shot-w:2200;--shot-h:1564;--shot-fit:56vh;--pos:50%;margin:0 0 44px}
 .cmp__stage{position:relative;
@@ -127,8 +172,12 @@
   padding:7px 12px;border-radius:999px;
   background:rgba(11,11,12,.74);color:var(--on-dark);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.cmp__tag{transition:opacity .2s ease,transform .2s ease}
 .cmp__tag--before{left:14px}
 .cmp__tag--after{right:14px}
+.cmp.is-hide-before .cmp__tag--before,
+.cmp.is-hide-after .cmp__tag--after{opacity:0;transform:translateY(-4px);pointer-events:none}
+@media (prefers-reduced-motion: reduce){ .cmp__tag{transition:none} }
 
 .cmp__bar{position:absolute;top:0;bottom:0;left:var(--pos);z-index:3;
   width:2px;margin-left:-1px;padding:0;border:0;

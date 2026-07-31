@@ -14,6 +14,10 @@
     pos=Math.max(0,Math.min(100,p));
     box.style.setProperty('--pos',pos.toFixed(2)+'%');
     bar.setAttribute('aria-valuenow',Math.round(pos));
+    /* подпись убираем, когда её сторона ужата: иначе «БЫЛО» висит
+       поверх нового экрана, хотя старого уже не видно */
+    box.classList.toggle('is-hide-before',pos<40);
+    box.classList.toggle('is-hide-after',pos>60);
   }
 
   function fromPointer(e){
