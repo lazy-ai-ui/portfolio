@@ -73,6 +73,27 @@
   .insights{grid-template-columns:1fr;gap:36px}
 }
 
+/* ---- JTBD: ситуация → требование → решение ---- */
+.jtbd{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.jtbd__card{background:var(--surface);border:1px solid var(--hair);border-radius:16px;
+  padding:28px 28px 30px}
+.jtbd__card .pill{display:inline-block;margin:0 0 22px}
+.jtbd__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 8px}
+.jtbd__t{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0;text-wrap:pretty}
+/* стрелка держит цепочку: из задачи следует требование, из него — решение */
+.jtbd__arrow{font-family:var(--mono);font-size:14px;line-height:1;color:var(--accent);
+  margin:16px 0;user-select:none}
+.jtbd__step--out .jtbd__k{color:var(--accent)}
+.jtbd__step--out .jtbd__t{color:var(--ink);font-weight:500}
+
+@media (max-width:900px){
+  .jtbd{grid-template-columns:1fr;gap:20px}
+  .jtbd__card{padding:24px 22px 26px}
+  .jtbd__card .pill{margin-bottom:18px}
+  .jtbd__arrow{margin:13px 0}
+}
+
 /* ---- заглушки будущих разделов ---- */
 .stub{padding:0}
 .stub__t{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.8vw,36px);
@@ -345,9 +366,24 @@ body.shade-open{overflow:hidden}
     text-align:center}
   .anno__hint{order:2;text-align:center}
   .anno__mobile{display:block}
-  .anno__mobile .tip{display:block;position:static;width:auto}
+  /* position:relative обязателен: холст внутри — absolute/inset:0, и при
+     static он считался от .shade (position:fixed), растягиваясь на весь экран */
+  .anno__mobile .tip{display:block;position:relative;width:auto}
   .anno__mobile .tip.solid{box-shadow:none}
   .anno__mobile .tip:not(.on){display:none}
+  .anno__mobile .tip__fx{display:none}
+
+  /* На телефоне выноска почти во весь экран — сборка из трёхсот квадратов
+     по такой площади читается как вспышка. Вместо неё короткий выезд
+     со стороны точки. */
+  .anno__mobile .tip.on{opacity:0;transform:translateX(-16px);
+    transition:opacity .28s ease,transform .28s cubic-bezier(.2,.8,.2,1),
+      background .28s ease,border-color .28s ease}
+  .anno__mobile .tip.on.from-right{transform:translateX(16px)}
+  .anno__mobile .tip.on.shown{opacity:1;transform:none}
+  @media (prefers-reduced-motion: reduce){
+    .anno__mobile .tip.on{transition:none;transform:none}
+  }
   .hs{width:26px;height:26px;font-size:11px}
 }
 

@@ -309,6 +309,88 @@
     </div>
   </section>
 
+  <!-- JTBD -->
+  <section id="jtbd">
+    <div class="labelrow"><p class="sect__label">JTBD</p><hr class="rule"></div>
+
+    <h2 class="stub__t">Задачи, требования и решения</h2>
+    <p class="lead">После интервью и конкурентного анализа я сформулировал JTBD, выделил требования к продукту и на их основе спроектировал решения.</p>
+
+    <div class="jtbd">
+      <article class="jtbd__card">
+        <p class="pill">При инциденте</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">JTBD</p>
+          <p class="jtbd__t">Когда что-то упало, хочу быстро увидеть всю информацию об объекте, чтобы найти причину, а не тратить время на её поиск.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">Требование</p>
+          <p class="jtbd__t">Диагностика инцидента не должна начинаться с похода в другой раздел.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step jtbd__step--out">
+          <p class="jtbd__k">Решение</p>
+          <p class="jtbd__t">Единый контекст объекта + Audit Log + метрики</p>
+        </div>
+      </article>
+
+      <article class="jtbd__card">
+        <p class="pill">При входе в систему</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">JTBD</p>
+          <p class="jtbd__t">Когда я захожу в систему, хочу сразу понять состояние инфраструктуры, чтобы определить, требует ли что-то моего внимания.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">Требование</p>
+          <p class="jtbd__t">Оценка состояния не должна требовать перехода в другие разделы.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step jtbd__step--out">
+          <p class="jtbd__k">Решение</p>
+          <p class="jtbd__t">Дашборд состояния + алерты + ресурсы</p>
+        </div>
+      </article>
+
+      <article class="jtbd__card">
+        <p class="pill">Когда нужно найти объект</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">JTBD</p>
+          <p class="jtbd__t">Когда мне нужен конкретный объект, хочу найти его напрямую, чтобы не тратить время на навигацию по разделам.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">Требование</p>
+          <p class="jtbd__t">Поиск не должен зависеть от точного названия — только от любого известного параметра.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step jtbd__step--out">
+          <p class="jtbd__k">Решение</p>
+          <p class="jtbd__t">Глобальный поиск по IP, имени, VLAN и тегу</p>
+        </div>
+      </article>
+
+      <article class="jtbd__card">
+        <p class="pill">При возвращении к работе</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">JTBD</p>
+          <p class="jtbd__t">Когда я возвращаюсь к работе, хочу быстро открыть последние объекты, чтобы продолжить без повторного поиска.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step">
+          <p class="jtbd__k">Требование</p>
+          <p class="jtbd__t">Возврат к прерванной работе не должен требовать повторного поиска.</p>
+        </div>
+        <p class="jtbd__arrow" aria-hidden="true">↓</p>
+        <div class="jtbd__step jtbd__step--out">
+          <p class="jtbd__k">Решение</p>
+          <p class="jtbd__t">Continue working + частые операции в один клик</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <section id="solution">
     <div class="labelrow"><p class="sect__label">Решение</p><hr class="rule"></div>
 
@@ -390,6 +472,7 @@
     <a href="#interview">Интервью</a>
     <a href="#market">Аналоги</a>
     <a href="#problems">Проблемы</a>
+    <a href="#jtbd">JTBD</a>
     <a href="#solution">Решение</a>
     <a href="#result">Итог</a>
   </div>

@@ -209,6 +209,9 @@
     t.style.top = bottom ? 'auto' : 'calc('+d.y+'% - 10px)';
     t.style.bottom = bottom ? 'calc('+(100-d.y)+'% - 10px)' : 'auto';
     t.dataset.side = (right?'r':'l')+(bottom?'b':'t');
+    /* для мобильного выезда порог свой: десктопный (x>52) выбирает сторону
+       всплытия выноски, а тут важно, в какой половине макета стоит точка */
+    t.dataset.mob = d.x>=50 ? 'r' : 'l';
     t.addEventListener('click',function(e){ e.stopPropagation(); });
     stage.appendChild(t); tips.push(t);
     t._fx=new Fx(t);
@@ -239,13 +242,23 @@
   function reset(tip){
     clearTimers(tip);
     tip._fx.stop(); tip._fx.clear();
-    tip.classList.remove('on','solid','shown');
+    tip.classList.remove('on','solid','shown','from-right');
   }
 
   function openTip(tip,side){
     clearTimers(tip);
     tip.classList.add('on');
     if(reduce){ tip.classList.add('solid','shown'); return; }
+
+    /* На узком экране частиц нет — выноска выезжает со стороны своей точки.
+       Стили прогоняем принудительно: элемент был display:none, и без этого
+       переход стартовал бы уже в конечном состоянии. */
+    if(isMobile()){
+      tip.classList.toggle('from-right', tip.dataset.mob==='r');
+      void tip.offsetHeight;
+      tip.classList.add('solid','shown');
+      return;
+    }
 
     var a=anchorOf(tip,side);
     tip._fx.build(a[0],a[1]).run(1,ASSEMBLE,function(){
@@ -261,8 +274,18 @@
   function closeTip(tip,side,after){
     clearTimers(tip);
     if(reduce){
-      tip.classList.remove('solid','shown','on');
+      tip.classList.remove('solid','shown','on','from-right');
       if(after) after();
+      return;
+    }
+
+    if(isMobile()){
+      tip.classList.remove('shown');          /* уезжает обратно и гаснет */
+      tip._showT=setTimeout(function(){
+        tip._showT=0;
+        tip.classList.remove('on','solid','from-right');
+        if(after) after();
+      },280);
       return;
     }
 
@@ -339,6 +362,7 @@
     if(isMobile()){
       mobTip.innerHTML=bodyHTML(DATA[i]);
       mobTip.insertBefore(mobTip._fx.cv,mobTip.firstChild);
+      mobTip.dataset.mob=tips[i].dataset.mob;
       tips.forEach(reset);
     } else {
       reset(mobTip);
