@@ -1,8 +1,9 @@
 /* ---------- hero ---------- */
-/* Две колонки: слева фраза-якорь с фактами и скрэмбл-строкой, справа частицы.
-   Тёмной плашки нет намеренно — хиро лежит прямо на фоне страницы, поэтому
-   единственный тёмный блок на главной это контакты, и приземление читается
-   сильнее. Частицы здесь тоже тёмные (см. hero-canvas.js). */
+/* Две колонки: слева имя с припиской роли, справа частицы. Тёмной плашки
+   нет намеренно — хиро лежит прямо на фоне страницы, поэтому единственный
+   тёмный блок на главной это контакты, и приземление читается сильнее.
+   Частицы здесь тоже тёмные (см. hero-canvas.js). Факты (город, возраст,
+   статус) вынесены в плавающую пилюлю .statuspill — см. ниже. */
 .hero{
   position:relative;
   min-height:min(84vh,760px);display:grid;
@@ -11,16 +12,18 @@
 }
 .col{position:relative;z-index:2}
 
-/* Якорь первого экрана: до него самым крупным текстом был моно-капс 12px,
-   и хиро читался как служебная подпись, а не как начало портфолио. */
+/* Имя — самый крупный текст первого экрана. Рядом с ним стояла длинная
+   клише-фраза про интерфейсы; теперь это просто имя, а роль — припиской
+   ниже (.role), в духе подписи художника. */
 .lede{font-family:var(--display);font-weight:500;
   font-size:clamp(26px,3.2vw,42px);line-height:1.16;letter-spacing:-.03em;
-  color:var(--ink);margin:0 0 28px;max-width:17ch;text-wrap:balance}
+  color:var(--ink);margin:0 0 12px;max-width:17ch;text-wrap:balance}
 
-.fact{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink);line-height:2.1;margin:0}
-.fact span{color:var(--ink-2)}
-.fact span.accent{color:var(--accent)}
+/* Приписка роли: мелкий моно-капс с широким трекингом. Не заголовок —
+   продолжение имени, а не отдельный блок. Фактов (город, возраст, статус)
+   здесь уже нет: они переехали в пилюлю .statuspill. */
+.role{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-2);margin:0}
 
 .ava{width:64px;height:64px;border-radius:6px;overflow:hidden;margin:0 0 22px;
   background:rgba(11,11,12,.06);position:relative}
@@ -29,28 +32,17 @@
   transition:filter .45s ease}
 .col:hover .ava img{filter:grayscale(.25) contrast(1) brightness(1)}
 
-.status{display:flex;align-items:center;gap:8px;margin:14px 0 0;
-  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink)}
+/* Точка статуса и её пульс: переиспользуется пилюлей .statuspill.
+   Класс .status (отдельный блок в хиро) убран — статус переехал в пилюлю. */
 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none;
   animation:pulse 2.6s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.82)}}
 @media (prefers-reduced-motion: reduce){ .dot{animation:none} }
 .accent{color:var(--accent)}
 
-/* Скрэмбл-строка: продолжение блока фактов, а не отдельный виджет — тот же
-   моно-шрифт, но ярче по цвету и с живым курсором. Отбита сверху линией,
-   чтобы читалась как «вот это отдельная, интерактивная штука». */
-.scr{margin:34px 0 0;padding-top:20px;border-top:1px solid var(--hair);
-  font-family:var(--mono);font-size:13px;line-height:1.75;letter-spacing:.04em;
-  color:var(--ink);max-width:34ch;
-  /* держим высоту под три строки: фразы разной длины не должны дёргать вёрстку */
-  min-height:calc(1.75em * 3);text-wrap:pretty}
-.scr__caret{display:inline-block;width:1px;height:1.05em;margin-left:3px;
-  background:var(--accent);vertical-align:-.16em;
-  animation:caret 1s step-end infinite}
-@keyframes caret{0%,100%{opacity:1}50%{opacity:0}}
-@media (prefers-reduced-motion: reduce){ .scr__caret{animation:none} }
+/* Скрэмбл-строка убрана: частицы — чистая метафора (хаос становится порядком),
+   ей не нужна словесная подпись, а отдельная зона с подсказкой только сбивала.
+   Поведение канваса (сборка фигуры по ховеру/тапу) осталось. */
 
 .stage{position:relative;align-self:stretch;display:flex;align-items:center;justify-content:center}
 #fig{display:block;width:100%;height:100%;cursor:pointer;touch-action:manipulation}
@@ -62,14 +54,54 @@
 
 #fig:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 
+/* ---------- пилюля статуса ----------
+   Плавает в правом верхнем углу, отдельно от навбара. Стекло то же, что у
+   .nav и .totop: та же подложка, размытие, бордер и тень — один язык. На
+   десктопе показывает статус и факты одной строкой; на мобиле свёрнута до
+   статуса, при тапе раскрывает «Самара · 25».
+   Поведение (скрытие по скроллу и в зоне «Обо мне») — в navbar.js. */
+.statuspill{position:fixed;top:14px;right:24px;z-index:50;
+  display:flex;align-items:center;
+  padding:9px 16px;border-radius:999px;
+  background:rgba(246,244,241,.62);
+  -webkit-backdrop-filter:blur(22px) saturate(1.8);
+  backdrop-filter:blur(22px) saturate(1.8);
+  border:1px solid rgba(11,11,12,.08);
+  box-shadow:0 8px 26px rgba(11,11,12,.08), inset 0 1px 0 rgba(255,255,255,.55);
+  transition:transform .42s cubic-bezier(.2,.8,.2,1), opacity .3s ease}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .statuspill{background:rgba(246,244,241,.94)}
+}
+/* скрытие: по скроллу вниз или в зоне «Обо мне» (классы вешает navbar.js) */
+.statuspill.hidden{transform:translateY(calc(-100% - 22px));opacity:0;pointer-events:none}
+.statuspill__head{display:flex;align-items:center;gap:8px;margin:0;padding:0;
+  background:none;border:0;cursor:pointer;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);line-height:1}
+.statuspill__head:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
+.statuspill__detail{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-2);line-height:1;
+  /* разделитель между статусом и фактами — мелкая точка в цвет волоска */
+  margin-left:6px;padding-left:14px;border-left:1px solid var(--hair)}
+@media (prefers-reduced-motion: reduce){ .statuspill{transition:opacity .01s} }
+
+/* На мобиле пилюля сворачивается: виден только статус. Факты раскрываются
+   по тапу (.statuspill--open), иначе правый угол занят слишком многим. */
+@media (max-width:520px){
+  .statuspill{top:auto;bottom:18px;right:12px;padding:10px 14px}
+  .statuspill__detail{
+    /* плавное раскрытие по ширине: max-width 0 → содержимому */
+    max-width:0;margin-left:0;padding-left:0;border-left:0;overflow:hidden;
+    opacity:0;transition:max-width .32s cubic-bezier(.2,.8,.2,1),opacity .24s ease,padding-left .32s}
+  .statuspill--open .statuspill__detail{
+    max-width:140px;margin-left:8px;padding-left:14px;border-left:1px solid var(--hair);opacity:1}
+}
+
 @media (max-width:900px){
   .hero{grid-template-columns:1fr;gap:20px;padding:0 0 16px;min-height:auto}
-  /* канвас чуть ниже, чем был: над ним теперь стоит фраза-якорь, и без этого
-     факты со статусом уезжали за первый экран */
+  /* канвас наверх: над ним имя с припиской, ниже CTA. Без приподнятого канваса
+     имя уезжало за первый экран */
   .stage{height:48vh;order:-1}
-  .status{justify-content:flex-start}
-  /* кегль не уменьшаем: строка не менее важна, чем факты рядом */
-  .scr{max-width:none;margin-top:28px;padding-top:18px;min-height:calc(1.75em * 2)}
 }
 
 /* ---------- projects ---------- */

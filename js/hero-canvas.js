@@ -7,7 +7,6 @@
   var DEFS=[
     {
       name:'dashboard', ratio:0.62, unitDiv:68, accent:[3],
-      phrase:'Превращаю сложные сценарии в понятные интерфейсы',
       blocks:[
         [0.06,0.05,0.88,0.09],
         [0.06,0.19,0.20,0.76],
@@ -20,7 +19,6 @@
     },
     {
       name:'phone', ratio:2.02, unitDiv:26, accent:[3],
-      phrase:'Проектирую мобильные сценарии без лишних экранов',
       /* контур корпуса: доли рамки + радиус скругления в долях ширины */
       outline:[0.00,0.00,1.00,1.00,0.155],
       blocks:[
@@ -37,7 +35,6 @@
     },
     {
       name:'tablet', ratio:0.74, unitDiv:52, accent:[5],
-      phrase:'Собираю системы из исследований и данных',
       outline:[0.00,0.00,1.00,1.00,0.055],
       blocks:[
         [0.06,0.07,0.88,0.055],
@@ -233,59 +230,9 @@
     }
   }
 
-  /* ---------- строка, которая называет собранную фигуру ---------- */
-
-  var scrEl=document.getElementById('scrText');
-  var scrLive=document.getElementById('scrLive');       /* стабильный текст для скринридера */
-  var touch=window.matchMedia('(hover: none)').matches;
-  var DEFAULT_PHRASE = touch ? 'Коснись частиц →' : 'Наведи на частицы →';
-
-  var scrPool='абвгдежзиклмнопрстуфхцчшщэюя';
-  var scrToken=0;
-  var scrCurrent=DEFAULT_PHRASE;
-
-  /* в разметке лежит десктопный вариант — на тач-устройстве подменяем сразу,
-     без перебора букв: это стартовое состояние, а не реакция на действие */
-  if(scrEl && scrEl.textContent.trim()!==DEFAULT_PHRASE){
-    scrEl.textContent=DEFAULT_PHRASE;
-    if(scrLive) scrLive.textContent=DEFAULT_PHRASE;
-  }
-
-  function scramble(text){
-    if(!scrEl) return;
-    var myToken=++scrToken;      /* всё, что запущено раньше, само остановится */
-    var prev=scrCurrent;
-    scrCurrent=text;
-
-    /* при reduced-motion перебор букв не показываем — сразу конечный текст */
-    if(reduce){
-      scrEl.textContent=text;
-      if(scrLive) scrLive.textContent=text;
-      return;
-    }
-
-    var len=Math.max(prev.length,text.length);
-    var frame=0, settle=[];
-    for(var i=0;i<len;i++) settle.push(Math.round(i*1.6+Math.random()*14));
-
-    (function tick(){
-      if(myToken!==scrToken) return;     /* отменено более новым вызовом */
-      var out='', done=true;
-      for(var i=0;i<len;i++){
-        var target=text[i];
-        if(target===undefined){ if(frame<settle[i]) done=false; continue; }
-        if(target===' '){ out+=' '; continue; }
-        out+=(frame>=settle[i]) ? target : scrPool[Math.floor(Math.random()*scrPool.length)];
-        if(frame<settle[i]) done=false;
-      }
-      scrEl.textContent=out;
-      frame++;
-      if(!done) requestAnimationFrame(tick);
-      else if(scrLive) scrLive.textContent=text;   /* озвучиваем только осевшую фразу */
-    })();
-  }
-
   /* ---------- сборка фигуры ---------- */
+
+  var touch=window.matchMedia('(hover: none)').matches;
 
   function pick(){
     if(LAYOUTS.length<2) return;
@@ -294,9 +241,11 @@
     current=n;
   }
 
-  /* один жест — один вызов, который меняет и фигуру, и строку */
-  function on(){ pick(); assembled=true; scramble(DEFS[current].phrase); }
-  function off(){ assembled=false; scramble(DEFAULT_PHRASE); }
+  /* один жест — один вызов: частицы собираются в макет или возвращаются
+     в покой. Меняющейся текстовой подписи больше нет — метафора работает
+     сама по себе, без слов */
+  function on(){ pick(); assembled=true; }
+  function off(){ assembled=false; }
 
   /* на тач-устройствах ховера нет: тап всегда показывает следующий макет,
      а через паузу без действий фигура сама возвращается в покой */
