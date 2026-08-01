@@ -82,8 +82,14 @@
     return pts;
   }
 
+  /* Доля стороны, на которой частицы угасают к краю — тот же приём, что
+     у разделителей .rule, только по всем четырём сторонам. Макет ужат до
+     (1 - 2*FADE), чтобы собранная фигура целиком стояла в непрозрачном ядре
+     и не притухала по краям. */
+  var FADE=0.10;
+
   function buildLayout(def){
-    var maxW=W*0.92, maxH=H*0.92;
+    var maxW=W*(1-FADE*2), maxH=H*(1-FADE*2);
     var w=maxW, h=w*def.ratio;
     if(h>maxH){ h=maxH; w=h/def.ratio; }
     var x0=(W-w)/2, y0=(H-h)/2;
@@ -117,7 +123,20 @@
     var a=Math.random()*Math.PI*2;
     var r=Math.pow(Math.random(),0.62);
     var ry=Math.max(50,(H-VPAD*2)/2);
-    return {x:W/2+Math.cos(a)*r*W*0.66, y:H/2+Math.sin(a)*r*ry*0.94};
+    /* 0.58, а не 0.66: с зоной угасания частицы за краем всё равно невидимы,
+       и облако выглядело бы разреженным без всякой пользы */
+    return {x:W/2+Math.cos(a)*r*W*0.58, y:H/2+Math.sin(a)*r*ry*0.94};
+  }
+
+  /* Прозрачность у краёв: 1 в ядре, плавно в 0 к границе канваса.
+     smoothstep вместо линейной — иначе на входе в зону виден излом. */
+  function edgeAlpha(x,y){
+    var fx=W*FADE, fy=H*FADE;
+    if(fx<=0||fy<=0) return 1;
+    var k=Math.min(Math.min(x,W-x)/fx, Math.min(y,H-y)/fy);
+    if(k>=1) return 1;
+    if(k<=0) return 0;
+    return k*k*(3-2*k);
   }
 
   function size(){
@@ -183,11 +202,12 @@
       var wantSz = tgt ? (tgt.edge?unit*0.92:unit) : p.s;
       p.sz += (wantSz-p.sz)*kSz;
 
-      if(p.cur<0.012) continue;
+      var a=p.cur*edgeAlpha(p.x,p.y);
+      if(a<0.012) continue;
 
       ctx.fillStyle=(tgt&&tgt.a)
-        ? 'rgba(228,87,58,'+Math.min(0.95,p.cur+0.12).toFixed(3)+')'
-        : 'rgba(237,235,232,'+p.cur.toFixed(3)+')';
+        ? 'rgba(228,87,58,'+Math.min(0.95,a+0.12).toFixed(3)+')'
+        : 'rgba(237,235,232,'+a.toFixed(3)+')';
 
       if(Math.abs(p.rot)<0.02){
         ctx.fillRect(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz);
@@ -299,7 +319,9 @@
       var L=LAYOUTS[0],T=L.targets;
       ctx.clearRect(0,0,W,H);
       for(var i=0;i<T.length;i++){
-        ctx.fillStyle=T[i].a?'rgba(228,87,58,.92)':'rgba(237,235,232,.84)';
+        var e=edgeAlpha(T[i].x,T[i].y);
+        ctx.fillStyle=T[i].a?'rgba(228,87,58,'+(0.92*e).toFixed(3)+')'
+                            :'rgba(237,235,232,'+(0.84*e).toFixed(3)+')';
         ctx.fillRect(T[i].x-L.unit/2,T[i].y-L.unit/2,L.unit,L.unit);
       }
       return;
