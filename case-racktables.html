@@ -455,6 +455,52 @@
       </div>
     </div>
 
+    <h2 class="stub__t" style="margin-top:96px">Разрешение конфликта IP-адреса</h2>
+    <p class="lead">Один адрес назначен двум устройствам — оба работают нестабильно. От алерта до закрытия три клика, плюс одно предупреждение, если выбрать рискованный адрес.</p>
+
+    <div class="flow" data-flow>
+      <div class="flow__screen">
+        <img class="on" src="assets/img/flow-ip-1.webp" alt="Дашборд: критический алерт о конфликте IP-адреса"
+             width="2200" height="1564" loading="lazy" decoding="async">
+        <img src="assets/img/flow-ip-2.webp" alt="Окно конфликта: два устройства и история назначения каждого"
+             width="2200" height="1564" loading="lazy" decoding="async">
+        <img src="assets/img/flow-ip-3.webp" alt="Переназначение адреса: подсказанные свободные адреса подсети"
+             width="2200" height="1564" loading="lazy" decoding="async">
+        <img src="assets/img/flow-ip-4.webp" alt="Предупреждение о DNS-кеше при выборе недавно освободившегося адреса"
+             width="2200" height="1564" loading="lazy" decoding="async">
+        <img src="assets/img/flow-ip-5.webp" alt="Адрес переназначен, алерт закрыт, изменение записано в Audit Log"
+             width="2200" height="1564" loading="lazy" decoding="async">
+      </div>
+
+      <div class="flow__rail" role="tablist" aria-label="Шаги сценария с конфликтом IP">
+        <button class="flow__step" type="button" role="tab" aria-selected="true">
+          <p class="flow__n">Шаг 01</p>
+          <p class="flow__t">Конфликт виден с главной</p>
+          <p class="flow__d">«192.168.1.15 is used by multiple devices» — критический алерт стоит первым в списке на дашборде. В отдельный раздел идти не нужно.</p>
+        </button>
+        <button class="flow__step" type="button" role="tab" aria-selected="false">
+          <p class="flow__n">Шаг 02</p>
+          <p class="flow__t">Видно, кто назначил каждый адрес</p>
+          <p class="flow__d">У первого устройства есть автор и время, у второго записи нет вообще — адрес выставили руками, в обход системы. Это тот же барьер, что назвал сисадмин на интервью.</p>
+        </button>
+        <button class="flow__step" type="button" role="tab" aria-selected="false">
+          <p class="flow__n">Шаг 03</p>
+          <p class="flow__t">Система предлагает адреса сама</p>
+          <p class="flow__d">Свободные адреса из той же подсети, с пометкой, какой безопаснее: один свободен две недели, другой освободился сорок минут назад.</p>
+        </button>
+        <button class="flow__step" type="button" role="tab" aria-selected="false">
+          <p class="flow__n">Шаг 04</p>
+          <p class="flow__t">Рискованный выбор объясняют</p>
+          <p class="flow__d">Если всё же взять недавно освободившийся адрес, система расскажет про DNS-кеш и чем это грозит — и только потом разрешит продолжить.</p>
+        </button>
+        <button class="flow__step" type="button" role="tab" aria-selected="false">
+          <p class="flow__n">Шаг 05</p>
+          <p class="flow__t">Алерт закрыт, след остался</p>
+          <p class="flow__d">Адрес переназначен, конфликт снят, а изменение попало в историю устройства и в Audit Log — видно, кто и что сделал.</p>
+        </button>
+      </div>
+    </div>
+
     <h2 class="stub__t" style="margin-top:96px">Смена статуса устройства</h2>
     <p class="lead">Устройство выключили в обход системы — причина неизвестна. Система просит объяснение при возврате в онлайн или честно помечает, что его нет.</p>
 
