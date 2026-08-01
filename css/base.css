@@ -8,14 +8,17 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 
 /* ---- появление при прокрутке ----------------------------------------
    Прячем только при js-rv на <html> — класс ставит скрипт в <head>, так что
-   без JS страница остаётся видимой. Список селекторов дублирует reveal.js. */
-html.js-rv .chead .brief, html.js-rv .chead .meta,
-html.js-rv .labelrow, html.js-rv .stub__t, html.js-rv .lead,
-html.js-rv .phases > div, html.js-rv .insights > div, html.js-rv .jtbd__card,
-html.js-rv .fact, html.js-rv .shot, html.js-rv .tbl, html.js-rv .claim,
-html.js-rv .note, html.js-rv .about__grid, html.js-rv .project,
-html.js-rv .contact{
-  opacity:0;transform:translateY(14px)}
+   без JS страница остаётся видимой. Список селекторов дублирует reveal.js.
+
+   Список обёрнут в :where() намеренно: он не добавляет веса, поэтому весь
+   селектор весит ровно как html.js-rv и правило показа ниже всегда сильнее.
+   Без этого составные селекторы (.chead .brief, .phases > div) оказывались
+   тяжелее .rv--in — класс навешивался, а блок оставался невидимым. */
+html.js-rv :where(
+  .chead .brief, .chead .meta, .labelrow, .stub__t, .lead,
+  .phases > div, .insights > div, .jtbd__card, .fact, .shot,
+  .tbl, .claim, .note, .about__grid, .project, .contact
+){opacity:0;transform:translateY(14px)}
 html.js-rv .rv{
   transition:opacity .6s ease, transform .6s cubic-bezier(.22,.8,.2,1)}
 html.js-rv .rv--in{opacity:1;transform:none}
