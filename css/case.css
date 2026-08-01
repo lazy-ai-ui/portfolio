@@ -394,6 +394,10 @@ body.shade-open{overflow:hidden}
    в истории изменений — ровно то, что делает сама фича. */
 .flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);
   gap:56px;align-items:start;margin:44px 0 0}
+/* экран стоит первым в разметке (ради sticky на мобилке), а сетка ставит
+   его справа — порядок в DOM и порядок на экране здесь независимы */
+.flow__rail{grid-column:1;grid-row:1}
+.flow__screen{grid-column:2;grid-row:1}
 
 .flow__screen{position:sticky;top:96px;
   aspect-ratio:2200 / 1564;border-radius:16px;overflow:hidden;
@@ -435,8 +439,12 @@ body.shade-open{overflow:hidden}
 .flow__step:hover .flow__t{color:var(--ink)}
 
 @media (max-width:900px){
-  .flow{grid-template-columns:1fr;gap:28px}
-  .flow__screen{position:static;order:-1}
+  /* На узком экране экран не уезжает наверх, а прилипает под навбаром:
+     листаешь шаги — картинка всё время перед глазами и меняется на месте.
+     display:block обязателен — в гриде sticky липнет только внутри своей
+     ячейки и отпустил бы экран сразу за первой строкой. */
+  .flow{display:block;margin-top:32px}
+  .flow__screen{position:sticky;top:70px;z-index:2;margin:0 0 28px}
   .flow__step{padding:0 0 24px 34px}
   .flow__d{font-size:15px;max-width:none}
 }

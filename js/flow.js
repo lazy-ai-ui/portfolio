@@ -24,6 +24,27 @@
       shots.forEach(function(img,n){ img.classList.toggle('on',n===i); });
     }
 
+    function isNarrow(){ return window.matchMedia('(max-width:900px)').matches; }
+
+    /* Активен последний шаг, чей верх пересёк полосу чтения — она проходит
+       ниже закреплённой картинки. На мобилке благодаря этому тыкать вообще
+       не нужно: листаешь, картинка над текстом меняется сама. */
+    function stepAtLine(){
+      var line=window.innerHeight*0.55, best=0;
+      for(var i=0;i<steps.length;i++){
+        if(steps[i].getBoundingClientRect().top<=line) best=i;
+      }
+      return best;
+    }
+    root._stepAtLine=stepAtLine;      /* точка входа для проверки */
+
+    var ticking=false;
+    window.addEventListener('scroll',function(){
+      if(!isNarrow()||ticking) return;
+      ticking=true;
+      requestAnimationFrame(function(){ ticking=false; go(stepAtLine()); });
+    },{passive:true});
+
     steps.forEach(function(s,i){
       s.addEventListener('click',function(){ go(i); });
       /* стрелками — как по обычному списку вкладок */
