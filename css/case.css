@@ -40,7 +40,10 @@
 
 .facts{display:grid;grid-template-rows:repeat(3,1fr);gap:20px}
 .fact{background:var(--surface);border:1px solid var(--hair);border-radius:16px;
-  padding:26px 24px;display:flex;flex-direction:column;justify-content:center}
+  padding:26px 24px;display:flex;flex-direction:column;justify-content:center;
+  transition:transform .32s cubic-bezier(.22,.8,.2,1),box-shadow .32s ease}
+/* еле заметный подъём: даёт отклик, но не тянет внимание на себя */
+.fact:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(11,11,12,.07)}
 .fact__k{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-.01em;
   color:var(--ink);margin:0 0 14px}
 .fact__v{font-family:var(--display);font-weight:600;font-size:clamp(34px,3.6vw,52px);
@@ -76,7 +79,9 @@
 /* ---- JTBD: ситуация → требование → решение ---- */
 .jtbd{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
 .jtbd__card{background:var(--surface);border:1px solid var(--hair);border-radius:16px;
-  padding:28px 28px 30px}
+  padding:28px 28px 30px;
+  transition:transform .32s cubic-bezier(.22,.8,.2,1),box-shadow .32s ease}
+.jtbd__card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(11,11,12,.07)}
 .jtbd__card .pill{display:inline-block;margin:0 0 22px}
 .jtbd__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-3);margin:0 0 8px}
@@ -105,17 +110,39 @@
 /* ---- нижняя навигация по разделам ---- */
 .secnav{position:fixed;left:0;right:0;bottom:18px;z-index:60;display:flex;justify-content:center;
   pointer-events:none;padding:0 16px}
-.secnav__in{pointer-events:auto;display:flex;gap:4px;padding:6px;border-radius:999px;
-  background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(16px) saturate(1.5);
-  backdrop-filter:blur(16px) saturate(1.5);border:1px solid rgba(11,11,12,.10);
-  box-shadow:0 10px 30px rgba(11,11,12,.10);max-width:100%;overflow-x:auto;
+.secnav__in{position:relative;pointer-events:auto;display:flex;gap:4px;padding:6px;border-radius:999px;
+  background:rgba(255,255,255,.66);-webkit-backdrop-filter:blur(24px) saturate(1.8);
+  backdrop-filter:blur(24px) saturate(1.8);border:1px solid rgba(11,11,12,.09);
+  box-shadow:0 10px 32px rgba(11,11,12,.10),
+             inset 0 1px 0 rgba(255,255,255,.7);max-width:100%;overflow-x:auto;
   scrollbar-width:none;-ms-overflow-style:none}
 .secnav__in::-webkit-scrollbar{display:none}
-.secnav a{flex:none;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .secnav__in{background:rgba(255,255,255,.95)}
+}
+
+/* Активный раздел — одна «пилюля», которая едет между пунктами.
+   Раньше тёмная подложка гасла у одного и загоралась у другого, и переход
+   читался как диссолв, а не как перемещение. */
+.secnav__pill{position:absolute;top:6px;left:0;height:calc(100% - 12px);width:0;
+  border-radius:999px;background:var(--dark);pointer-events:none;
+  transform:translateX(0);opacity:0;
+  transition:transform .44s cubic-bezier(.22,.8,.2,1),
+             width .44s cubic-bezier(.22,.8,.2,1),
+             opacity .2s ease}
+.secnav__pill.on{opacity:1}
+/* первая установка — без проезда через всю ленту */
+.secnav__pill.no-anim{transition:none}
+
+.secnav a{position:relative;z-index:1;flex:none;
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
   text-decoration:none;color:var(--ink-2);padding:11px 16px;border-radius:999px;
-  transition:background .22s ease,color .22s ease;white-space:nowrap}
+  transition:color .28s ease;white-space:nowrap}
 .secnav a:hover{color:var(--ink)}
-.secnav a.active{background:var(--dark);color:var(--on-dark)}
+.secnav a.active{color:var(--on-dark)}
+@media (prefers-reduced-motion: reduce){
+  .secnav__pill{transition:none}
+}
 
 @media (max-width:1000px){
   .ov{grid-template-columns:1fr}
@@ -475,4 +502,6 @@ body.shade-open{overflow:hidden}
 .caveat__body p{font-size:14px;line-height:1.6;color:var(--ink-2);margin:14px 0 0;max-width:62ch}
 @media (prefers-reduced-motion: reduce){
   .caveat__body,.tip{transition:none}
+  .fact,.jtbd__card{transition:none}
+  .fact:hover,.jtbd__card:hover{transform:none}
 }
