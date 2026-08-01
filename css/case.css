@@ -113,24 +113,30 @@
   color:var(--on-dark-3);margin:0 0 22px}
 .outcome__t{font-family:var(--display);font-weight:500;font-size:clamp(24px,2.9vw,38px);
   line-height:1.18;letter-spacing:-.03em;margin:0 0 56px;max-width:26ch;text-wrap:balance}
-.outcome__t b{color:var(--accent);font-weight:500}
 
 .outcome__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;
   padding-top:40px;border-top:1px solid rgba(237,235,232,.14)}
 .outcome__h{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--on-dark-2);margin:0 0 20px}
-/* колонка с непроверенным помечена акцентом — это не оговорка мелким шрифтом,
-   а равноправная часть итога */
-.outcome__h--warn{color:var(--accent)}
+
+/* колонка с непроверенным — лёгкая карточка, статус вынесен в плашку,
+   а не в цвет заголовка: акцент точечный, не заливка целого блока */
+.outcome__col--hypo{border:1px solid rgba(237,235,232,.14);border-radius:12px;padding:18px}
+.outcome__hrow{display:flex;align-items:center;gap:10px;margin:0 0 20px}
+.outcome__hrow .outcome__h{margin:0}
+.outcome__tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);border:1px solid rgba(228,87,58,.4);border-radius:3px;padding:2px 6px;line-height:1}
 
 .outcome__list{margin:0;padding:0;list-style:none}
-.outcome__list li{position:relative;padding-left:20px;margin:0 0 16px;
-  font-size:14px;line-height:1.62;color:var(--on-dark-2);text-wrap:pretty}
+.outcome__list li{margin:0 0 16px;font-size:14px;line-height:1.62;color:var(--on-dark-2);text-wrap:pretty}
 .outcome__list li:last-child{margin-bottom:0}
-/* маркер — квадрат из общего словаря */
-.outcome__list li::before{content:"";position:absolute;left:0;top:.6em;
-  width:5px;height:5px;border-radius:1px;background:var(--on-dark-3)}
-.outcome__h--warn + .outcome__list li::before{background:var(--accent);opacity:.55}
+.outcome__list li b{color:var(--on-dark);font-weight:600}
+
+/* «что дальше» — трекер шагов, номер вместо квадрата: это план, а не факт */
+.outcome__list--steps{counter-reset:step}
+.outcome__list--steps li{position:relative;padding-left:26px}
+.outcome__list--steps li::before{counter-increment:step;content:counter(step,decimal-leading-zero);
+  position:absolute;left:0;top:0;font-family:var(--mono);font-size:11px;color:var(--accent);opacity:.85}
 
 .outcome__foot{display:flex;align-items:center;justify-content:space-between;gap:20px;
   flex-wrap:wrap;margin-top:52px;padding-top:26px;border-top:1px solid rgba(237,235,232,.14)}
