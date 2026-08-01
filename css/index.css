@@ -92,24 +92,32 @@
   background:#EDEAE6;display:flex;align-items:center;justify-content:center}
 .fan--empty{background:#EFEDEA;border:0;position:relative;overflow:hidden}
 .fan--empty canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.sheet{position:absolute;width:74%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;
+/* пропорция листа совпадает с макетами (2200×1564), иначе object-fit срезал бы
+   края дашборда */
+.sheet{position:absolute;width:72%;aspect-ratio:2200 / 1564;border-radius:10px;overflow:hidden;
   box-shadow:0 18px 40px rgba(11,11,12,.18), 0 2px 6px rgba(11,11,12,.10);
   transition:transform .62s cubic-bezier(.19,.9,.22,1);
   will-change:transform;transform-origin:50% 90%}
 .sheet img{width:100%;height:100%;object-fit:cover;display:block}
-.sheet--dark{background:#16181B}
-.sheet--light{background:#FFFFFF}
+/* тёмная лежит ровно под светлой: в покое виден один экран */
+.sheet--dark{background:#16181B;z-index:1}
+.sheet--light{background:#FFFFFF;z-index:2}
 
-.fan:hover .sheet--light,.project__media:focus-visible .sheet--light{transform:translateX(-19%) rotate(-5deg)}
-.fan:hover .sheet--dark,.project__media:focus-visible .sheet--dark{transform:translateX(19%) rotate(5deg)}
+/* по наведению тёмная тема выглядывает из-под светлой, а та чуть уходит
+   в противоход — иначе движение читается как сдвиг одной картинки */
+.fan:hover .sheet--dark,.project__media:focus-visible .sheet--dark{
+  transform:translate(13%,-3%) rotate(4deg)}
+.fan:hover .sheet--light,.project__media:focus-visible .sheet--light{
+  transform:translate(-4%,1%) rotate(-1.5deg)}
 
 .soon{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;
   font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:rgba(11,11,12,.34)}
 
+/* без ховера подсказать нечем — показываем вторую тему сразу, но сдержаннее */
 @media (hover:none){
-  .sheet--light{transform:translateX(-15%) rotate(-4deg)}
-  .sheet--dark{transform:translateX(15%) rotate(4deg)}
+  .sheet--dark{transform:translate(11%,-2.5%) rotate(3.5deg)}
+  .sheet--light{transform:translate(-3%,1%) rotate(-1deg)}
 }
 @media (prefers-reduced-motion: reduce){ .sheet{transition:none} }
 
