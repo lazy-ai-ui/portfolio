@@ -121,11 +121,15 @@
 
   function scatter(){
     var a=Math.random()*Math.PI*2;
-    var r=Math.pow(Math.random(),0.62);
+    /* Показатель >1 сгущает частицы к центру. При 0.62 распределение было
+       почти равномерным по площади, и облако читалось как ровный шум —
+       у хаоса не было ядра, к которому он стремится, и метафора не работала.
+       Теперь в покое уже видно сгущение на месте будущей фигуры. */
+    var r=Math.pow(Math.random(),1.45);
     var ry=Math.max(50,(H-VPAD*2)/2);
     /* 0.58, а не 0.66: с зоной угасания частицы за краем всё равно невидимы,
        и облако выглядело бы разреженным без всякой пользы */
-    return {x:W/2+Math.cos(a)*r*W*0.58, y:H/2+Math.sin(a)*r*ry*0.94};
+    return {x:W/2+Math.cos(a)*r*W*0.58, y:H/2+Math.sin(a)*r*ry*0.94, r:r};
   }
 
   /* Прозрачность у краёв: 1 в ядре, плавно в 0 к границе канваса.
@@ -155,7 +159,12 @@
     for(var n=0;n<need;n++){
       var old=P[n];
       var home=scatter();
-      var o=0.26+Math.random()*0.3;
+      /* Дальше от ядра — мельче и бледнее. Это второй слой той же мысли, что
+         и сгущение: у облака появляется глубина, а край не спорит с собранной
+         фигурой. Диапазон непрозрачности заметно ниже прежнего, потому что
+         тёмное на светлом весит сильнее светлого на тёмном. */
+      var fall=1-home.r*0.55;
+      var o=(0.11+Math.random()*0.25)*fall;
       np.push({
         x:old?old.x:home.x, y:old?old.y:home.y,
         hx:home.x, hy:home.y,
@@ -164,7 +173,7 @@
         f2:0.016+Math.random()*0.024,
         ax:34+Math.random()*62, ay:20+Math.random()*32,
         rot:old?old.rot:Math.random()*Math.PI, rs:(Math.random()-0.5)*0.03,
-        s:base*(0.55+Math.random()*0.85),
+        s:base*(0.5+Math.random()*0.8)*fall,
         o:o, cur:old?old.cur:o, sz:base
       });
     }
@@ -196,7 +205,10 @@
 
       if(tgt){ p.rot+=(0-p.rot)*kRot; } else { p.rot+=p.rs*f; }
 
-      var wantOp = idle ? 0 : (tgt ? (tgt.edge?0.92:0.8) : p.o);
+      /* Собранная фигура почти непрозрачна: она должна читаться как макет
+         интерфейса, а не как облако. Чуть ниже прежних 0.92/0.8 — на светлом
+         фоне тёмный квадрат и без того плотный. */
+      var wantOp = idle ? 0 : (tgt ? (tgt.edge?0.86:0.72) : p.o);
       p.cur += (wantOp-p.cur)*kOp;
 
       var wantSz = tgt ? (tgt.edge?unit*0.92:unit) : p.s;
@@ -207,7 +219,7 @@
 
       ctx.fillStyle=(tgt&&tgt.a)
         ? 'rgba(228,87,58,'+Math.min(0.95,a+0.12).toFixed(3)+')'
-        : 'rgba(237,235,232,'+a.toFixed(3)+')';
+        : 'rgba(11,11,12,'+a.toFixed(3)+')';
 
       if(Math.abs(p.rot)<0.02){
         ctx.fillRect(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz);
@@ -321,7 +333,7 @@
       for(var i=0;i<T.length;i++){
         var e=edgeAlpha(T[i].x,T[i].y);
         ctx.fillStyle=T[i].a?'rgba(228,87,58,'+(0.92*e).toFixed(3)+')'
-                            :'rgba(237,235,232,'+(0.84*e).toFixed(3)+')';
+                            :'rgba(11,11,12,'+(0.72*e).toFixed(3)+')';
         ctx.fillRect(T[i].x-L.unit/2,T[i].y-L.unit/2,L.unit,L.unit);
       }
       return;
