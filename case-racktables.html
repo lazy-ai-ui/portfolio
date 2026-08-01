@@ -543,14 +543,57 @@
 
   <section id="result">
     <div class="labelrow"><p class="sect__label">Итог</p><hr class="rule"></div>
-    <div class="stub">
-      <h2 class="stub__t">Как решение отвечает на исходную задачу</h2>
-      <p class="stub__d">Собираем следующим шагом.</p>
+
+    <div class="outcome">
+      <p class="outcome__k">Что получилось</p>
+      <h2 class="outcome__t">Экран отвечает на вопрос, с которым в систему заходят: <b>всё ли в порядке — и что делать дальше</b>.</h2>
+
+      <div class="outcome__grid">
+        <div class="outcome__col">
+          <p class="outcome__h">Это видно по макетам</p>
+          <ul class="outcome__list">
+            <li>Оценка состояния на входе: четыре показателя и активные проблемы вместо каталога из 12 разделов.</li>
+            <li>Конфликт IP разрешается в три клика прямо из алерта, без похода в разделы.</li>
+            <li>Изменение в обход системы перестаёт быть невидимым: система просит причину, а отказ фиксирует.</li>
+          </ul>
+        </div>
+
+        <div class="outcome__col">
+          <p class="outcome__h outcome__h--warn">Это покажут только тесты</p>
+          <ul class="outcome__list">
+            <li>Быстрее ли инженер реагирует на инцидент. Продукт не выходил в прод, замеров нет.</li>
+            <li>Хватает ли четырёх показателей: набор собран на двух интервью — этого мало для статистики.</li>
+            <li>Не станет ли обязательная причина раздражать на рутинных работах.</li>
+          </ul>
+        </div>
+
+        <div class="outcome__col">
+          <p class="outcome__h">Что сделал бы дальше</p>
+          <ul class="outcome__list">
+            <li>Коридорные тесты на 5–7 инженерах: время до первого действия и до причины инцидента.</li>
+            <li>Проверил бы экран на дата-центре другого масштаба — 1468 устройств это один сценарий из многих.</li>
+            <li>Собрал бы состояния для передачи в разработку: пустые, ошибки, загрузка.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="outcome__foot">
+        <p>Спасибо, что дочитали</p>
+        <div class="outcome__links">
+          <a href="index.html">← Другие проекты</a>
+          <a href="https://t.me/deadlif1" target="_blank" rel="noopener">Telegram</a>
+          <a href="mailto:new.boxmail666@gmail.com">Email</a>
+        </div>
+      </div>
     </div>
   </section>
 
   <div class="tail"></div>
 </div>
+
+<button class="totop" id="toTop" type="button" aria-hidden="true" tabindex="-1">
+  <b aria-hidden="true">↑</b>Наверх
+</button>
 
 <div class="secnav">
   <div class="secnav__in" id="secnav">
@@ -566,6 +609,7 @@
 </div>
 
 <script src="js/reveal.js"></script>
+<script src="js/to-top.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/section-nav.js"></script>
 <script src="js/compare.js"></script>

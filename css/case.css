@@ -105,6 +105,51 @@
   letter-spacing:-.03em;margin:0 0 12px;text-wrap:balance}
 .stub__d{font-size:15px;color:var(--ink-3);margin:0}
 
+/* ---------- итог ----------
+   Тёмный блок: кейс открывается светлым и приземляется в тёмное, тем же
+   приёмом, что хиро и контакты на главной. */
+.outcome{background:var(--dark);border-radius:20px;padding:64px 52px 52px;color:var(--on-dark)}
+.outcome__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--on-dark-3);margin:0 0 22px}
+.outcome__t{font-family:var(--display);font-weight:500;font-size:clamp(24px,2.9vw,38px);
+  line-height:1.18;letter-spacing:-.03em;margin:0 0 56px;max-width:26ch;text-wrap:balance}
+.outcome__t b{color:var(--accent);font-weight:500}
+
+.outcome__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;
+  padding-top:40px;border-top:1px solid rgba(237,235,232,.14)}
+.outcome__h{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--on-dark-2);margin:0 0 20px}
+/* колонка с непроверенным помечена акцентом — это не оговорка мелким шрифтом,
+   а равноправная часть итога */
+.outcome__h--warn{color:var(--accent)}
+
+.outcome__list{margin:0;padding:0;list-style:none}
+.outcome__list li{position:relative;padding-left:20px;margin:0 0 16px;
+  font-size:14px;line-height:1.62;color:var(--on-dark-2);text-wrap:pretty}
+.outcome__list li:last-child{margin-bottom:0}
+/* маркер — квадрат из общего словаря */
+.outcome__list li::before{content:"";position:absolute;left:0;top:.6em;
+  width:5px;height:5px;border-radius:1px;background:var(--on-dark-3)}
+.outcome__h--warn + .outcome__list li::before{background:var(--accent);opacity:.55}
+
+.outcome__foot{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;margin-top:52px;padding-top:26px;border-top:1px solid rgba(237,235,232,.14)}
+.outcome__foot p{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--on-dark-3);margin:0}
+.outcome__links{display:flex;flex-wrap:wrap;gap:12px 28px}
+.outcome__links a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--on-dark);text-decoration:none;border-bottom:1px solid var(--on-dark-3);
+  padding-bottom:3px;transition:color .2s,border-color .2s}
+.outcome__links a:hover,.outcome__links a:focus-visible{color:var(--accent);border-color:var(--accent)}
+
+@media (max-width:900px){
+  .outcome{padding:40px 24px 36px;border-radius:16px}
+  .outcome__t{margin-bottom:36px}
+  .outcome__grid{grid-template-columns:1fr;gap:32px;padding-top:30px}
+  .outcome__list li{font-size:15px}
+  .outcome__foot{margin-top:36px}
+}
+
 .tail{height:180px}
 
 /* ---- нижняя навигация по разделам ---- */

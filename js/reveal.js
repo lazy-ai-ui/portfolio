@@ -12,7 +12,7 @@
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var SEL='.chead .brief, .chead .meta, .labelrow, .stub__t, .lead,'+
           '.phases > div, .insights > div, .jtbd__card, .fact, .shot,'+
-          '.tbl, .claim, .note, .about__grid, .project, .contact';
+          '.tbl, .claim, .note, .about__grid, .project, .contact, .outcome';
 
   var els=[].slice.call(document.querySelectorAll(SEL));
 
