@@ -489,13 +489,18 @@ body.shade-open{overflow:hidden}
 .flow__rail{grid-column:1;grid-row:1}
 .flow__screen{grid-column:2;grid-row:1}
 
-.flow__screen{position:sticky;top:96px;
+.flow__screen{position:sticky;top:96px}
+/* Рамка вынесена отдельным слоем, а не лежит на .flow__screen: на десктопе
+   .flow__screen растянут на высоту окна ради пина по центру, и картинки с
+   inset:0 считались бы от него — растеклись бы на весь экран. Это грабли №1
+   из PROJECT_CONTEXT, только с другой стороны. */
+.flow__frame{position:relative;width:100%;
   aspect-ratio:2200 / 1564;border-radius:16px;overflow:hidden;
   background:var(--surface);border:1px solid var(--hair);
   box-shadow:0 18px 44px rgba(11,11,12,.08)}
-.flow__screen img{position:absolute;inset:0;width:100%;height:100%;
+.flow__frame img{position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;display:block;opacity:0;transition:opacity .34s ease}
-.flow__screen img.on{opacity:1}
+.flow__frame img.on{opacity:1}
 
 .flow__rail{margin:0;padding:0;list-style:none}
 .flow__step{position:relative;display:block;width:100%;text-align:left;
@@ -527,6 +532,21 @@ body.shade-open{overflow:hidden}
 .flow__step.on .flow__t{color:var(--ink)}
 .flow__step.on .flow__d{color:var(--ink-2)}
 .flow__step:hover .flow__t{color:var(--ink)}
+
+/* ---- десктоп: экран приколот по центру окна ----
+   Шаги раньше стояли в 130px друг от друга, и второй включался прежде, чем
+   успевали дочитать первый. Теперь каждый шаг занимает по высоте пол-окна —
+   это и есть его время на чтение, ~470px прокрутки вместо 130.
+
+   Пин держится, пока не кончится грид-ячейка, то есть вся лента шагов.
+   Хвост в конце ленты нужен именно для этого: без него картинка отлипала
+   бы раньше, чем включается последний шаг, — ячейка кончается на 100vh
+   раньше своего низа, потому что столько занимает сам приколотый экран. */
+@media (min-width:901px){
+  .flow__screen{top:0;height:100vh;display:flex;align-items:center}
+  .flow__step{min-height:52vh}
+  .flow__rail{padding-bottom:55vh}
+}
 
 @media (max-width:900px){
   /* На узком экране экран не уезжает наверх, а прилипает под навбаром:
