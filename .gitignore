@@ -6,3 +6,4 @@ node_modules/
 .claude/scheduled_tasks.lock
 # исходники картинок до пережатия в webp — в деплой не нужны
 assets/img/_src/
+.zcode/
