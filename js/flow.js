@@ -1,6 +1,10 @@
 /* Пошаговый разбор флоу: слева лента шагов, справа закреплённый экран.
-   Клик по шагу подменяет экран. Форма повторяет то, что делает сама фича, —
-   историю изменений, где каждая запись остаётся на месте. */
+   Шаг переключается сам по мере прокрутки — на всех ширинах, не только на
+   мобилке. Раньше на десктопе экран менялся только по клику, и это был
+   скрытый интерактив: большинство просто пролистывало флоу, не догадавшись,
+   что по шагам надо тыкать. Клик и стрелки остались как способ вернуться.
+   Форма повторяет то, что делает сама фича, — историю изменений, где каждая
+   запись остаётся на месте. */
 (function(){
   var blocks=document.querySelectorAll('[data-flow]');
   if(!blocks.length) return;
@@ -24,11 +28,8 @@
       shots.forEach(function(img,n){ img.classList.toggle('on',n===i); });
     }
 
-    function isNarrow(){ return window.matchMedia('(max-width:900px)').matches; }
-
     /* Активен последний шаг, чей верх пересёк полосу чтения — она проходит
-       ниже закреплённой картинки. На мобилке благодаря этому тыкать вообще
-       не нужно: листаешь, картинка над текстом меняется сама. */
+       ниже закреплённой картинки. Листаешь — картинка меняется сама. */
     function stepAtLine(){
       var line=window.innerHeight*0.55, best=0;
       for(var i=0;i<steps.length;i++){
@@ -40,7 +41,7 @@
 
     var ticking=false;
     window.addEventListener('scroll',function(){
-      if(!isNarrow()||ticking) return;
+      if(ticking) return;
       ticking=true;
       requestAnimationFrame(function(){ ticking=false; go(stepAtLine()); });
     },{passive:true});

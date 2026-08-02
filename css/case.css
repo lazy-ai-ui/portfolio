@@ -78,10 +78,10 @@
 
 /* ---- JTBD: ситуация → требование → решение ---- */
 .jtbd{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+/* Ховера нет намеренно: карточки некликабельны, и подъём с тенью обещал
+   переход, которого не существует. То же правило, что у строк таблиц. */
 .jtbd__card{background:var(--surface);border:1px solid var(--hair);border-radius:16px;
-  padding:28px 28px 30px;
-  transition:transform .32s cubic-bezier(.22,.8,.2,1),box-shadow .32s ease}
-.jtbd__card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(11,11,12,.07)}
+  padding:28px 28px 30px}
 .jtbd__card .pill{display:inline-block;margin:0 0 22px}
 .jtbd__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-3);margin:0 0 8px}
@@ -106,31 +106,33 @@
 .stub__d{font-size:15px;color:var(--ink-3);margin:0}
 
 /* ---------- итог ----------
-   Тёмный блок: кейс открывается светлым и приземляется в тёмное, тем же
-   приёмом, что хиро и контакты на главной. */
-.outcome{background:var(--dark);border-radius:20px;padding:64px 52px 52px;color:var(--on-dark)}
+   Светлый, как и вся страница: тёмная подложка делала из итога отдельный
+   остров и заставляла глаз перестраиваться на последнем блоке. Иерархию
+   держат кегль и разделители, а не смена фона. */
+.outcome{padding:8px 0 0;color:var(--ink)}
 .outcome__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--on-dark-3);margin:0 0 22px}
+  color:var(--ink-3);margin:0 0 22px}
 .outcome__t{font-family:var(--display);font-weight:500;font-size:clamp(24px,2.9vw,38px);
   line-height:1.18;letter-spacing:-.03em;margin:0 0 56px;max-width:26ch;text-wrap:balance}
 
 .outcome__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;
-  padding-top:40px;border-top:1px solid rgba(237,235,232,.14)}
+  padding-top:40px;border-top:1px solid var(--hair)}
 .outcome__h{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--on-dark-2);margin:0 0 20px}
+  color:var(--ink-3);margin:0 0 20px}
 
 /* колонка с непроверенным — лёгкая карточка, статус вынесен в плашку,
    а не в цвет заголовка: акцент точечный, не заливка целого блока */
-.outcome__col--hypo{border:1px solid rgba(237,235,232,.14);border-radius:12px;padding:18px}
+.outcome__col--hypo{background:var(--surface);border:1px solid var(--hair);
+  border-radius:12px;padding:18px}
 .outcome__hrow{display:flex;align-items:center;gap:10px;margin:0 0 20px}
 .outcome__hrow .outcome__h{margin:0}
 .outcome__tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--accent);border:1px solid rgba(228,87,58,.4);border-radius:3px;padding:2px 6px;line-height:1}
 
 .outcome__list{margin:0;padding:0;list-style:none}
-.outcome__list li{margin:0 0 16px;font-size:14px;line-height:1.62;color:var(--on-dark-2);text-wrap:pretty}
+.outcome__list li{margin:0 0 16px;font-size:14px;line-height:1.62;color:var(--ink-2);text-wrap:pretty}
 .outcome__list li:last-child{margin-bottom:0}
-.outcome__list li b{color:var(--on-dark);font-weight:600}
+.outcome__list li b{color:var(--ink);font-weight:600}
 
 /* «что дальше» — трекер шагов, номер вместо квадрата: это план, а не факт */
 .outcome__list--steps{counter-reset:step}
@@ -139,17 +141,17 @@
   position:absolute;left:0;top:0;font-family:var(--mono);font-size:11px;color:var(--accent);opacity:.85}
 
 .outcome__foot{display:flex;align-items:center;justify-content:space-between;gap:20px;
-  flex-wrap:wrap;margin-top:52px;padding-top:26px;border-top:1px solid rgba(237,235,232,.14)}
+  flex-wrap:wrap;margin-top:52px;padding-top:26px;border-top:1px solid var(--hair)}
 .outcome__foot p{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--on-dark-3);margin:0}
+  color:var(--ink-3);margin:0}
 .outcome__links{display:flex;flex-wrap:wrap;gap:12px 28px}
 .outcome__links a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--on-dark);text-decoration:none;border-bottom:1px solid var(--on-dark-3);
+  color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink-3);
   padding-bottom:3px;transition:color .2s,border-color .2s}
 .outcome__links a:hover,.outcome__links a:focus-visible{color:var(--accent);border-color:var(--accent)}
 
 @media (max-width:900px){
-  .outcome{padding:40px 24px 36px;border-radius:16px}
+  .outcome{padding:4px 0 0}
   .outcome__t{margin-bottom:36px}
   .outcome__grid{grid-template-columns:1fr;gap:32px;padding-top:30px}
   .outcome__list li{font-size:15px}
@@ -170,6 +172,16 @@
 .secnav__in::-webkit-scrollbar{display:none}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .secnav__in{background:rgba(255,255,255,.95)}
+}
+
+/* Пилюля навигации центрирована и имеет фиксированную ширину по содержимому
+   (~694px), а кнопка «Наверх» прижата к правому краю. Чем уже окно, тем ближе
+   они сходятся: на 1000px между ними остаётся 9px, дальше — наложение.
+   Поэтому ниже 1080px кнопка уезжает над навигацией, как на мобилке.
+   Правило живёт в case.css, а не в base.css: на главной нижней навигации нет,
+   и там поднимать кнопку не от чего. */
+@media (max-width:1080px){
+  .totop{bottom:78px}
 }
 
 /* Активный раздел — одна «пилюля», которая едет между пунктами.
@@ -553,6 +565,6 @@ body.shade-open{overflow:hidden}
 .caveat__body p{font-size:14px;line-height:1.6;color:var(--ink-2);margin:14px 0 0;max-width:62ch}
 @media (prefers-reduced-motion: reduce){
   .caveat__body,.tip{transition:none}
-  .fact,.jtbd__card{transition:none}
-  .fact:hover,.jtbd__card:hover{transform:none}
+  .fact{transition:none}
+  .fact:hover{transform:none}
 }
