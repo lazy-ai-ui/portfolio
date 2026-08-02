@@ -62,7 +62,7 @@
    Поведение (скрытие по скроллу и в зоне «Обо мне») — в navbar.js. */
 .statuspill{position:fixed;top:14px;right:24px;z-index:50;
   display:flex;align-items:center;
-  padding:9px 16px;border-radius:999px;
+  padding:var(--pill-py) var(--pill-px);border-radius:999px;
   background:rgba(246,244,241,.62);
   -webkit-backdrop-filter:blur(22px) saturate(1.8);
   backdrop-filter:blur(22px) saturate(1.8);
@@ -76,11 +76,15 @@
 .statuspill.hidden{transform:translateY(calc(-100% - 22px));opacity:0;pointer-events:none}
 .statuspill__head{display:flex;align-items:center;gap:8px;margin:0;padding:0;
   background:none;border:0;cursor:pointer;
-  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink);line-height:1}
+  font-family:var(--mono);font-size:var(--pill-fs);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);line-height:var(--pill-lh)}
 .statuspill__head:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
-.statuspill__detail{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-2);line-height:1;
+/* nowrap обязателен: на мобиле подпись схлопывается в max-width:0, и без него
+   «Самара · 25» переносилась по слову внутри нулевой ширины — три строки под
+   overflow:hidden, из-за чего свёрнутая пилюля была на 25px выше навбара. */
+.statuspill__detail{font-family:var(--mono);font-size:var(--pill-fs);letter-spacing:.16em;text-transform:uppercase;
+  white-space:nowrap;
+  color:var(--ink-2);line-height:var(--pill-lh);
   /* разделитель между статусом и фактами — мелкая точка в цвет волоска */
   margin-left:6px;padding-left:14px;border-left:1px solid var(--hair)}
 @media (prefers-reduced-motion: reduce){ .statuspill{transition:opacity .01s} }
@@ -88,7 +92,7 @@
 /* На мобиле пилюля сворачивается: виден только статус. Факты раскрываются
    по тапу (.statuspill--open), иначе правый угол занят слишком многим. */
 @media (max-width:520px){
-  .statuspill{top:auto;bottom:18px;right:12px;padding:10px 14px}
+  .statuspill{top:auto;bottom:18px;right:12px}
   .statuspill__detail{
     /* плавное раскрытие по ширине: max-width 0 → содержимому */
     max-width:0;margin-left:0;padding-left:0;border-left:0;overflow:hidden;

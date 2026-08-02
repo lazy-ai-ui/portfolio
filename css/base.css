@@ -69,6 +69,18 @@ html.js-rv .rv--in{opacity:1;transform:none}
   html{scroll-behavior:auto}
 }
 
+/* ---- общий размер плавающих пилюль ----
+   Навбар и пилюля статуса стоят на одной линии и обязаны быть одной высоты.
+   Держим это переменными, а не совпадающими числами в двух файлах: высота
+   складывается из padding, кегля и межстрочного, и стоит разойтись одному —
+   пилюли разъезжаются на пару пикселей, что видно сразу. line-height задан
+   явно по той же причине: у ссылки он был `normal`, у статуса — 1, и при
+   одинаковом padding пилюли всё равно отличались бы на три пикселя. */
+:root{--pill-py:11px;--pill-px:20px;--pill-fs:11px;--pill-lh:1.25}
+@media (max-width:520px){
+  :root{--pill-py:10px;--pill-px:16px;--pill-fs:10px}
+}
+
 /* ---- плавающий навбар ---- */
 .navbar{position:fixed;top:14px;left:0;right:0;z-index:50;
   display:flex;justify-content:center;pointer-events:none;
@@ -79,7 +91,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
    и подъёмом насыщенности. Ниже .62 текст начинает проигрывать тёмному хиро,
    который проезжает под навбаром, поэтому дальше не разбавляем. */
 .nav{pointer-events:auto;display:flex;align-items:center;gap:30px;
-  padding:11px 20px;border-radius:999px;
+  padding:var(--pill-py) var(--pill-px);border-radius:999px;
   background:rgba(246,244,241,.62);
   -webkit-backdrop-filter:blur(22px) saturate(1.8);
   backdrop-filter:blur(22px) saturate(1.8);
@@ -90,21 +102,49 @@ html.js-rv .rv--in{opacity:1;transform:none}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .nav{background:rgba(246,244,241,.94)}
 }
-.nav a{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+.nav a{position:relative;
+  font-family:var(--mono);font-size:var(--pill-fs);line-height:var(--pill-lh);
+  letter-spacing:.16em;text-transform:uppercase;
   text-decoration:none;color:var(--ink-3);transition:color .2s}
 .nav a:hover,.nav a:focus-visible{color:var(--ink)}
 .nav .back{color:var(--ink)}
-.nav__m{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  margin:0;color:var(--ink)}
 .nav__l{display:flex;gap:20px}
+
+/* ---- пиксельный ховер ----
+   Раньше ссылка просто темнела. Теперь под ней слева направо собирается
+   строка из квадратов — тот же словарь, что у разделителя .rule (квадрат 5px,
+   шаг 12px), и то же движение, что у частиц в хиро: россыпь становится
+   структурой. Ведёт сборку коралловый квадрат: он приклеен к правому краю
+   растущей полосы, поэтому едет впереди неё, как курсор.
+
+   Цвет ссылки продолжает меняться — на одну только полосу состояние вешать
+   нельзя, она слишком мелкая, чтобы быть единственным признаком.
+
+   Квадрат здесь 3px, а не 5px как у .rule: под текстом внутри пилюли всего
+   11px отступа, и пятипиксельная полоса упиралась бы прямо в границу. Это
+   внутренний масштаб того же словаря, как мелкий пунктир в таблицах. */
+.nav a::after{
+  content:"";position:absolute;left:0;bottom:-4px;height:3px;width:0;
+  background-image:
+    linear-gradient(var(--accent) 0 0),
+    repeating-linear-gradient(to right,
+      rgba(11,11,12,.45) 0 3px, transparent 3px 8px);
+  background-size:3px 3px, auto auto;
+  background-position:right center, left center;
+  background-repeat:no-repeat, repeat-x;
+  transition:width .34s cubic-bezier(.2,.8,.2,1)}
+.nav a:hover::after,.nav a:focus-visible::after{width:100%}
+@media (prefers-reduced-motion: reduce){
+  .nav a::after{transition:none}
+}
 
 .spacer{height:78px}
 
 @media (prefers-reduced-motion: reduce){ .navbar{transition:none} }
 @media (max-width:520px){
-  .nav{gap:18px;padding:10px 16px}
+  .nav{gap:18px}
   .nav__l{gap:14px}
-  .nav__l a,.nav a,.nav__m{font-size:10px;letter-spacing:.14em}
+  .nav__l a,.nav a{letter-spacing:.14em}
 }
 
 /* ---- словарь: строка из квадратиков вместо линии ---- */
