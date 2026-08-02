@@ -544,8 +544,12 @@ body.shade-open{overflow:hidden}
    раньше своего низа, потому что столько занимает сам приколотый экран. */
 @media (min-width:901px){
   .flow__screen{top:0;height:100vh;display:flex;align-items:center}
-  .flow__step{min-height:52vh}
-  .flow__rail{padding-bottom:55vh}
+  /* Отступ снизу, а не min-height. Кнопка центрирует содержимое по вертикали,
+     когда она выше него, — с min-height текст уезжал вниз на полбокса, а
+     маркер на пунктире оставался наверху, и подпись отрывалась от своей
+     засечки. С padding-bottom содержимое остаётся прижатым к верху. */
+  .flow__step{padding-bottom:36vh}
+  .flow__rail{padding-bottom:70vh}
 }
 
 @media (max-width:900px){
