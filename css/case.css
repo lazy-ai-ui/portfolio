@@ -124,10 +124,9 @@
    а не в цвет заголовка: акцент точечный, не заливка целого блока */
 .outcome__col--hypo{background:var(--surface);border:1px solid var(--hair);
   border-radius:12px;padding:18px}
-.outcome__hrow{display:flex;align-items:center;gap:10px;margin:0 0 20px}
-.outcome__hrow .outcome__h{margin:0}
 .outcome__tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--accent);border:1px solid rgba(228,87,58,.4);border-radius:3px;padding:2px 6px;line-height:1}
+.outcome__col--hypo .outcome__tag{display:inline-block;margin:0 0 14px}
 
 .outcome__list{margin:0;padding:0;list-style:none}
 .outcome__list li{margin:0 0 16px;font-size:14px;line-height:1.62;color:var(--ink-2);text-wrap:pretty}
