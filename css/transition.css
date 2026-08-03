@@ -1,0 +1,153 @@
+/* ---------------------------------------------------------------------------
+   Переход между страницами — «пространство втягивается в курсор»
+
+   Работает поверх обычных ссылок: разметка навигации не менялась, ничего не
+   перехватывается насовсем. Основной путь — межстраничные View Transitions
+   (браузер сам снимает кадр старой страницы, включая fixed-навбар, и отдаёт
+   его как псевдоэлемент). Поэтому не нужно ни трогать DOM, ни ставить
+   transform на body: трансформация на живом контейнере сменила бы containing
+   block у fixed-элементов, и навбар прыгнул бы в первом же кадре.
+
+   Запасной путь для браузеров без межстраничных VT (сейчас Firefox) —
+   .pt-cover ниже: полотно цвета фона с дыркой, которая стягивается в точку
+   клика. Тот же смысл движения, но без снимка страницы.
+
+   Точку клика ставит js/page-transition.js в --pt-x / --pt-y, радиус до
+   дальнего угла — в --pt-r. Фиксированного центра нет нигде.
+--------------------------------------------------------------------------- */
+
+:root{
+  --pt-x:50%;
+  --pt-y:50%;
+  --pt-r:150vmax;
+
+  --pt-out:480ms;              /* схлопывание */
+  --pt-in:620ms;               /* раскрытие */
+  --pt-scale:.84;              /* насколько ужимается пространство к точке */
+  --pt-blur:6px;
+
+  /* Физика. Стандартный ease-in-out не подходит намеренно: он симметричен и
+     читается как «плавно поехало — плавно приехало», то есть как переход, а не
+     как масса. Обе кривые ниже — сэмплы собственных функций с шагом 5%.
+
+     Закрытие: p(t)=1-(1-t)^3.8. Две трети пути пройдены за первую четверть
+     времени, дальше движение затухает и последние проценты почти стоят у
+     курсора — инерция гасится, а не тормозится тормозом. */
+  --pt-ease-out:linear(0,.177,.330,.461,.572,.665,.742,.805,.856,.897,.928,.952,.969,.982,.990,.995,.998,.999,1,1,1);
+
+  /* Раскрытие: зеркальная кривая t^3.8 с мягкой посадкой на последней
+     четверти (подмешан пологий out). Начало почти неподвижно — экран
+     «набирает массу», последние 70% пути проходятся за четверть времени, но
+     приезд не обрубается на максимальной скорости. Овершута нет: смесь
+     монотонна и никогда не превышает 1. */
+  --pt-ease-in:linear(0,0,0,.001,.002,.005,.010,.019,.031,.048,.072,.103,.144,.195,.258,.335,.482,.690,.874,.978,1);
+}
+
+/* --- Основной путь: межстраничные View Transitions ----------------------- */
+
+@media (prefers-reduced-motion: no-preference){
+  @view-transition{ navigation:auto }
+}
+
+/* Дефолтная морфирующая группа и кроссфейд не нужны — движение задаём сами.
+   Снимки складываем без смешивания, иначе полупрозрачные кадры просвечивают
+   друг сквозь друга и появляется грязь на светлом фоне. */
+::view-transition-group(root){ animation:none }
+::view-transition-image-pair(root){ isolation:auto }
+::view-transition-old(root),
+::view-transition-new(root){ animation:none; mix-blend-mode:normal }
+
+/* Класс ставит js/page-transition.js в pagereveal — только когда есть точка
+   клика. Если её нет (кнопка «назад», обновление страницы), переход
+   пропускается целиком, и навигация остаётся мгновенной. */
+html.pt-nav::view-transition-old(root){
+  z-index:2;
+  transform-origin:var(--pt-x) var(--pt-y);
+  animation:
+    pt-collapse var(--pt-out) var(--pt-ease-out) both,
+    pt-dim 300ms cubic-bezier(.4,0,.7,.9) 200ms both;
+}
+
+/* Раскрытие стартует ровно там, где закончилось схлопывание: задержка равна
+   длительности закрытия, both держит начальный кадр до старта. */
+html.pt-nav::view-transition-new(root){
+  z-index:1;
+  transform-origin:var(--pt-x) var(--pt-y);
+  animation:
+    pt-expand var(--pt-in) var(--pt-ease-in) var(--pt-out) both,
+    pt-lit 240ms ease-out var(--pt-out) both;
+}
+
+@keyframes pt-collapse{
+  from{
+    clip-path:circle(var(--pt-r) at var(--pt-x) var(--pt-y));
+    transform:scale(1);
+    filter:blur(0);
+  }
+  to{
+    clip-path:circle(0px at var(--pt-x) var(--pt-y));
+    transform:scale(var(--pt-scale));
+    filter:blur(var(--pt-blur));
+  }
+}
+
+/* Гасим не всё движение целиком, а его хвост: пока пространство идёт быстро,
+   оно плотное, растворяется уже почти остановившись. */
+@keyframes pt-dim{ from{opacity:1} to{opacity:.3} }
+
+@keyframes pt-expand{
+  from{
+    clip-path:circle(0px at var(--pt-x) var(--pt-y));
+    transform:scale(var(--pt-scale));
+    filter:blur(var(--pt-blur));
+  }
+  to{
+    clip-path:circle(var(--pt-r) at var(--pt-x) var(--pt-y));
+    transform:scale(1);
+    filter:blur(0);
+  }
+}
+
+@keyframes pt-lit{ from{opacity:.35} to{opacity:1} }
+
+/* --- Запасной путь: полотно с дыркой ------------------------------------- */
+
+/* Полотно цвета страницы. Дырка (--pt-hole) стягивается в точку клика при
+   уходе и разворачивается из неё при входе — то же «пространство сжимается в
+   точку», но без снимка страницы, поэтому без blur и без scale: живой
+   контейнер здесь не трогаем сознательно. */
+html.pt-cover::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:var(--bg);
+  pointer-events:none;
+  -webkit-mask-image:radial-gradient(circle var(--pt-hole,0px) at var(--pt-x) var(--pt-y),transparent 99%,#000 100%);
+          mask-image:radial-gradient(circle var(--pt-hole,0px) at var(--pt-x) var(--pt-y),transparent 99%,#000 100%);
+}
+
+/* Пока идёт схлопывание, клики по странице уже ничего не значат: навигация
+   назначена, а повторное нажатие запустило бы второй переход поверх первого. */
+html.pt-busy{ cursor:progress }
+html.pt-busy body{ pointer-events:none }
+
+/* Мобилка. Курсора нет: палец уже убран с экрана, и та же длительность
+   читается дольше, чем на десктопе — режем на 13%. Заодно снимаем нагрузку:
+   размытие полноэкранного снимка на каждом кадре — самое дорогое место
+   перехода, а на маленьком экране разница между 6px и 4px не видна.
+   Держать синхронно с OUT / IN в js/page-transition.js. */
+@media (max-width: 600px){
+  :root{
+    --pt-out:420ms;
+    --pt-in:540ms;
+    --pt-blur:4px;
+    --pt-scale:.88;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  html.pt-cover::before{ display:none }
+  html.pt-nav::view-transition-old(root),
+  html.pt-nav::view-transition-new(root){ animation:none }
+}

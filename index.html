@@ -11,8 +11,11 @@
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="css/transition.css">
 <!-- ставим флаг до первой отрисовки: иначе блоки успеют показаться и мигнут -->
 <script>document.documentElement.classList.add('js-rv')</script>
+<!-- без defer намеренно: переход должен встать до первой отрисовки страницы -->
+<script src="js/page-transition.js"></script>
 </head>
 <body>
 
