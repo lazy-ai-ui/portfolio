@@ -160,6 +160,94 @@ html.js-rv .rv--in{opacity:1;transform:none}
   -webkit-mask-image:linear-gradient(to right,transparent,#000 8%,#000 82%,transparent);
   mask-image:linear-gradient(to right,transparent,#000 8%,#000 82%,transparent)}
 
+/* ---- акцент на ключевой фразе (.mark) ---------------------------------
+   Каретка печатает фразу. Порядок: каретка появляется в начале фразы →
+   мигает один раз → едет вправо, проявляя текст из-под маски → исчезает,
+   оставив фразу в полном --ink на фоне обычного --ink-2. Всего ~1.56 с.
+   Инструкция по применению — docs/ACCENT_MARK.md.
+
+   Только для страниц кейсов. На главной не применять: там первый экран
+   держат частицы, и вторая печатающая штука спорит с ними за внимание.
+
+   ЦВЕТ. Каретка чёрная, не коралловая. Это сознательно: акцент не тратит
+   единственный акцентный цвет проекта и не заводит второго. Выделение
+   держится плотностью — фраза чернее окружающего текста.
+
+   МАСКА ЖИВЁТ ТОЛЬКО ПРИ РАБОТАЮЩЕМ JS. Классы .mark__w и .is-armed
+   навешивает mark.js; без него в разметке остаётся голый <span class=mark>
+   с обычным видимым текстом. Это не перестраховка: маска скрывает фразу
+   целиком, и если бы она применялась из CSS, то при любом отказе JS в
+   предложении навсегда осталась бы дыра — то есть сломанный текст, а не
+   просто пропавший эффект.
+
+   ПОЧЕМУ ПО СЛОВАМ, А НЕ ОДНОЙ МАСКОЙ НА ФРАЗУ. Маска на строчном элементе
+   считается по общему прямоугольнику всех его строк, поэтому перенесённая
+   фраза раскрывалась бы на обеих строках разом. Слово переносом не рвётся,
+   значит каждое гарантированно лежит на одной строке — и каретка сама
+   перепрыгивает на новую строку вместе со словом. */
+.mark{
+  --mark-in:220ms;      /* каретка появляется */
+  --mark-blink:590ms;   /* один цикл мигания */
+  --mark-write:750ms;   /* печать всей фразы */
+  position:relative;
+  color:var(--ink)}
+
+/* Слово. inline-block — чтобы маска считалась по самому слову.
+   white-space:pre защищает пробел внутри слова, если он там окажется. */
+.mark__w{position:relative;display:inline-block;white-space:pre}
+
+/* Скрытое состояние. Навешивается только после разбивки на слова. */
+.mark.is-armed .mark__w{
+  -webkit-mask-image:linear-gradient(#000 0 0);mask-image:linear-gradient(#000 0 0);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:left center;mask-position:left center;
+  -webkit-mask-size:0 100%;mask-size:0 100%}
+
+/* Каретка до старта — стоит перед первой буквой фразы. */
+.mark::before{content:"";position:absolute;left:-1px;top:.02em;
+  height:1.06em;width:2px;background:var(--ink);opacity:0}
+.mark.is-cursor::before{opacity:1;
+  transition:opacity var(--mark-in) cubic-bezier(.2,.8,.2,1)}
+.mark.is-blink::before{opacity:1;
+  animation:mark-blink var(--mark-blink) steps(1,end) 1}
+@keyframes mark-blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* Каретка внутри слова — ведёт раскрытие этого слова и гаснет на его конце.
+   Своя каретка у каждого слова: так переход на новую строку получается сам,
+   без вычисления координат. */
+.mark__w::after{content:"";position:absolute;left:0;top:.02em;
+  height:1.06em;width:2px;background:var(--ink);opacity:0}
+
+/* Печать. --w-dur и --w-del своя у каждого слова, их считает mark.js по
+   ширине слова — иначе каретка дёргалась бы, проскакивая короткие слова
+   за то же время, что и длинные. */
+.mark.is-armed.is-writing .mark__w{
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;
+  transition:-webkit-mask-size var(--w-dur) linear var(--w-del),
+             mask-size var(--w-dur) linear var(--w-del)}
+.mark.is-writing .mark__w::after{
+  animation:mark-caret var(--w-dur) linear var(--w-del)}
+@keyframes mark-caret{
+  0%{left:0;opacity:1}
+  99%{opacity:1}
+  100%{left:100%;opacity:0}}
+
+/* Финал: текст открыт, кареток нет. */
+.mark.is-armed.is-done .mark__w{
+  -webkit-mask-size:100% 100%;mask-size:100% 100%}
+
+/* Отказоустойчивость. Оба случая ведут к одному — обычный видимый текст.
+   При печати фоны и маски ведут себя непредсказуемо, а при reduce человек
+   просил не двигать: показываем фразу сразу и целиком. */
+@media print{
+  .mark.is-armed .mark__w{-webkit-mask-image:none;mask-image:none}
+  .mark::before,.mark__w::after{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  .mark.is-armed .mark__w{-webkit-mask-image:none;mask-image:none}
+  .mark::before,.mark__w::after{display:none}
+}
+
 .labelrow{display:flex;flex-direction:column;gap:16px;margin-bottom:56px}
 .sect__label,.work__label,.about__label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--ink-3);margin:0}

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Стенд: каретка печатает текст</title>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/tokens.css">
+<style>
+  :root{
+    --acc:#4C5FD7;      /* цвет каретки */
+    --txt:#0B0B0C;      /* цвет проявленного текста */
+    --t-in:220ms; --t-wait:380ms; --t-blink:530ms; --n-blink:2;
+    --t-write:900ms; --t-hold:1200ms; --t-out:300ms;
+    --dim:.42;
+    --ease:cubic-bezier(.2,.8,.2,1);
+  }
+  body{margin:0;padding:32px 26px 170px;background:var(--bg);color:var(--ink);
+    font-family:var(--body);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto}
+  h1{font-size:21px;letter-spacing:-.01em;margin:0 0 6px}
+  .sub{font-size:13px;color:var(--ink-2);margin:0 0 22px;line-height:1.62}
+
+  .bar{position:sticky;top:0;z-index:5;padding:12px 0 14px;margin-bottom:14px;
+    background:var(--bg);border-bottom:1px solid var(--hair)}
+  .ctl{display:grid;grid-template-columns:104px 1fr 52px;gap:5px 10px;align-items:center;
+    margin-bottom:4px}
+  .ctl label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-3)}
+  .ctl output{font-family:var(--mono);font-size:10px;color:var(--ink-2);text-align:right}
+  input[type=range]{width:100%;accent-color:var(--acc)}
+  .btns{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  button{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+    padding:8px 12px;border:1px solid var(--hair);border-radius:999px;background:transparent;
+    color:var(--ink);cursor:pointer}
+  button.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  button.sel{border-color:var(--acc);color:var(--acc)}
+  .sw{width:24px;height:24px;padding:0;border-radius:50%}
+
+  .case{padding:20px 0;border-bottom:1px dashed rgba(11,11,12,.13)}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--ink-3);margin:0 0 11px}
+  .txt{font-size:15px;line-height:1.68;color:var(--ink-2);margin:0;text-wrap:pretty;
+    transition:color var(--t-write) var(--ease)}
+  .big{font-size:26px;line-height:1.45}
+  .txt.dimmed{color:rgba(11,11,12,var(--dim))}
+
+  /* ---------- ФРАЗА ----------
+     Разбита JS-ом на слова. Слово переносом не разрывается, поэтому каждое
+     гарантированно лежит на одной строке — можно маскировать по отдельности
+     и раскрывать по очереди. Каретка перепрыгивает между словами сама,
+     включая переход на новую строку. */
+  .k{position:relative;color:var(--txt)}
+
+  .w{position:relative;display:inline-block;white-space:pre;
+    -webkit-mask-image:linear-gradient(#000 0 0);mask-image:linear-gradient(#000 0 0);
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-position:left center;mask-position:left center;
+    -webkit-mask-size:0 100%;mask-size:0 100%}
+
+  /* каретка внутри слова — едет по нему, пока слово раскрывается */
+  .w::after{content:"";position:absolute;left:0;top:.02em;height:1.06em;width:2px;
+    background:var(--acc);opacity:0}
+
+  /* мигающая каретка перед стартом — стоит в начале фразы */
+  .k::before{content:"";position:absolute;left:-1px;top:.02em;height:1.06em;width:2px;
+    background:var(--acc);opacity:0}
+  .k.c1::before{opacity:1;transition:opacity var(--t-in) var(--ease)}
+  .k.c2::before{opacity:1;animation:blink var(--t-blink) steps(1,end) var(--n-blink)}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+  /* печать: у каждого слова свои duration и delay, посчитанные по ширине */
+  .k.go .w{
+    -webkit-mask-size:100% 100%;mask-size:100% 100%;
+    transition:-webkit-mask-size var(--wd) linear var(--wdel),
+               mask-size var(--wd) linear var(--wdel)}
+  .k.go .w::after{animation:cur var(--wd) linear var(--wdel)}
+  @keyframes cur{
+    0%{left:0;opacity:1}
+    99%{opacity:1}
+    100%{left:100%;opacity:0}
+  }
+
+  /* финал: всё проявлено, кареток нет */
+  .k.done .w{-webkit-mask-size:100% 100%;mask-size:100% 100%}
+  .k.done .w::after{opacity:0}
+  .k.done::before{opacity:0}
+
+  /* Без JS и при reduced-motion фраза обязана быть видна: иначе в предложении
+     навсегда останется дыра. Маска снимается целиком. */
+  .k.plain .w{-webkit-mask-image:none;mask-image:none}
+  .k.plain .w::after,.k.plain::before{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Каретка печатает текст</h1>
+  <p class="sub">Фраза скрыта маской, каретка проявляет её слева направо.
+    Подчёркивания нет. Место под фразу зарезервировано, поэтому до старта
+    в предложении видна <b>дыра</b> — это следствие подхода, посмотри,
+    не мешает ли. Ползунок «Печать» задаёт темп всей фразы целиком.</p>
+
+  <div class="bar">
+    <div class="ctl"><label>Появление</label><input type="range" id="r-in" min="0" max="800" step="20" value="220"><output id="o-in"></output></div>
+    <div class="ctl"><label>Дилей</label><input type="range" id="r-wait" min="0" max="1500" step="20" value="380"><output id="o-wait"></output></div>
+    <div class="ctl"><label>Мигание</label><input type="range" id="r-blink" min="200" max="900" step="10" value="530"><output id="o-blink"></output></div>
+    <div class="ctl"><label>Миганий</label><input type="range" id="r-n" min="1" max="6" step="1" value="2"><output id="o-n"></output></div>
+    <div class="ctl"><label>Печать</label><input type="range" id="r-write" min="300" max="3000" step="50" value="900"><output id="o-write"></output></div>
+    <div class="ctl"><label>Большой дилей</label><input type="range" id="r-hold" min="0" max="4000" step="100" value="1200"><output id="o-hold"></output></div>
+    <div class="ctl"><label>Уход</label><input type="range" id="r-out" min="0" max="1200" step="20" value="300"><output id="o-out"></output></div>
+    <div class="ctl"><label>Окружение</label><input type="range" id="r-dim" min="20" max="58" step="1" value="42"><output id="o-dim"></output></div>
+
+    <div class="btns">
+      <span style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--ink-3)">КАРЕТКА</span>
+      <button class="sw sel" data-c="#4C5FD7" style="background:#4C5FD7" title="индиго"></button>
+      <button class="sw" data-c="#2F6FE0" style="background:#2F6FE0" title="синий"></button>
+      <button class="sw" data-c="#7C7FB8" style="background:#7C7FB8" title="лавандовый"></button>
+      <button class="sw" data-c="#0B0B0C" style="background:#0B0B0C" title="чёрная"></button>
+    </div>
+    <div class="btns">
+      <button class="pri" id="play">Проиграть</button>
+      <button id="rest">Показать покой</button>
+      <button id="plain">Как без JS</button>
+      <span id="total" style="font-family:var(--mono);font-size:10px;color:var(--ink-3)"></span>
+    </div>
+  </div>
+
+  <div class="case">
+    <p class="tag">основной размер — 15px</p>
+    <p class="txt d">Переработка главного экрана <span class="k">системы управления</span> дата-центром: от каталога разделов к оценке состояния инфраструктуры и переходу к действию.</p>
+  </div>
+
+  <div class="case">
+    <p class="tag">крупный кегль — 26px</p>
+    <p class="txt big d">Отчёт собирается <span class="k">за один вечер</span>, а не за неделю.</p>
+  </div>
+
+  <div class="case">
+    <p class="tag">короткая фраза — три слова</p>
+    <p class="txt d">Главная проблема — <span class="k">поиска по IP</span> в системе нет вообще.</p>
+  </div>
+
+  <div class="case">
+    <p class="tag">узкая колонка — фраза переносится на две строки</p>
+    <p class="txt d" style="max-width:230px">Переработка экрана <span class="k">системы управления дата-центром</span> и переход.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var ks=[].slice.call(document.querySelectorAll('.k'));
+  var ps=[].slice.call(document.querySelectorAll('.txt.d'));
+  var timers=[];
+  var v={};
+
+  /* --- разбивка фразы на слова ---
+     Пробелы сохраняем отдельными текстовыми узлами, чтобы перенос строк
+     работал как в обычном тексте. */
+  ks.forEach(function(k){
+    var parts=k.textContent.split(/(\s+)/);
+    k.textContent='';
+    parts.forEach(function(p){
+      if(!p) return;
+      if(/^\s+$/.test(p)){ k.appendChild(document.createTextNode(p)); return; }
+      var s=document.createElement('span');
+      s.className='w'; s.textContent=p;
+      k.appendChild(s);
+    });
+  });
+
+  /* Раздаём каждому слову длительность и задержку пропорционально его
+     ширине — тогда каретка идёт ровным темпом, а не дёргается на коротких
+     словах. Пересчитываем при каждом запуске: ширины меняются от кегля и
+     от ширины окна. */
+  function layout(total){
+    ks.forEach(function(k){
+      var ws=[].slice.call(k.querySelectorAll('.w'));
+      var sum=0, widths=ws.map(function(w){ var x=w.offsetWidth; sum+=x; return x; });
+      var acc=0;
+      ws.forEach(function(w,i){
+        var d=widths[i]/sum*total;
+        w.style.setProperty('--wd',d.toFixed(0)+'ms');
+        w.style.setProperty('--wdel',(acc/sum*total).toFixed(0)+'ms');
+        acc+=widths[i];
+      });
+    });
+  }
+
+  var map=[['in','--t-in','r-in','o-in','ms'],['wait','--t-wait','r-wait','o-wait','ms'],
+    ['blink','--t-blink','r-blink','o-blink','ms'],['n','--n-blink','r-n','o-n',''],
+    ['write','--t-write','r-write','o-write','ms'],['hold','--t-hold','r-hold','o-hold','ms'],
+    ['out','--t-out','r-out','o-out','ms'],['dim','--dim','r-dim','o-dim','%']];
+
+  function sync(){
+    map.forEach(function(m){
+      var el=document.getElementById(m[2]);
+      v[m[0]]=+el.value;
+      var val = m[0]==='dim' ? (el.value/100) : (m[0]==='n' ? el.value : el.value+'ms');
+      root.style.setProperty(m[1],val);
+      document.getElementById(m[3]).textContent=el.value+m[4];
+    });
+    var t=v.in+v.wait+v.blink*v.n+v.write+v.hold+v.out;
+    document.getElementById('total').textContent='всего '+(t/1000).toFixed(1)+' с';
+  }
+
+  function clear(){ timers.forEach(clearTimeout); timers=[]; }
+  function at(ms,fn){ timers.push(setTimeout(fn,ms)); }
+  function cls(c){ ks.forEach(function(k){ k.className='k'+(c?' '+c:''); }); }
+
+  function play(){
+    clear(); sync(); layout(v.write);
+    cls('');
+    ps.forEach(function(p){p.classList.remove('dimmed')});
+    void document.body.offsetWidth;
+
+    at(30,function(){ cls('c1'); });
+    at(30+v.in+v.wait,function(){ cls('c2'); });
+    var tw=30+v.in+v.wait+v.blink*v.n;
+    at(tw,function(){
+      cls('go');
+      ps.forEach(function(p){p.classList.add('dimmed')});
+    });
+    at(tw+v.write+v.hold,function(){ cls('done'); });
+  }
+  function rest(){ clear(); sync(); cls('done'); ps.forEach(function(p){p.classList.add('dimmed')}); }
+  function plain(){ clear(); cls('plain'); ps.forEach(function(p){p.classList.remove('dimmed')}); }
+
+  document.getElementById('play').addEventListener('click',play);
+  document.getElementById('rest').addEventListener('click',rest);
+  document.getElementById('plain').addEventListener('click',plain);
+  map.forEach(function(m){ document.getElementById(m[2]).addEventListener('input',sync); });
+  [].forEach.call(document.querySelectorAll('[data-c]'),function(b){
+    b.addEventListener('click',function(){
+      [].forEach.call(document.querySelectorAll('[data-c]'),function(x){x.classList.remove('sel')});
+      b.classList.add('sel');
+      root.style.setProperty('--acc',b.dataset.c);
+    });
+  });
+
+  sync();
+  setTimeout(play,350);
+})();
+</script>
+</body>
+</html>
