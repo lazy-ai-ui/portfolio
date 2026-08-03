@@ -166,8 +166,8 @@
         x:old?old.x:home.x, y:old?old.y:home.y,
         hx:home.x, hy:home.y,
         p1:Math.random()*Math.PI*2, p2:Math.random()*Math.PI*2,
-        f1:0.026+Math.random()*0.034,
-        f2:0.016+Math.random()*0.024,
+        f1:(0.026+Math.random()*0.034)*1.2,
+        f2:(0.016+Math.random()*0.024)*1.2,
         ax:34+Math.random()*62, ay:20+Math.random()*32,
         rot:old?old.rot:Math.random()*Math.PI, rs:(Math.random()-0.5)*0.03,
         s:base*(0.5+Math.random()*0.8)*fall,
@@ -247,6 +247,18 @@
   function on(){ pick(); assembled=true; }
   function off(){ assembled=false; }
 
+  function inHoverCore(e){
+    var r=cv.getBoundingClientRect();
+    var x=e.clientX-r.left, y=e.clientY-r.top;
+    var rx=W*0.25, ry=Math.max(120,H*0.28);
+    var dx=(x-W/2)/rx, dy=(y-H/2)/ry;
+    return dx*dx+dy*dy<=1;
+  }
+
+  function syncHover(e){
+    inHoverCore(e) ? (assembled || on()) : (assembled && off());
+  }
+
   /* на тач-устройствах ховера нет: тап всегда показывает следующий макет,
      а через паузу без действий фигура сама возвращается в покой */
   var idle=0;
@@ -257,8 +269,8 @@
 
   cv.setAttribute('tabindex','0');
   if(!touch){
-    cv.addEventListener('mouseenter',on);
-    cv.addEventListener('mouseleave',off);
+    cv.addEventListener('pointermove',syncHover);
+    cv.addEventListener('pointerleave',off);
   }
   cv.addEventListener('click',function(){
     if(touch){ on(); armIdle(); return; }
