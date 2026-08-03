@@ -21,6 +21,7 @@
 ```
 index.html                — главная
 case-racktables.html      — кейс RackTables
+case-nearby.html          — кейс Nearby (в работе)
 demo-mark.html            — стенд для перенастройки акцента-каретки, в вёрстку не входит
 css/
   fonts.css               — локальные @font-face (Geist/Geist Mono, latin+cyrillic)
@@ -28,6 +29,7 @@ css/
   base.css                — навбар, разделители, таблицы, акцент .mark, общие классы
   index.css               — стили главной
   case.css                — стили кейса
+  nearby.css              — компоненты кейса Nearby: шкала, карточки, свитчер, выводы
   transition.css          — переход между страницами: физика, кадры, полотно
 js/
   page-transition.js      — переход между страницами (в <head>, обе страницы)
@@ -41,11 +43,20 @@ js/
   compare.js              — слайдер «было/стало» в кейсе
   flow.js                 — лента шагов с закреплённым экраном в кейсе
   to-top.js               — кнопка «Наверх», только на страницах кейсов
+  timeline.js             — шкала сделки в кейсе Nearby
+  evidence.js             — подсветка метки на шкале от карточки случая (Nearby)
+  switcher.js             — вкладки с переезжающей пилюлей (Nearby)
 docs/
   ACCENT_MARK.md          — как применять акцент .mark
 content/
   UX Copywriting Rules.md — правила текста
   case-racktables-source.md — исходный текст кейса, снятый с Framer
+case nearby/
+  Nearby_Case_Context.md  — главный контекст кейса Nearby: продукт, исследование, решения
+  Nearby_Current_State.md — что собрано в кейсе Nearby и что дальше
+  case source/            — исходные тексты по разделам
+  layout flow/            — экраны по флоу (booking, handoff, return, dispute, edge)
+  references/             — референсы механики подачи (свитчер, колесико)
 assets/
   img/                    — изображения
   fonts/                  — Geist/Geist Mono woff2, только latin+cyrillic (~60KB суммарно)

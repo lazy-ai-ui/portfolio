@@ -6,4 +6,11 @@ node_modules/
 .claude/scheduled_tasks.lock
 # исходники картинок до пережатия в webp — в деплой не нужны
 assets/img/_src/
+# рабочие материалы кейса Nearby: экраны, референсы, скрины отзывов (~16 МБ).
+# В деплой не идут, в гите не нужны — по той же причине, что и _src.
+# Тексты и контекстные .md из этой папки отслеживаются.
+case nearby/**/*.png
+case nearby/**/*.jpg
+case nearby/**/*.webp
+case nearby/**/desktop.ini
 .zcode/
