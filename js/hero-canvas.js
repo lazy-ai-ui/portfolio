@@ -132,6 +132,10 @@
      надпись упирается в ширину раньше, чем во что-либо ещё, и каждый
      процент бокового поля напрямую уменьшает кегль. FX задаётся в size(). */
   var FX=FADE, FY=FADE;
+  /* Узкий экран. На нём кегль надписи мал, и всё, что вокруг неё движется,
+     мешает читаемости сильнее, чем на десктопе: та же амплитуда в пикселях
+     относительно буквы втрое крупнее. */
+  var narrow=false;
 
   /* Каждая цель несёт свою задержку dl (в долях от 0 до 1): по ней строится
      очередь прилёта. Порядок — слева направо, как читается структура. */
@@ -286,8 +290,11 @@
     for(i=0;i<4&&t.length;i++) t[Math.floor(Math.random()*t.length)].a=true;
 
     stagger(t);
-    /* free:0.75 — свободные частицы вокруг надписи продолжают жить */
-    return {id:'text', targets:t, unit:Math.max(3,step*0.62), kind:'text', free:0.75};
+    /* free — насколько заметно облако вокруг собранной надписи. На узком
+       экране оно приглушено: там свободные частицы того же размера, что и
+       квадраты букв, и на фоне мелкого кегля читались как шум поверх текста. */
+    return {id:'text', targets:t, unit:Math.max(3,step*0.62), kind:'text',
+            free:narrow?0.4:0.75};
   }
 
   var VPAD=130;  /* насколько поджать облако частиц сверху и снизу */
@@ -380,7 +387,8 @@
     dpr=Math.min(window.devicePixelRatio||1,2);
     var rc=cv.getBoundingClientRect();
     W=Math.max(1,rc.width); H=Math.max(1,rc.height);
-    FX=W<720?0.035:FADE; FY=FADE;
+    narrow=W<720;
+    FX=narrow?0.035:FADE; FY=FADE;
     cv.width=Math.floor(W*dpr); cv.height=Math.floor(H*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
 
@@ -407,7 +415,10 @@
         p1:Math.random()*Math.PI*2, p2:Math.random()*Math.PI*2,
         f1:(0.026+Math.random()*0.034)*1.2,
         f2:(0.016+Math.random()*0.024)*1.2,
-        ax:34+Math.random()*62, ay:20+Math.random()*32,
+        /* размах свободного дрейфа: на узком экране вдвое меньше, иначе
+           облако разбредается через всю надпись и та расплывается */
+        ax:(34+Math.random()*62)*(narrow?0.5:1),
+        ay:(20+Math.random()*32)*(narrow?0.5:1),
         rot:old?old.rot:Math.random()*Math.PI, rs:(Math.random()-0.5)*0.03,
         s:base*(0.7+Math.random()*0.95)*fall,
         o:o, cur:old?old.cur:o, sz:base,
@@ -448,9 +459,13 @@
     var live=F&&F.kind==='text';
     var lx=0,ly=0,br=1,cx=W/2,cy=H/2;
     if(live){
-      lx=Math.sin(t*0.11)*3; ly=Math.sin(t*0.18)*6;
-      br=1+Math.sin(t*0.23)*0.006;
+      var amp=narrow?0.45:1;
+      lx=Math.sin(t*0.11)*3*amp; ly=Math.sin(t*0.18)*6*amp;
+      br=1+Math.sin(t*0.23)*0.006*amp;
     }
+    /* микроколебание квадрата внутри буквы: на мелком кегле те же 1.3 px
+       съедают заметную долю штриха и буква начинает мылиться */
+    var jit=narrow?0.5:1.3;
 
     /* Присутствие курсора нарастает и спадает плавно: иначе на входе и выходе
        указателя всё поле дёргалось бы разом. */
@@ -469,8 +484,8 @@
       if(tgt){
         gx=tgt.x; gy=tgt.y;
         if(live){
-          gx=cx+(gx-cx)*br+lx+Math.cos(t*p.f1*0.55+p.p1)*1.3;
-          gy=cy+(gy-cy)*br+ly+Math.sin(t*p.f2*0.50+p.p2)*1.3;
+          gx=cx+(gx-cx)*br+lx+Math.cos(t*p.f1*0.55+p.p1)*jit;
+          gy=cy+(gy-cy)*br+ly+Math.sin(t*p.f2*0.50+p.p2)*jit;
         }
         /* Ворота: коэффициент лерпа не включается скачком, а нарастает по
            своей кривой после личной задержки. Лерп с растущим k читается как
@@ -576,21 +591,43 @@
     schedule();
   }
 
+  var touch=window.matchMedia('(hover: none)').matches;
+
   cv.setAttribute('tabindex','0');
-  /* указатель нужен только для глайда — ни ховера, ни зон */
-  cv.addEventListener('pointermove',pointerAt);
-  cv.addEventListener('pointerleave',function(){ mOn=false; });
-  cv.addEventListener('pointerup',function(){ mOn=false; });
-  cv.addEventListener('pointercancel',function(){ mOn=false; });
+  /* Глайд — только для мыши. На тач-устройствах его нет совсем: палец при
+     скролле непрерывно шлёт pointermove по канвасу, частицы всё время
+     разлетались из-под пальца, а сам жест приходил ещё и как клик — форма
+     перещёлкивалась на каждом касании. Указатель здесь не инструмент. */
+  if(!touch){
+    cv.addEventListener('pointermove',pointerAt);
+    cv.addEventListener('pointerleave',function(){ mOn=false; });
+  }
 
   /* клик листает структуры дальше и заново заводит цикл */
   function advance(e){
     if(!clickable) return;
-    if(e) pointerAt(e);
+    if(e&&!touch) pointerAt(e);
     toUI();
     schedule();
   }
-  cv.addEventListener('click',advance);
+
+  /* На тач-устройствах click прилетает и после скролла-флика. Считаем жест
+     тапом только если палец почти не сдвинулся и не задержался. */
+  var dx0=0,dy0=0,dt0=0,moved=false;
+  if(touch){
+    cv.addEventListener('pointerdown',function(e){
+      dx0=e.clientX; dy0=e.clientY; dt0=Date.now(); moved=false;
+    });
+    cv.addEventListener('pointermove',function(e){
+      if(Math.abs(e.clientX-dx0)>10||Math.abs(e.clientY-dy0)>10) moved=true;
+    });
+    cv.addEventListener('click',function(){
+      if(moved||Date.now()-dt0>500) return;
+      advance();
+    });
+  } else {
+    cv.addEventListener('click',advance);
+  }
   cv.addEventListener('keydown',function(e){
     if(e.key==='Enter'||e.key===' '){ e.preventDefault(); advance(); }
   });
