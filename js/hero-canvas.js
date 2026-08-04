@@ -547,7 +547,16 @@
      (плотность, размер, акцентный цвет) заданы целью, а не частицей, поэтому
      обмен целями ничего не ломает — в интерфейсе так же не видно, какая
      именно частица стоит в конкретной точке макета. */
-  var SWAPS=6, SWAP_EVERY=1240;
+  /* Интервал свой у каждого типа формы. Надпись — крупные буквы с большим
+     запасом квадратов, движение в ней читается как дыхание. Интерфейс мельче
+     и строже, там та же частота выглядела бы как рябь по макету. */
+  var SWAPS=6, SWAP_TEXT=1500, SWAP_UI=3000, swapT=0;
+
+  function swapLoop(){
+    refresh();
+    swapT=setTimeout(swapLoop, curForm&&curForm.kind==='ui'?SWAP_UI:SWAP_TEXT);
+  }
+
   function refresh(){
     if(!curForm||P.length<2) return;
     var pool=[],i;
@@ -715,7 +724,7 @@
     }
     function sync(){ (visible && !document.hidden) ? start() : stop(); }
 
-    setInterval(refresh,SWAP_EVERY);
+    swapLoop();
 
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(e){
