@@ -42,17 +42,12 @@
   <div class="spacer" aria-hidden="true"></div>
 
   <header class="hero">
-    <div class="col">
-      <div class="ava">
-        <img src="" alt="Фирдавс" onerror="this.style.display='none'">
-      </div>
-      <h1 class="lede">Привет, я Фирдавс</h1>
-      <p class="role">продуктовый дизайнер</p>
-      <a class="cta" href="#work">Проекты →</a>
-    </div>
+    <!-- Надпись живёт на канвасе и недоступна ни скринридеру, ни поиску,
+         поэтому настоящий h1 остаётся в разметке — визуально скрытым. -->
+    <h1 class="sr-only">Product Designer — Фирдавс</h1>
 
     <div class="stage">
-      <canvas id="fig" aria-label="Интерактивная графика: элементы собираются в схему интерфейса"></canvas>
+      <canvas id="fig" aria-label="Облако частиц собирается в надпись Product Designer и в схемы интерфейсов"></canvas>
     </div>
   </header>
 

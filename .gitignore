@@ -14,3 +14,5 @@ case nearby/**/*.jpg
 case nearby/**/*.webp
 case nearby/**/desktop.ini
 .zcode/
+# локальные бекапы перед крупными правками — в деплой и в историю не нужны
+.backup/
