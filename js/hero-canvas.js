@@ -330,6 +330,20 @@
      самой частице, а к её цели: частица продолжает лететь по своему обычному
      лерпу, просто цель на время смещена. Поэтому возврат «примагничиванием»
      получается сам собой, без отдельной пружины и без хранения скоростей. */
+  /* Воронка интро. Раньше первый кадр показывал уже разбросанное облако,
+     частицы крутились каждая сама по себе, и в момент выдачи целей вращение
+     обрывалось — движения «откуда» не было вовсе. Теперь система сначала
+     стягивается в одну точку у левого верхнего угла и медленно вращается:
+     внутренние кольца быстрее внешних, как в воронке. Оттуда частицы по
+     очереди уходят в надпись. */
+  var vortex=false, vcx=0, vcy=0;
+  function vortexGoal(p,t,out){
+    var a=p.va+p.vw*t;
+    out[0]=vcx+Math.cos(a)*p.vr;
+    out[1]=vcy+Math.sin(a)*p.vr*0.86;
+  }
+  var vg=[0,0];
+
   var mx=0,my=0,mOn=false,mF=0;
   function pointerAt(e){
     var r=cv.getBoundingClientRect();
@@ -364,8 +378,8 @@
     curForm=F; tStart=nowT;
     /* интро — единственный медленный переход: 2+ секунды на самоорганизацию.
        Дальнейшие перестроения короче, иначе взаимодействие ощущается вялым. */
-    dlScale=slow?1.35:0.4;
-    gRise  =slow?1.15:0.72;
+    dlScale=slow?1.0:0.4;
+    gRise  =slow?0.95:0.72;
     if(F) assign(F);
   }
 
@@ -401,10 +415,15 @@
     need=Math.round(need*1.35);
 
     var base=restForm.unit;
+    /* воронка живёт у левого верхнего угла и по размеру не спорит с надписью */
+    var vR=Math.min(W,H)*0.17;
+    vcx=W*0.17; vcy=H*0.26;
+
     var np=[];
     for(var n=0;n<need;n++){
       var old=P[n];
       var home=scatter();
+      var vr=vR*(0.10+0.90*Math.pow(Math.random(),0.62));
       /* Лёгкий спад к краю оставлен ради глубины, но заметно слабее прежнего:
          при равномерном облаке сильный спад снова читался бы как ядро. */
       var fall=1-home.r*0.3;
@@ -424,7 +443,13 @@
         o:o, cur:old?old.cur:o, sz:base,
         /* своя скорость подлёта у каждой: строй не приезжает одним фронтом */
         tk:0.05+Math.random()*0.04,
-        ti:old?old.ti:-1
+        ti:old?old.ti:-1,
+        /* место в воронке: показатель <1 сгущает частицы к её центру */
+        vr:vr,
+        va:Math.random()*Math.PI*2,
+        /* угловая скорость падает с радиусом: разница внутренних и внешних
+           колец и читается как вращение воронки, а не как карусель */
+        vw:1.55/Math.pow(1+vr/(vR*0.42),0.85)
       });
     }
     P=np;
@@ -449,7 +474,9 @@
     ctx.clearRect(0,0,W,H);
     var f=dt*60;
     function ease(k){ return k<=0?0:1-Math.pow(1-k,f); }
-    var kOff=ease(0.026), kRot=ease(0.09), kOp=ease(0.075), kSz=ease(0.09);
+    /* поворот гасится мягче прежнего: на 0.09 остановка вращения читалась
+       как обрыв движения, особенно на первом кадре после интро */
+    var kOff=ease(0.026), kRot=ease(0.045), kOp=ease(0.075), kSz=ease(0.09);
 
     var F=curForm, T=F?F.targets:null, len=T?T.length:0;
     var unit=F?F.unit:0, freeK=F?F.free:1;
@@ -481,18 +508,30 @@
       var tgt=(F&&p.ti>-1&&p.ti<len)?T[p.ti]:null;
       var gx,gy,k;
 
+      var g=0, toTarget;
       if(tgt){
+        /* Ворота: коэффициент лерпа не включается скачком, а нарастает по
+           своей кривой после личной задержки. Лерп с растущим k читается как
+           разгон и торможение — инерция без отдельной физики и без телепорта. */
+        var el=t-tStart-tgt.dl*dlScale;
+        g=el<=0?0:Math.min(1,el/gRise);
+      }
+
+      toTarget=tgt&&!(vortex&&g<=0);
+      if(toTarget){
         gx=tgt.x; gy=tgt.y;
         if(live){
           gx=cx+(gx-cx)*br+lx+Math.cos(t*p.f1*0.55+p.p1)*jit;
           gy=cy+(gy-cy)*br+ly+Math.sin(t*p.f2*0.50+p.p2)*jit;
         }
-        /* Ворота: коэффициент лерпа не включается скачком, а нарастает по
-           своей кривой после личной задержки. Лерп с растущим k читается как
-           разгон и торможение — инерция без отдельной физики и без телепорта. */
-        var el=t-tStart-tgt.dl*dlScale;
-        var g=el<=0?0:Math.min(1,el/gRise);
         k=ease(p.tk*g*g*(3-2*g));
+      } else if(vortex){
+        /* Очередь ещё не подошла — частица продолжает вращаться в воронке.
+           Без этого она просто стояла бы на месте с нулевым коэффициентом:
+           «откуда» вылетают квадраты, было бы не видно. */
+        vortexGoal(p,t,vg);
+        gx=vg[0]; gy=vg[1];
+        k=ease(0.085);
       } else {
         gx=p.hx+Math.cos(t*p.f1+p.p1)*p.ax+Math.sin(t*p.f2*0.7+p.p2)*p.ax*0.35;
         gy=p.hy+Math.sin(t*p.f2+p.p2)*p.ay+Math.cos(t*p.f1*0.6+p.p1)*p.ay*0.35;
@@ -510,18 +549,22 @@
 
       p.x+=(gx-p.x)*k; p.y+=(gy-p.y)*k;
 
-      if(tgt){ p.rot+=(0-p.rot)*kRot; } else { p.rot+=p.rs*f; }
+      /* Плотность, размер и поворот берутся от цели только когда частица
+         действительно летит к ней. Пока она ждёт своей очереди в воронке, она
+         остаётся частью облака — поэтому надпись набирает вес постепенно, по
+         мере прилёта, а вращение гаснет не разом, а у каждой в свой момент. */
+      if(toTarget){ p.rot+=(0-p.rot)*kRot; } else { p.rot+=p.rs*f; }
 
-      var wantOp = tgt ? (tgt.edge?0.86:0.72) : p.o*freeK;
+      var wantOp = toTarget ? (tgt.edge?0.86:0.72) : p.o*freeK;
       p.cur += (wantOp-p.cur)*kOp;
 
-      var wantSz = tgt ? (tgt.edge?unit*0.92:unit) : p.s;
+      var wantSz = toTarget ? (tgt.edge?unit*0.92:unit) : p.s;
       p.sz += (wantSz-p.sz)*kSz;
 
       var a=p.cur*edgeAlpha(p.x,p.y);
       if(a<0.012) continue;
 
-      ctx.fillStyle=(tgt&&tgt.a)
+      ctx.fillStyle=(toTarget&&tgt.a)
         ? 'rgba(228,87,58,'+Math.min(0.95,a+0.12).toFixed(3)+')'
         : 'rgba(11,11,12,'+a.toFixed(3)+')';
 
@@ -674,14 +717,17 @@
     }
 
     var startTs=null, prevTs=null, running=false, rafId=0, visible=true, kicked=false;
-    var wantRest=false;
+    var wantRest=false, lastT=0;
 
     function loop(ts){
-      if(startTs===null){ startTs=ts; prevTs=ts; }
+      /* Время продолжается с того места, где остановилось. При отсчёте заново
+         tStart оставался бы от прошлого запуска: задержки очереди уходили бы
+         в минус, ворота лерпа не открывались, и форма замирала на полпути. */
+      if(startTs===null){ startTs=ts-lastT*1000; prevTs=ts; }
       var dt=Math.min(0.1,(ts-prevTs)/1000);
       prevTs=ts;
       var t=(ts-startTs)/1000;
-      nowT=t;
+      lastT=t; nowT=t;
 
       /* Пока экран был вне поля зрения, кадры не шли: перестроение назначаем
          здесь, на первом же кадре после возврата, иначе задержки очереди
@@ -694,14 +740,20 @@
           /* повторное открытие: структура уже существует, интро не повторяем */
           nowT=t; setForm(restForm); snap(); ready=true; schedule();
         } else {
-          /* первое открытие: пауза на пустом экране, затем самоорганизация.
+          /* Первое открытие. Система стягивается в воронку у левого верхнего
+             угла и раскручивается, затем оттуда по очереди уходит в надпись.
              Цикл заводится только после того, как надпись собралась целиком:
              первое перестроение прервать нельзя. */
+          vortex=true;
           setTimeout(function(){
             setForm(restForm,true);
             markSeen();
-            setTimeout(function(){ ready=true; schedule(); },2400);
-          },700);
+            setTimeout(function(){
+              /* воронка больше не нужна: к этому моменту очередь дошла до
+                 всех, а свободные частицы расходятся по своим орбитам */
+              vortex=false; ready=true; schedule();
+            },1900);
+          },850);
         }
       }
 
@@ -710,8 +762,7 @@
     }
     function start(){
       if(running) return;
-      running=true; prevTs=null;
-      if(startTs!==null) startTs=null;
+      running=true; prevTs=null; startTs=null;
       if(ready) schedule();
       rafId=requestAnimationFrame(loop);
     }
