@@ -542,7 +542,7 @@
      оставался пустым на время полёта: при шести одновременных отпусканиях
      это читалось как дыры в буквах, а не как жизнь. При обмене ни одна
      позиция не пустует, но структура всё время в лёгком движении. */
-  var SWAPS=6;
+  var SWAPS=6, SWAP_EVERY=1240;
   function refresh(){
     if(!curForm||curForm.kind!=='text'||P.length<2) return;
     var pool=[],i;
@@ -710,7 +710,7 @@
     }
     function sync(){ (visible && !document.hidden) ? start() : stop(); }
 
-    setInterval(refresh,620);
+    setInterval(refresh,SWAP_EVERY);
 
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(e){
