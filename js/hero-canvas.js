@@ -128,6 +128,10 @@
      (1 - 2*FADE), чтобы собранная фигура целиком стояла в непрозрачном ядре
      и не притухала по краям. */
   var FADE=0.10;
+  /* Горизонтальная зона угасания. На узких экранах она ужимается: там
+     надпись упирается в ширину раньше, чем во что-либо ещё, и каждый
+     процент бокового поля напрямую уменьшает кегль. FX задаётся в size(). */
+  var FX=FADE, FY=FADE;
 
   /* Каждая цель несёт свою задержку dl (в долях от 0 до 1): по ней строится
      очередь прилёта. Порядок — слева направо, как читается структура. */
@@ -195,12 +199,17 @@
     off.width=ow; off.height=oh;
     octx.clearRect(0,0,ow,oh);
 
-    var fam=displayFont(), track=0.02, weight=700;
+    /* 600 — реальный потолок Geist (переменный шрифт объявлен как 400..600),
+       вес 700 браузер всё равно зажимал до него. Чтобы на телефоне штрих
+       набирался не одним квадратом, глиф дополнительно утолщается обводкой:
+       начертание остаётся тем же, растёт только толщина линии. */
+    var fam=displayFont(), track=0.02, weight=600;
+    var fatten=W<720?0.055:0;
     octx.textAlign='center'; octx.textBaseline='alphabetic';
 
     /* кегль от viewport, а не константой: сначала по ширине самой длинной
        строки, затем ограничиваем высотой двух строк */
-    var boxW=W*(1-FADE*2)*0.98, boxH=H*(1-FADE*2);
+    var boxW=W*(1-FX*2)*0.99, boxH=H*(1-FY*2);
     octx.font=weight+' 100px '+fam;
     var wid=0,i;
     for(i=0;i<LINES.length;i++) wid=Math.max(wid,octx.measureText(LINES[i]).width+100*track*(LINES[i].length-1));
@@ -212,11 +221,18 @@
       octx.clearRect(0,0,ow,oh);
       octx.font=weight+' '+(fs*S)+'px '+fam;
       if('letterSpacing' in octx) octx.letterSpacing=(fs*S*track)+'px';
+      if(fatten){
+        octx.lineWidth=fs*S*fatten;
+        octx.lineJoin='round';
+        octx.strokeStyle='#000';
+      }
       var total=fs*lh*LINES.length*S;
       var top=(oh-total)/2;
       for(var n=0;n<LINES.length;n++){
         /* 0.79 от кегля — оптическая база прописных, чтобы блок стоял по центру */
-        octx.fillText(LINES[n], ow/2, top+fs*lh*S*n+fs*S*0.79);
+        var by=top+fs*lh*S*n+fs*S*0.79;
+        octx.fillText(LINES[n], ow/2, by);
+        if(fatten) octx.strokeText(LINES[n], ow/2, by);
       }
     }
     draw();
@@ -230,7 +246,9 @@
 
     /* бюджет целей: главный рычаг производительности. Если сетка дала больше
        квадратов, чем мы готовы рисовать, шаг увеличивается и проход повторяется */
-    var budget=W<720?460:900;
+    /* На узких экранах целей больше прежнего: штрих буквы должен набираться
+       не одним квадратом, иначе надпись читается как пунктир. */
+    var budget=W<720?620:900;
     var step=Math.max(4,fs*0.062);
 
     function sample(st){
@@ -288,7 +306,7 @@
   /* Прозрачность у краёв: 1 в ядре, плавно в 0 к границе канваса.
      smoothstep вместо линейной — иначе на входе в зону виден излом. */
   function edgeAlpha(x,y){
-    var fx=W*FADE, fy=H*FADE;
+    var fx=W*FX, fy=H*FY;
     if(fx<=0||fy<=0) return 1;
     var k=Math.min(Math.min(x,W-x)/fx, Math.min(y,H-y)/fy);
     if(k>=1) return 1;
@@ -355,9 +373,14 @@
   }
 
   function size(){
-    dpr=Math.min(window.devicePixelRatio||1,W<720?1.5:2);
+    /* На телефонах плотность больше не режется до 1.5: квадрат надписи там
+       всего несколько пикселей, и на 1.5 его края размывались сглаживанием —
+       буквы читались мягкими и бледными. Квадратов немного, заливка мелкая,
+       на 2 это не заметно по кадру. */
+    dpr=Math.min(window.devicePixelRatio||1,2);
     var rc=cv.getBoundingClientRect();
     W=Math.max(1,rc.width); H=Math.max(1,rc.height);
+    FX=W<720?0.035:FADE; FY=FADE;
     cv.width=Math.floor(W*dpr); cv.height=Math.floor(H*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
 
