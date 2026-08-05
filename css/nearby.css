@@ -1169,6 +1169,77 @@
   .cardfull { transition: none; }
 }
 
+/* ── Цепочка неявки ───────────────────────────────────────────────────────
+   Ветка «владелец не пришёл» — связная история из трёх состояний, но не
+   основная линия кейса. Поэтому ряд небольших экранов с подписями, а не
+   колесико: полноразмерный флоу на шесть шагов перевесил бы передачу и
+   возврат, ради которых кейс и собран.
+
+   Экраны здесь меньше, чем во флоу, и это намеренно: размер сообщает вес. */
+.chain {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+}
+
+.chain__ph {
+  --ch-w: min(100%, 196px);
+  margin: 0 0 20px;
+  width: var(--ch-w);
+}
+
+.chain__ph img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: calc(var(--ch-w) * var(--screen-r));
+}
+
+.chain__t {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.chain__d {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+@media (max-width: 900px) {
+  .chain { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .chain__ph { --ch-w: min(100%, 200px); }
+}
+
+/* ── Таблица гипотез ──────────────────────────────────────────────────────
+   Левая колонка — те же 132px, что во всех таблицах кейсов. Номер и короткое
+   имя гипотезы стоят вместе: в развёрнутом на телефоне виде подпись остаётся
+   заголовком карточки. */
+@media (min-width: 761px) {
+  .tbl--hyp table { table-layout: fixed; }
+  .tbl--hyp th:first-child,
+  .tbl--hyp td:first-child { width: 132px; }
+}
+
+.tbl--hyp .tbl__who {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: -.01em;
+  color: var(--ink);
+}
+
 /* ── Таблица «что сказали → что я увидел» ─────────────────────────────── */
 
 /* Ширина колонки — только с планшета и шире, см. пояснение у .tbl--rivals:
