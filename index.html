@@ -94,6 +94,26 @@
     </article>
 
     <article class="project project--flip">
+      <a class="project__media" href="case-nearby.html" aria-label="Открыть кейс Nearby">
+        <!-- Пока без скриншотов: листы .sheet сами по себе — плашки цвета
+             тёмной и светлой темы, поэтому пустая пара читается как макет
+             в ожидании контента, а разворот по наведению работает уже сейчас.
+             Когда появятся картинки, они просто кладутся внутрь листов. -->
+        <div class="fan" aria-hidden="true">
+          <div class="sheet sheet--dark"></div>
+          <div class="sheet sheet--light"></div>
+        </div>
+      </a>
+      <div class="project__body">
+        <p class="project__idx">02</p>
+        <p class="project__tags">личный проект · iOS · аренда</p>
+        <h2 class="project__title">Nearby</h2>
+        <p class="project__sub">Сервис аренды вещей поблизости: состав, состояние и время встречи фиксируются до неё, а спор решается сверкой двух состояний, а не словом против слова.</p>
+        <a class="project__cta" href="case-nearby.html">Читать кейс →</a>
+      </div>
+    </article>
+
+    <article class="project">
       <div class="project__media">
         <div class="fan fan--empty" aria-hidden="true">
           <canvas id="soonfig"></canvas>
@@ -101,10 +121,10 @@
         </div>
       </div>
       <div class="project__body">
-        <p class="project__idx">02</p>
+        <p class="project__idx">03</p>
         <p class="project__tags">скоро</p>
         <h2 class="project__title project__title--muted">Следующий проект</h2>
-        <p class="project__sub">Здесь будет второй кейс — сейчас в работе.</p>
+        <p class="project__sub">Здесь будет третий кейс — сейчас в работе.</p>
       </div>
     </article>
   </section>
@@ -117,18 +137,26 @@
              width="880" height="1168" loading="lazy" decoding="async">
       </div>
       <div class="about__text">
-        <p>Здесь один абзац о том, как ты пришёл в дизайн и что тебя в нём держит. Пара живых деталей — почему именно сложные системы, а не лендинги.</p>
-        <p class="dim">Второй абзац о том, как ты работаешь: что делаешь до того, как открыть Фигму, как проверяешь решения, что считаешь своей сильной стороной. Без списка навыков — они видны из кейса.</p>
-        <p class="dim">Третий, короткий и человеческий: чем занят помимо работы. Это то, что запоминают.</p>
+        <!-- Неразрывные пробелы связывают короткое слово только со следующим,
+             без цепочек: «а не останавливаться» одним куском в 20 символов не
+             помещалось в остаток строки и выталкивало перенос сильно раньше —
+             отсюда и рваный правый край. Максимальная связка здесь 13 знаков. -->
+        <p>Привет, я&nbsp;Фирдавс — продуктовый дизайнер. В&nbsp;профессию пришёл из&nbsp;личного интереса: мне всегда было интересно, как сложные сервисы устроены изнутри.</p>
+        <p class="dim">Меня зажигают логика, сценарии и&nbsp;поиск решений, а&nbsp;не отрисовка красивых макетов. По-настоящему круто делать продукты, где удобный интерфейс вырастает из&nbsp;понимания задачи, а&nbsp;не из&nbsp;визуального вкуса.</p>
+        <p class="dim">Вне работы разбираю новые AI-инструменты, играю на&nbsp;гитаре, читаю. Изучаю фреймворки, чтобы доводить идеи до&nbsp;работающих прототипов, а&nbsp;не останавливаться на&nbsp;макетах. AI использую не&nbsp;вместо продуктового мышления, а&nbsp;чтобы освободить для&nbsp;него время. Стараюсь меньше рисовать и&nbsp;больше думать.</p>
 
         <dl class="about__meta">
           <div>
             <dt>Инструменты</dt>
-            <dd>Figma<br>Framer<br>Gravity UI</dd>
+            <dd>Figma<br>Framer<br>Gravity UI<br>Codex<br>Claude Code<br>Cursor</dd>
           </div>
           <div>
             <dt>Методы</dt>
-            <dd>Интервью<br>JTBD<br>Прототипы</dd>
+            <dd>Глубинные интервью<br>JTBD<br>CJM<br>User Flow<br>Wireframing<br>Прототипирование</dd>
+          </div>
+          <div>
+            <dt>Навыки</dt>
+            <dd>Design Systems<br>Auto Layout<br>Components<br>Variables</dd>
           </div>
           <div>
             <dt>Языки</dt>
@@ -139,24 +167,56 @@
     </div>
   </section>
 
-  <section class="contact" id="contact">
-    <p class="contact__k">Контакты</p>
-    <h2 class="contact__t">Открыт к предложениям и просто к разговору</h2>
-    <div class="contact__links">
-      <a href="https://t.me/deadlif1" target="_blank" rel="noopener">Telegram</a>
-      <a href="mailto:new.boxmail666@gmail.com">Email</a>
-      <a href="#" target="_blank" rel="noopener">Behance</a>
-    </div>
+  <footer class="contact" id="contact">
+    <div class="labelrow"><p class="about__label">Контакты</p><hr class="rule"></div>
+
+    <dl class="contact__meta">
+      <div>
+        <dt>Связь</dt>
+        <dd class="contact__line">
+          <!-- Подписи вместо самих адресов: ник и почта нужны для действия,
+               а не для чтения. Почта всё равно доступна целиком — её кладёт
+               в буфер кнопка рядом. -->
+          <a href="https://t.me/deadlif1" target="_blank" rel="noopener">Telegram</a>
+          <span class="contact__sep" aria-hidden="true">·</span>
+          <a href="mailto:fluffy.clou9@yandex.ru" title="fluffy.clou9@yandex.ru">Email</a>
+          <button class="copy" type="button" data-copy="fluffy.clou9@yandex.ru"
+                  data-tip="Копировать" aria-label="Скопировать почту">
+            <svg viewBox="0 0 14 14" width="13" height="13" fill="none" aria-hidden="true">
+              <rect x="4.6" y="1.6" width="7.8" height="7.8" rx="1.6"
+                    stroke="currentColor" stroke-width="1.2"/>
+              <path d="M9.4 11.1v.7a1.6 1.6 0 0 1-1.6 1.6H3.2a1.6 1.6 0 0 1-1.6-1.6V6.2a1.6 1.6 0 0 1 1.6-1.6h.7"
+                    stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </dd>
+      </div>
+      <div>
+        <dt>Город</dt>
+        <dd>Самара · GMT+4</dd>
+      </div>
+      <div>
+        <dt>Статус</dt>
+        <dd>Открыт к работе</dd>
+      </div>
+    </dl>
+
     <div class="contact__foot">
-      <p>Фирдавс · 2026</p>
-      <p>Самара</p>
+      <p>Built with Claude Code × Codex</p>
     </div>
-  </section>
+  </footer>
+
+  <!-- Кромка страницы: та же пунктирная линейка, что делит секции, только
+       осыпающаяся. Сайт заканчивается не ровным краем, а структурой, которая
+       не досыпалась — обратная сторона того, что происходит на первом экране. -->
+  <canvas id="edgefig" class="edge" aria-hidden="true"></canvas>
 </div>
 
 <script src="js/reveal.js"></script>
 <script src="js/hero-canvas.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/soon-canvas.js"></script>
+<script src="js/edge-canvas.js"></script>
+<script src="js/copy.js"></script>
 </body>
 </html>
