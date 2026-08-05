@@ -34,30 +34,39 @@
       // d — расстояние до активного шага. Соседи уходят вниз и вверх по дуге,
       // отклоняются от вертикали и отступают вглубь.
       var ad = d < 0 ? -d : d;
-      if (ad > 2) {
+      // Сосед показывается только один с каждой стороны. Двух хватало, чтобы
+      // за внимание конкурировали пять макетов сразу: у дальних оставалась
+      // читаемая типографика, и глаз не понимал, какой экран активный.
+      if (ad > 1) {
         el.style.opacity = '0';
         // z-index сбрасываем обязательно: без этого экран, уехавший далеко,
         // сохранил бы вес от прошлого шага и лёг бы поверх активного.
         el.style.zIndex = '0';
         el.setAttribute('data-off', '');
-        el.style.transform = 'translateY(' + (d * 46) + '%) scale(.6)';
+        el.style.filter = 'blur(6px)';
+        el.style.transform = 'translateY(' + (d * 56) + '%) scale(.6)';
         return;
       }
       el.removeAttribute('data-off');
       if (calm) {
         // Без дуги и поворота: остаётся только активный экран.
         el.style.transform = 'none';
+        el.style.filter = 'none';
         el.style.opacity = d === 0 ? '1' : '0';
         el.style.zIndex = d === 0 ? '3' : '1';
         if (d !== 0) el.setAttribute('data-off', '');
         return;
       }
       el.style.transform =
-        'translateY(' + (d * 46) + '%)' +
-        ' translateX(' + (ad * -7) + '%)' +
+        'translateY(' + (d * 56) + '%)' +
+        ' translateX(' + (ad * -8) + '%)' +
         ' rotate(' + (d * 7) + 'deg)' +
-        ' scale(' + (1 - ad * 0.16) + ')';
-      el.style.opacity = ad === 0 ? '1' : (ad === 1 ? '.5' : '.2');
+        ' scale(' + (1 - ad * 0.22) + ')';
+      el.style.opacity = ad === 0 ? '1' : '.32';
+      // Блюр соседа — не украшение: разнести экраны по вертикали некуда,
+      // макет и так во весь рост сцены. Расфокус снимает с соседа
+      // читаемость, оставляя его как «что было до» и «что будет после».
+      el.style.filter = ad === 0 ? 'none' : 'blur(4px)';
       el.style.zIndex = String(3 - ad);
     }
 
@@ -83,6 +92,10 @@
     // Позиция прокрутки → номер шага. Считаем от секции, а не от окна:
     // навбар и высота сцены на расчёт не влияют.
     function fromScroll() {
+      // Пока страница едет по кнопке, шаг уже выбран. Без этой блокировки
+      // плавная прокрутка сыпала событиями, каждое пересчитывало шаг по
+      // промежуточной позиции, и картинку трясло до конца пути.
+      if (lockTo !== -1) return;
       var r = wh.getBoundingClientRect();
       var travel = wh.offsetHeight - stage.offsetHeight;
       if (travel <= 0) return;
@@ -96,6 +109,9 @@
     // Кнопки двигают страницу, а не только картинку: иначе прокрутка и
     // показанный шаг разъезжаются, и следующее движение колёсиком
     // отбрасывало бы читателя назад.
+    var lockTo = -1;   // шаг, к которому едем по кнопке; -1 — рулит читатель
+    var lockTimer = 0;
+
     function goTo(i) {
       if (i < 0 || i > n - 1) return;
       if (narrow.matches) { render(i); return; }
@@ -105,8 +121,29 @@
       // кому-то выше получить position:relative, как расчёт молча поедет.
       var docTop = wh.getBoundingClientRect().top + window.pageYOffset;
       var top = docTop + travel * (i / (n - 1));
-      window.scrollTo({ top: top, behavior: calm ? 'auto' : 'smooth' });
+      lockTo = i;
       render(i);
+      window.scrollTo({ top: top, behavior: calm ? 'auto' : 'smooth' });
+      // Предохранитель: если прокрутка никуда не поедет (шаг уже на месте),
+      // событий не будет и блокировку снимать некому.
+      clearTimeout(lockTimer);
+      lockTimer = setTimeout(unlock, 700);
+    }
+
+    function unlock() {
+      lockTo = -1;
+      fromScroll();
+    }
+
+    // Блокировку снимаем по тишине, а не по таймеру фиксированной длины:
+    // сколько едет плавная прокрутка, решает браузер и длина пути.
+    function onScroll() {
+      if (lockTo !== -1) {
+        clearTimeout(lockTimer);
+        lockTimer = setTimeout(unlock, 140);
+        return;
+      }
+      fromScroll();
     }
 
     for (var b = 0; b < btns.length; b++) {
@@ -123,7 +160,7 @@
 
     // passive: обработчик ничего не отменяет, и браузер не ждёт его,
     // чтобы начать прокрутку.
-    window.addEventListener('scroll', fromScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', fromScroll);
 
     render(0);

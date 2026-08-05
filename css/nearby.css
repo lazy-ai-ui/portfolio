@@ -622,20 +622,22 @@
 .wh--on .wh__arc { display: block; }
 
 .wh__screen {
+  --wh-w: min(300px, 26vw);
   margin: 0;
-  width: min(300px, 26vw);
+  width: var(--wh-w);
 }
 
 .wh--on .wh__screen {
   position: absolute;
   left: 50%;
   top: 50%;
-  margin-left: calc(min(300px, 26vw) / -2);
+  margin-left: calc(var(--wh-w) / -2);
   margin-top: -37vh;
   transform-origin: 50% 50%;
   will-change: transform, opacity;
   transition: transform .58s cubic-bezier(.22, .8, .2, 1),
-              opacity .45s ease;
+              opacity .45s ease,
+              filter .45s ease;
 }
 
 .wh__screen img {
@@ -645,7 +647,27 @@
   max-height: 74vh;
   object-fit: contain;
   object-position: top center;
-  border-radius: 18px;
+  border-radius: calc(var(--wh-w) * var(--screen-r));
+}
+
+/* Экран, который длиннее обычного (чеклист приёмки — 2288 против 1748).
+   Вписать его целиком значило бы уменьшить по ширине на четверть, и на дуге
+   он читался бы телефоном меньшего размера. Поэтому показываем окно той же
+   высоты, что у остальных, с верхом экрана — как на настоящем телефоне,
+   где длинный экран листают. Полностью экран открывается кнопкой из текста
+   шага. */
+.wh__screen--tall {
+  /* Та же высота, что достаётся обычным экранам: их режет либо собственная
+     пропорция, либо потолок 74vh на низком окне. Считать нужно оба варианта,
+     иначе на невысоком экране окно чеклиста выпирало бы из ряда. */
+  height: min(calc(var(--wh-w) / .46), 74vh);
+  overflow: hidden;
+  border-radius: calc(var(--wh-w) * var(--screen-r));
+}
+
+.wh__screen--tall img {
+  max-height: none;
+  border-radius: 0;
 }
 
 .wh__side { max-width: 46ch; }
@@ -664,19 +686,30 @@
   display: grid;
 }
 
+/* visibility, а не только opacity: прозрачный текст остаётся в дереве
+   доступности и в порядке табуляции — скринридер читал бы все шесть шагов
+   подряд, а таб уводил бы на кнопку внутри невидимого шага. */
 .wh__text {
   grid-area: 1 / 1;
   opacity: 0;
+  visibility: hidden;
   transform: translateY(10px);
   pointer-events: none;
-  transition: opacity .3s ease, transform .38s cubic-bezier(.22, .8, .2, 1);
+  transition: opacity .3s ease,
+              visibility .3s ease,
+              transform .38s cubic-bezier(.22, .8, .2, 1);
 }
 
 .wh__text.is-on {
   opacity: 1;
+  visibility: visible;
   transform: none;
   pointer-events: auto;
 }
+
+/* Кнопка раскрытия карточки живёт в тексте шага, поэтому ей нужен отступ
+   от абзаца — у .wh__nav он свой. */
+.wh__more { margin-top: 24px; }
 
 .wh__t {
   margin: 0;
@@ -752,7 +785,10 @@
   .wh--on .wh__screen {
     position: static;
     margin: 0;
-    width: min(280px, 72vw);
+    /* Меняем переменную, а не width: от неё же считаются радиус скругления
+       и высота окна длинного экрана. */
+    --wh-w: min(280px, 72vw);
+    width: var(--wh-w);
     transform: none !important;
     transition: opacity .3s ease;
   }
@@ -762,6 +798,12 @@
   .wh--on .wh__screen:not(.is-on) { display: none; }
 
   .wh__screen img { max-height: none; }
+
+  /* На мобилке экран стоит один и прокрутки страницы у флоу нет — длинный
+     экран можно показать целиком, окно с обрезкой здесь ни к чему. А раз
+     ничего не обрезано, то и раскрывать нечего. */
+  .wh__screen--tall { height: auto; }
+  .wh__more--tall { display: none; }
 
   .wh__side { max-width: none; }
 }
@@ -774,26 +816,141 @@
   .wh__text { transform: none; transition: opacity .2s ease; }
 }
 
-/* ── Крупный скриншот ─────────────────────────────────────────────────── */
+/* ── Карточка целиком ─────────────────────────────────────────────────── */
 
-.shot {
-  margin: 40px 0 0;
-  max-width: 420px;
+/* Раскрывается из шага «Карточка» в сценарии, отдельного блока в конце
+   секции больше нет. Там она стояла развёрнутым экспортом на 4258px: на
+   белой плашке .shot, без скруглений, и страница под ней прокручивалась
+   бесконечно ради одной картинки.
+
+   Теперь карточка открывается в телефонной рамке и прокручивается внутри
+   неё — ровно так, как её листали бы в приложении. Это не тот перехват
+   прокрутки, от которого отказались в колесике: страница под подложкой
+   заблокирована, отнимать у читателя нечего. */
+/* Без JS открыть модалку нечем, поэтому подложка включается только под
+   флагом js-rv — иначе карточка осталась бы в разметке, но недостижимой.
+   В таком режиме она просто лежит в конце секции обычной картинкой, как
+   список экранов сценария лежит колонкой. */
+.cardfull {
+  margin: 64px auto 0;
+  max-width: 340px;
 }
 
-.shot img {
+.cardfull .cardfull__hint,
+.cardfull .cardfull__x { display: none; }
+
+.js-rv .cardfull {
+  margin: 0;
+  max-width: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-direction: column;
+  padding: 24px;
+  background: rgba(11, 11, 12, .66);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s ease, visibility .22s;
+}
+
+.js-rv .cardfull.is-on { opacity: 1; visibility: visible; }
+
+.js-rv .cardfull .cardfull__hint,
+.js-rv .cardfull .cardfull__x { display: block; }
+
+.js-rv .cardfull .cardfull__x { display: flex; }
+
+/* Пропорция взята у экранов сценария (804 / 1748), чтобы рамка читалась тем
+   же телефоном, что стоит на дуге. Высота выводится из ширины, а ширина уже
+   ограничена и экраном, и окном — поэтому в высоту рамка не вылезет. */
+.cardfull__phone {
+  --cf-w: 340px;
+  border-radius: calc(var(--cf-w) * var(--screen-r));
+  overflow: hidden;
+}
+
+.js-rv .cardfull__phone {
+  --cf-w: min(340px, 86vw, calc(82vh * .46));
+  position: relative;
+  width: var(--cf-w);
+  height: calc(var(--cf-w) / .46);
+  overflow-y: auto;
+  /* Прокрутка не должна дотекать до страницы под подложкой: без этого
+     докрутка до конца карточки начинала бы двигать документ. */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  border-radius: calc(var(--cf-w) * var(--screen-r));
+  /* Фона нет намеренно. Углы экспорта прозрачные и нарисованы «непрерывным»
+     скруглением iOS, а border-radius в CSS — дуга окружности: точного
+     совпадения не бывает, и любая заливка под картинкой вылезала бы в углах
+     светлым серпом. Картинка кладётся прямо на подложку. */
+  background: transparent;
+  box-shadow: 0 24px 60px rgba(11, 11, 12, .38);
+  /* Полосы прокрутки нет намеренно: рамка изображает телефон, а подпись под
+     ней говорит, что карточка листается. */
+  scrollbar-width: none;
+}
+
+.cardfull__phone::-webkit-scrollbar { display: none; }
+
+.cardfull__phone img {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 18px;
 }
 
-.shot__cap {
-  margin-top: 16px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--ink-3);
-  text-wrap: pretty;
+.cardfull__hint {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--on-dark-3);
+}
+
+.cardfull__x {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(237, 235, 232, .26);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--on-dark-2);
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .2s ease, border-color .2s ease;
+}
+
+@media (hover: hover) {
+  .cardfull__x:hover { color: var(--on-dark); border-color: var(--on-dark-3); }
+}
+
+.cardfull__x:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .js-rv .cardfull { padding: 12px; gap: 14px; }
+  .js-rv .cardfull__phone { --cf-w: min(86vw, calc(78vh * .46)); }
+  .cardfull__x { top: 10px; right: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardfull { transition: none; }
 }
 
 /* ── Таблица «что сказали → что я увидел» ─────────────────────────────── */

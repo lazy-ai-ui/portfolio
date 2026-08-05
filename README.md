@@ -25,7 +25,7 @@ case-nearby.html          — кейс Nearby (в работе)
 demo-mark.html            — стенд для перенастройки акцента-каретки, в вёрстку не входит
 css/
   fonts.css               — локальные @font-face (Geist/Geist Mono, latin+cyrillic)
-  tokens.css              — дизайн-токены (цвета, шрифты)
+  tokens.css              — дизайн-токены (цвета, шрифты, скругление экранов)
   base.css                — навбар, разделители, таблицы, акцент .mark, общие классы
   index.css               — стили главной
   case.css                — стили кейса
@@ -47,6 +47,7 @@ js/
   evidence.js             — подсветка метки на шкале от карточки случая (Nearby)
   switcher.js             — вкладки с переезжающей пилюлей (Nearby)
   wheel.js                — флоу по дуге: липкая сцена, шаг от позиции прокрутки (Nearby)
+  card-full.js            — раскрытие экрана целиком в телефонной рамке (Nearby)
 docs/
   ACCENT_MARK.md          — как применять акцент .mark
 content/
