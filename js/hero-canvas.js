@@ -663,50 +663,26 @@
   /* клик листает структуры дальше и заново заводит цикл */
   function advance(e){
     if(!clickable) return;
-    if(e&&!touch) pointerAt(e);
+    /* сюда попадают только мышь и клавиатура: на тач-устройствах
+       обработчика нет, и проверка на touch здесь была бы лишней */
+    if(e) pointerAt(e);
     toUI();
     schedule();
   }
 
-  /* Тап против скролла.
+  /* На тач-устройствах канвас не реагирует на касания вообще.
 
-     Первая версия гарда смотрела на pointermove: сдвинулся палец — значит не
-     тап. Но как только браузер решает, что жест это скролл, он забирает
-     указатель себе и перестаёт слать элементу pointermove, присылая вместо
-     него pointercancel. Флаг «палец двигался» так и оставался снятым, быстрый
-     флик укладывался в лимит времени — и каждый скролл по канвасу срабатывал
-     как клик. Проверялся ровно тот сигнал, который во время скролла и
-     отключается.
+     Отличить тап от скролла здесь надёжно не выходит: как только браузер
+     решает, что жест это прокрутка, он забирает указатель себе, перестаёт
+     слать pointermove и присылает pointercancel, а click всё равно прилетает
+     — в том числе по инерции, уже после отрыва пальца. Гарды по смещению,
+     по факту прокрутки и по карантину времени отсеивали часть случаев, но не
+     все, и каждый пропущенный скролл дёргал форму.
 
-     Поэтому теперь решает факт прокрутки, а не движение пальца: если страница
-     сдвинулась между касанием и отпусканием — это был скролл. Плюс короткий
-     карантин после последней прокрутки: click прилетает и по инерции, уже
-     после того, как палец оторван. */
-  var dx0=0,dy0=0,dt0=0,sy0=0,moved=false,lastScroll=0;
-
-  if(touch){
-    window.addEventListener('scroll',function(){ lastScroll=Date.now(); },{passive:true});
-
-    cv.addEventListener('pointerdown',function(e){
-      dx0=e.clientX; dy0=e.clientY; dt0=Date.now();
-      sy0=window.pageYOffset||0; moved=false;
-    });
-    cv.addEventListener('pointermove',function(e){
-      if(Math.abs(e.clientX-dx0)>8||Math.abs(e.clientY-dy0)>8) moved=true;
-    });
-    /* жест отобран браузером под прокрутку — тапом он уже не станет */
-    cv.addEventListener('pointercancel',function(){ moved=true; });
-
-    cv.addEventListener('click',function(){
-      if(moved) return;
-      if(Math.abs((window.pageYOffset||0)-sy0)>3) return;
-      if(Date.now()-lastScroll<400) return;
-      if(Date.now()-dt0>500) return;
-      advance();
-    });
-  } else {
-    cv.addEventListener('click',advance);
-  }
+     Тап при этом ничего не добавлял: автоцикл и так меняет структуру каждые
+     семь секунд. Цена возможности пролистать вручную оказалась выше пользы,
+     поэтому её здесь просто нет. На десктопе клик работает как раньше. */
+  if(!touch) cv.addEventListener('click',advance);
   cv.addEventListener('keydown',function(e){
     if(e.key==='Enter'||e.key===' '){ e.preventDefault(); advance(); }
   });
