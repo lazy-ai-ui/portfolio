@@ -88,6 +88,34 @@
     </dl>
   </header>
 
+  <!-- Кейс длинный намеренно, но не каждый читатель готов пройти его целиком.
+       Здесь аргумент целиком в четырёх строках, дальше — как я к нему пришёл.
+       Шапка выше отвечает «что за проект», этот блок — «что я утверждаю». -->
+  <section class="tldr" aria-label="Кратко о кейсе">
+    <p class="tldr__k">Если коротко</p>
+
+    <dl class="tldr__l">
+      <div>
+        <dt>Что нашёл</dt>
+        <dd>Сделки рвутся не в поиске, а на встрече — там, где обе стороны уже потратили время и отступать поздно.</dd>
+      </div>
+      <div>
+        <dt>Что спроектировал</dt>
+        <dd>Состав и состояние вещи фиксируются на встрече обеими сторонами, а не выясняются после неё.</dd>
+      </div>
+      <div>
+        <dt>Главное решение</dt>
+        <dd>Фиксирует тот, кто в этот момент рискует: при выдаче арендатор, при возврате владелец.</dd>
+      </div>
+      <div>
+        <dt>Чего здесь нет</dt>
+        <dd>Замеров. Продукт не выходил в прод, поэтому всё, что я утверждаю, — свойства макета и гипотезы для проверки.</dd>
+      </div>
+    </dl>
+
+    <p class="tldr__go"><a href="#solution">Сразу к решениям ↓</a></p>
+  </section>
+
   <!-- ── 1. Проблема ──────────────────────────────────────────────────── -->
   <section id="problem">
     <div class="labelrow"><p class="sect__label">Проблема</p><hr class="rule"></div>
@@ -513,26 +541,25 @@
 
     <p class="lead">До встречи обе стороны имеют дело с обещаниями: описанием, отзывами, рейтингом. На встрече вещь переходит из рук в руки, и дальше спорить будет уже не о чем — либо состояние зафиксировано, либо нет. Здесь два флоу впервые становятся одной сделкой.</p>
 
-    <p class="lead">Десять шагов, ни один не выкинут. Сквозь них тянется один дефект: в карточке заявлен комплект из четырёх предметов, на приёмке HDMI-кабеля не окажется.</p>
+    <p class="lead">Девять шагов от заявки до начала аренды. Сквозь них тянется один дефект: в карточке заявлен комплект из четырёх предметов, на приёмке HDMI-кабеля не окажется.</p>
 
-    <div class="wh" id="wh-handoff" data-steps="10">
+    <div class="wh" id="wh-handoff" data-steps="9">
       <div class="wh__stage">
         <div class="wh__arc" aria-hidden="true">
           <figure class="wh__screen" data-i="0"><img src="assets/img/nearby/handoff-1-pending.webp" width="804" height="1748" loading="lazy" alt="Владелец рассматривает заявку: обычно отвечает за семь минут, через восемнадцать заявка отменится"></figure>
           <figure class="wh__screen" data-i="1"><img src="assets/img/nearby/handoff-2-approved.webp" width="804" height="1818" loading="lazy" alt="Заявка подтверждена: время встречи, адрес, комментарий владельца и заблокированный до встречи QR-код"></figure>
-          <figure class="wh__screen" data-i="2"><img src="assets/img/nearby/handoff-3-arrived.webp" width="804" height="1748" loading="lazy" alt="Скоро встреча: геопозиция недоступна, подтвердить прибытие предлагается свайпом «Я на месте»"></figure>
-          <figure class="wh__screen" data-i="3"><img src="assets/img/nearby/handoff-4-waiting.webp" width="804" height="1748" loading="lazy" alt="Владелец идёт к вам: обратный отсчёт и подпись, что обычно он выходит за три-пять минут"></figure>
-          <figure class="wh__screen" data-i="4"><img src="assets/img/nearby/handoff-5-qr.webp" width="804" height="1748" loading="lazy" alt="QR-код для подтверждения встречи и резервный код на случай, если сканер не сработал"></figure>
-          <figure class="wh__screen" data-i="5"><img src="assets/img/nearby/handoff-6-qr-ok.webp" width="804" height="1748" loading="lazy" alt="Код принят: встреча подтверждена обеими сторонами"></figure>
-          <figure class="wh__screen" data-i="6"><img src="assets/img/nearby/handoff-7-photo.webp" width="804" height="1748" loading="lazy" alt="Фотофиксация состояния: два снимка вещи добавлены"></figure>
-          <figure class="wh__screen wh__screen--tall" data-i="7"><img src="assets/img/nearby/handoff-8-checklist.webp" width="804" height="2288" loading="lazy" alt="Чеклист приёмки: состав комплекта из объявления и три вопроса о состоянии, у комплекта отмечено замечание о нехватке HDMI-кабеля"></figure>
-          <figure class="wh__screen" data-i="8"><img src="assets/img/nearby/handoff-9-summary.webp" width="804" height="1748" loading="lazy" alt="Сводка приёмки: два фото, два пункта в порядке и одно замечание с пометкой «без фото»"></figure>
-          <figure class="wh__screen" data-i="9"><img src="assets/img/nearby/handoff-10-success.webp" width="804" height="1748" loading="lazy" alt="Аренда началась: замечание о HDMI-кабеле сохранено, списано 949 рублей, залог 500 рублей заморожен до возврата"></figure>
+          <figure class="wh__screen" data-i="2"><img src="assets/img/nearby/handoff-4-waiting.webp" width="804" height="1748" loading="lazy" alt="Владелец идёт к вам: обратный отсчёт и подпись, что обычно он выходит за три-пять минут"></figure>
+          <figure class="wh__screen" data-i="3"><img src="assets/img/nearby/handoff-5-qr.webp" width="804" height="1748" loading="lazy" alt="QR-код для подтверждения встречи и резервный код на случай, если сканер не сработал"></figure>
+          <figure class="wh__screen" data-i="4"><img src="assets/img/nearby/handoff-6-qr-ok.webp" width="804" height="1748" loading="lazy" alt="Код принят: встреча подтверждена обеими сторонами"></figure>
+          <figure class="wh__screen" data-i="5"><img src="assets/img/nearby/handoff-7-photo.webp" width="804" height="1748" loading="lazy" alt="Фотофиксация состояния: два снимка вещи добавлены"></figure>
+          <figure class="wh__screen wh__screen--tall" data-i="6"><img src="assets/img/nearby/handoff-8-checklist.webp" width="804" height="2288" loading="lazy" alt="Чеклист приёмки: состав комплекта из объявления и три вопроса о состоянии, у комплекта отмечено замечание о нехватке HDMI-кабеля"></figure>
+          <figure class="wh__screen" data-i="7"><img src="assets/img/nearby/handoff-9-summary.webp" width="804" height="1748" loading="lazy" alt="Сводка приёмки: два фото, два пункта в порядке и одно замечание с пометкой «без фото»"></figure>
+          <figure class="wh__screen" data-i="8"><img src="assets/img/nearby/handoff-10-success.webp" width="804" height="1748" loading="lazy" alt="Аренда началась: замечание о HDMI-кабеле сохранено, списано 949 рублей, залог 500 рублей заморожен до возврата"></figure>
         </div>
 
         <div class="wh__side">
           <p class="wh__tap">Нажмите на экран, чтобы открыть целиком</p>
-          <p class="wh__count"><span data-wh-now>1</span> / 10</p>
+          <p class="wh__count"><span data-wh-now>1</span> / 9</p>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
@@ -544,37 +571,33 @@
               <p class="wh__d">Адрес, окно встречи и комментарий владельца — «выйду к подъезду, буду в синей рубашке». QR-код виден, но заблокирован до начала встречи: экран показывает, что будет дальше, не давая сделать это раньше времени.</p>
             </div>
             <div class="wh__text" data-i="2">
-              <h3 class="wh__t">Прибытие</h3>
-              <p class="wh__d">Обычно приход отмечается по геопозиции. Это экран для случая, когда её нет: прибытие подтверждается свайпом вручную. Показываю его вместо основного намеренно — отказ в доступе к геолокации не должен останавливать сделку.</p>
-            </div>
-            <div class="wh__text" data-i="3">
               <h3 class="wh__t">Ожидание на месте</h3>
               <p class="wh__d">Стоять у подъезда и не понимать, идёт ли к тебе человек, — самая частая точка срыва встречи. Поэтому здесь обратный отсчёт и подпись «обычно выходит за 3–5 минут»: ожидание снова названо числом, а не словом «скоро».</p>
             </div>
-            <div class="wh__text" data-i="4">
+            <div class="wh__text" data-i="3">
               <h3 class="wh__t">Код</h3>
               <p class="wh__d">Встреча подтверждается сканированием QR. Рядом лежит резервный код на случай, если сканер не сработает: встреча идёт на улице, у чужого подъезда, с плохой связью — сценарий должен доходить до конца и там.</p>
             </div>
-            <div class="wh__text" data-i="5">
+            <div class="wh__text" data-i="4">
               <h3 class="wh__t">Код принят</h3>
               <p class="wh__d">Факт встречи зафиксирован обеими сторонами. С этого момента начинается приёмка — то, чего нет ни у одного разобранного сервиса.</p>
             </div>
-            <div class="wh__text" data-i="6">
+            <div class="wh__text" data-i="5">
               <h3 class="wh__t">Фото</h3>
               <p class="wh__d">Фотофиксация отвечает за состояние вещи. Снимки делает тот, кто вещь принимает: при выдаче боится арендатор, поэтому фиксирует он.</p>
             </div>
-            <div class="wh__text" data-i="7">
+            <div class="wh__text" data-i="6">
               <h3 class="wh__t">Чеклист</h3>
               <p class="wh__d">Чеклист отвечает за состав. Комплект из объявления лежит прямо на экране, сверять нужно с ним, а не по памяти: «Комплект полный?» → «Есть замечания» → «Не хватает HDMI кабеля, в объявлении указан». Это случай из интервью, только пойманный на встрече, а не через два дня.</p>
               <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
                 data-cf-src="assets/img/nearby/handoff-8-checklist.webp" data-cf-w="804" data-cf-h="2288"
                 data-cf-alt="Чеклист приёмки целиком: состав комплекта из объявления и три вопроса о состоянии, у комплекта отмечено замечание о нехватке HDMI-кабеля">Посмотреть экран целиком</button>
             </div>
-            <div class="wh__text" data-i="8">
+            <div class="wh__text" data-i="7">
               <h3 class="wh__t">Сводка</h3>
               <p class="wh__d">«2 пункта в порядке · 1 замечание». У замечания стоит пометка «Без фото» — и это не недосмотр: отсутствие предмета сфотографировать нельзя. Фото и чеклист отвечают за разное, поэтому требование фотофиксации здесь не нарушено.</p>
             </div>
-            <div class="wh__text" data-i="9">
+            <div class="wh__text" data-i="8">
               <h3 class="wh__t">Аренда началась</h3>
               <p class="wh__d">Замечание доехало до последнего экрана и осталось в сделке. Списано 949 ₽, залог 500 ₽ заморожен до возврата — деньги названы отдельно от аренды, чтобы «списали 1449» не выглядело ошибкой.</p>
             </div>
@@ -599,7 +622,7 @@
     <h3 class="cl__t" style="margin-top:40px">Замечание не теряется между экранами</h3>
     <p>Комплект заявлен в карточке, недостача поймана в чеклисте, замечание попало в сводку и осталось на экране начала аренды. Претензия живёт не в переписке, а в сделке — с датой и стороной, которая её зафиксировала.</p>
 
-    <p class="note" style="margin-top:56px">Экран прибытия в кейсе показан в варианте без геопозиции. Основной путь — автоматическая отметка; ручное подтверждение существует, чтобы отказ в доступе к геолокации не блокировал встречу.</p>
+    <p class="note" style="margin-top:56px">Шаг с отметкой о прибытии здесь не показан: единственный отснятый экран для него — вариант без геопозиции, с подтверждением вручную. Он относится к границам системы, а не к основному пути, и разобран в закрывающем блоке.</p>
   </section>
 
   <!-- ── 7. Возврат и спор ────────────────────────────────────────────── -->
@@ -610,9 +633,9 @@
 
     <p class="lead">Третий вывод исследования — стороны боятся в разные моменты. При выдаче рискует арендатор: вещь чужая, а отвечать за неё ему. При возврате рискует владелец: вещь возвращается, и повреждение обнаружит он. Вывод остался бы словами, если бы не превратился в структуру: фиксирует тот, кто боится.</p>
 
-    <p class="lead">Поэтому возврат показан двумя флоу сразу. Слева арендатор, справа владелец, шаг общий. Там, где у стороны экран не меняется, она в этот момент ничего не делает — и это видно без объяснений.</p>
+    <p class="lead">Поэтому возврат показан двумя флоу сразу: слева арендатор, справа владелец, шаг общий. Там, где у стороны экран не меняется, она в этот момент ничего не делает — и это видно без объяснений.</p>
 
-    <div class="wh wh--duo" id="wh-return" data-steps="11">
+    <div class="wh wh--duo" id="wh-return" data-steps="10">
       <div class="wh__stage">
         <div class="wh__col" aria-hidden="true">
           <p class="wh__role">Арендатор</p>
@@ -622,15 +645,14 @@
             <figure class="wh__screen" data-i="2"><img src="assets/img/nearby/return-r3-slot.webp" width="804" height="1748" loading="lazy" alt="Выбор окна возврата"></figure>
             <figure class="wh__screen" data-i="3"><img src="assets/img/nearby/return-r4-waiting.webp" width="804" height="1748" loading="lazy" alt="Ожидание владельца на месте возврата"></figure>
             <figure class="wh__screen" data-i="4"><img src="assets/img/nearby/return-r5-qr.webp" width="804" height="1748" loading="lazy" alt="QR-код арендатора для подтверждения встречи при возврате"></figure>
-            <figure class="wh__screen" data-i="5"><img src="assets/img/nearby/return-r6-qr-ok.webp" width="804" height="1748" loading="lazy" alt="Код принят, встреча при возврате подтверждена"></figure>
-            <figure class="wh__screen" data-i="6"><img src="assets/img/nearby/return-r7-inspection.webp" width="804" height="1748" loading="lazy" alt="Экран ожидания: владелец проверяет вещь и делает фото"></figure>
-            <figure class="wh__screen" data-i="10"><img src="assets/img/nearby/return-r8-success.webp" width="804" height="1748" loading="lazy" alt="Возврат завершён у арендатора: замечание о царапине сохранено, залог разморожен"></figure>
+            <figure class="wh__screen" data-i="5"><img src="assets/img/nearby/return-r7-inspection.webp" width="804" height="1748" loading="lazy" alt="Экран ожидания: владелец проверяет вещь и делает фото"></figure>
+            <figure class="wh__screen" data-i="9"><img src="assets/img/nearby/return-r8-success.webp" width="804" height="1748" loading="lazy" alt="Возврат завершён у арендатора: замечание о царапине сохранено, залог разморожен"></figure>
           </div>
         </div>
 
         <div class="wh__side">
           <p class="wh__tap">Нажмите на экран, чтобы открыть целиком</p>
-          <p class="wh__count"><span data-wh-now>1</span> / 11</p>
+          <p class="wh__count"><span data-wh-now>1</span> / 10</p>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
@@ -651,32 +673,28 @@
             </div>
             <div class="wh__text" data-i="4">
               <h3 class="wh__t">Код</h3>
-              <p class="wh__d">Встреча подтверждается тем же способом, что при выдаче. Механика повторяется намеренно: второй раз человек уже знает, что делать.</p>
+              <p class="wh__d">Встреча подтверждается тем же способом, что при выдаче — экран, сканирование, резервный код. Механика повторяется намеренно: второй раз человек уже знает, что делать. С этого шага роли расходятся, приёмку ведёт владелец.</p>
             </div>
             <div class="wh__text" data-i="5">
-              <h3 class="wh__t">Код принят</h3>
-              <p class="wh__d">Факт встречи зафиксирован. С этого шага роли расходятся: приёмку ведёт владелец.</p>
-            </div>
-            <div class="wh__text" data-i="6">
               <h3 class="wh__t">Фото</h3>
               <p class="wh__d">Снимает владелец. У арендатора на экране — «Александр проверяет вещь. Делает фото…», и дальше три шага подряд его экран не меняется. Это не пустое место в сценарии, а ответ на вопрос, кто здесь работает: тот, кто рискует.</p>
             </div>
-            <div class="wh__text" data-i="7">
+            <div class="wh__text" data-i="6">
               <h3 class="wh__t">Чеклист</h3>
               <p class="wh__d">Первые два вопроса те же, третий сменился: вместо «Внешне без повреждений?» — «Состояние как при выдаче?». Рядом лежат фото с выдачи и замечание про HDMI-кабель. Проверка привязана к зафиксированному состоянию, а не к тому, каким владелец вещь помнит.</p>
               <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
                 data-cf-src="assets/img/nearby/return-o8-checklist.webp" data-cf-w="804" data-cf-h="2392"
                 data-cf-alt="Чеклист возврата целиком: фото с выдачи, замечание при получении и три вопроса о состоянии, у третьего отмечена появившаяся царапина">Посмотреть экран целиком</button>
             </div>
-            <div class="wh__text" data-i="8">
+            <div class="wh__text" data-i="7">
               <h3 class="wh__t">Сводка</h3>
               <p class="wh__d">Владелец отметил царапину на крышке, но фото к ней не приложил — поле осталось пустым. Система это запомнит и через шаг предъявит ему же.</p>
             </div>
-            <div class="wh__text" data-i="9">
+            <div class="wh__text" data-i="8">
               <h3 class="wh__t">Решение</h3>
               <p class="wh__d">«Принять с замечаниями?» — замечания останутся в истории, залог разморозим. «Открыть спор» стоит вторичной кнопкой. Спокойный путь предложен по умолчанию, но второй не спрятан.</p>
             </div>
-            <div class="wh__text" data-i="10">
+            <div class="wh__text" data-i="9">
               <h3 class="wh__t">Готово</h3>
               <p class="wh__d">На финальном экране одновременно «Появилась царапина на крышке» и «Залог 500 ₽ разморожен». Система собрала доказательства, но решение за неё не приняла — это прямая противоположность Next2U, который заявлен арбитром в спорах, хотя данных для решения не собирает.</p>
             </div>
@@ -693,11 +711,11 @@
           <div class="wh__arc">
             <figure class="wh__screen" data-i="0"><img src="assets/img/nearby/return-o1-active.webp" width="804" height="1748" loading="lazy" alt="Активная аренда со стороны владельца"></figure>
             <figure class="wh__screen" data-i="3"><img src="assets/img/nearby/return-o4-onsite.webp" width="804" height="1798" loading="lazy" alt="Владелец на месте встречи для приёма вещи"></figure>
-            <figure class="wh__screen" data-i="6"><img src="assets/img/nearby/return-o7-photo.webp" width="804" height="1748" loading="lazy" alt="Владелец добавляет фото состояния вещи при возврате"></figure>
-            <figure class="wh__screen wh__screen--tall" data-i="7"><img src="assets/img/nearby/return-o8-checklist.webp" width="804" height="2392" loading="lazy" alt="Чеклист возврата: фото с выдачи, замечание при получении и вопрос, соответствует ли состояние выдаче"></figure>
-            <figure class="wh__screen" data-i="8"><img src="assets/img/nearby/return-o9-summary.webp" width="804" height="1748" loading="lazy" alt="Сводка приёмки у владельца с замечанием о царапине"></figure>
-            <figure class="wh__screen" data-i="9"><img src="assets/img/nearby/return-o10-confirm.webp" width="804" height="1748" loading="lazy" alt="Диалог «Принять с замечаниями?» с кнопкой принять и вторичной кнопкой открыть спор"></figure>
-            <figure class="wh__screen" data-i="10"><img src="assets/img/nearby/return-o11-success.webp" width="804" height="1748" loading="lazy" alt="Возврат завершён у владельца"></figure>
+            <figure class="wh__screen" data-i="5"><img src="assets/img/nearby/return-o7-photo.webp" width="804" height="1748" loading="lazy" alt="Владелец добавляет фото состояния вещи при возврате"></figure>
+            <figure class="wh__screen wh__screen--tall" data-i="6"><img src="assets/img/nearby/return-o8-checklist.webp" width="804" height="2392" loading="lazy" alt="Чеклист возврата: фото с выдачи, замечание при получении и вопрос, соответствует ли состояние выдаче"></figure>
+            <figure class="wh__screen" data-i="7"><img src="assets/img/nearby/return-o9-summary.webp" width="804" height="1748" loading="lazy" alt="Сводка приёмки у владельца с замечанием о царапине"></figure>
+            <figure class="wh__screen" data-i="8"><img src="assets/img/nearby/return-o10-confirm.webp" width="804" height="1748" loading="lazy" alt="Диалог «Принять с замечаниями?» с кнопкой принять и вторичной кнопкой открыть спор"></figure>
+            <figure class="wh__screen" data-i="9"><img src="assets/img/nearby/return-o11-success.webp" width="804" height="1748" loading="lazy" alt="Возврат завершён у владельца"></figure>
           </div>
         </div>
       </div>
@@ -707,31 +725,28 @@
 
     <p class="lead">Вещь возвращается владельцу в любом случае — она его. Спор не об этом, а о том, кто отвечает за царапину, которой при выдаче не было. К этому моменту у сервиса уже есть всё, что стороны зафиксировали сами.</p>
 
-    <div class="wh" id="wh-dispute" data-steps="3">
+    <p class="lead">Открывается спор из того же диалога, что показан шагом выше: отдельного входа «пожаловаться» нет, это продолжение приёмки, а не жалоба в пустоту.</p>
+
+    <div class="wh" id="wh-dispute" data-steps="2">
       <div class="wh__stage">
         <div class="wh__arc" aria-hidden="true">
-          <figure class="wh__screen" data-i="0"><img src="assets/img/nearby/dispute-1-entry.webp" width="804" height="1748" loading="lazy" alt="Вход в спор: принять с замечаниями или открыть спор"></figure>
-          <figure class="wh__screen wh__screen--tall" data-i="1"><img src="assets/img/nearby/dispute-2-report.webp" width="804" height="2150" loading="lazy" alt="Экран спора «Что мы уже знаем»: фото и замечания при выдаче 21.05 и при возврате 23.05, под замечанием о царапине плашка «без фото доказательств»"></figure>
-          <figure class="wh__screen wh__screen--tall" data-i="2"><img src="assets/img/nearby/dispute-3-pending.webp" width="804" height="2602" loading="lazy" alt="Спор отправлен в поддержку и ожидает рассмотрения"></figure>
+          <figure class="wh__screen wh__screen--tall" data-i="0"><img src="assets/img/nearby/dispute-2-report.webp" width="804" height="2150" loading="lazy" alt="Экран спора «Что мы уже знаем»: фото и замечания при выдаче 21.05 и при возврате 23.05, под замечанием о царапине плашка «без фото доказательств»"></figure>
+          <figure class="wh__screen wh__screen--tall" data-i="1"><img src="assets/img/nearby/dispute-3-pending.webp" width="804" height="2602" loading="lazy" alt="Спор отправлен в поддержку и ожидает рассмотрения"></figure>
         </div>
 
         <div class="wh__side">
           <p class="wh__tap">Нажмите на экран, чтобы открыть целиком</p>
-          <p class="wh__count"><span data-wh-now>1</span> / 3</p>
+          <p class="wh__count"><span data-wh-now>1</span> / 2</p>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
-              <h3 class="wh__t">Развилка</h3>
-              <p class="wh__d">Спор открывается из того же диалога, где предлагается закрыть сделку с замечаниями. Отдельного входа «пожаловаться» нет: спор — это продолжение приёмки, а не жалоба в пустоту.</p>
-            </div>
-            <div class="wh__text" data-i="1">
               <h3 class="wh__t">Что мы уже знаем</h3>
               <p class="wh__d">Две даты рядом: «При выдаче · 21.05» и «При возврате · 23.05», с фото и замечаниями обеих сторон. Спорить о том, была ли царапина, больше не о чем — вопрос только в том, когда она появилась.</p>
               <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
                 data-cf-src="assets/img/nearby/dispute-2-report.webp" data-cf-w="804" data-cf-h="2150"
                 data-cf-alt="Экран спора целиком: что мы уже знаем при выдаче и при возврате, фото, замечания и плашка «без фото доказательств»">Посмотреть экран целиком</button>
             </div>
-            <div class="wh__text" data-i="2">
+            <div class="wh__text" data-i="1">
               <h3 class="wh__t">Отправлено</h3>
               <p class="wh__d">Спор уходит в поддержку с собранными материалами. Решение принимает человек — сервис доводит до него факты, а не вердикт.</p>
               <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
