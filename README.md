@@ -46,6 +46,7 @@ js/
   timeline.js             — шкала сделки в кейсе Nearby
   evidence.js             — подсветка метки на шкале от карточки случая (Nearby)
   switcher.js             — вкладки с переезжающей пилюлей (Nearby)
+  wheel.js                — флоу по дуге: липкая сцена, шаг от позиции прокрутки (Nearby)
 docs/
   ACCENT_MARK.md          — как применять акцент .mark
 content/
@@ -59,6 +60,7 @@ case nearby/
   references/             — референсы механики подачи (свитчер, колесико)
 assets/
   img/                    — изображения
+  img/nearby/             — экраны кейса Nearby (webp, конвертация через npx sharp-cli)
   fonts/                  — Geist/Geist Mono woff2, только latin+cyrillic (~60KB суммарно)
 ```
 
