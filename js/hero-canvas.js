@@ -668,18 +668,40 @@
     schedule();
   }
 
-  /* На тач-устройствах click прилетает и после скролла-флика. Считаем жест
-     тапом только если палец почти не сдвинулся и не задержался. */
-  var dx0=0,dy0=0,dt0=0,moved=false;
+  /* Тап против скролла.
+
+     Первая версия гарда смотрела на pointermove: сдвинулся палец — значит не
+     тап. Но как только браузер решает, что жест это скролл, он забирает
+     указатель себе и перестаёт слать элементу pointermove, присылая вместо
+     него pointercancel. Флаг «палец двигался» так и оставался снятым, быстрый
+     флик укладывался в лимит времени — и каждый скролл по канвасу срабатывал
+     как клик. Проверялся ровно тот сигнал, который во время скролла и
+     отключается.
+
+     Поэтому теперь решает факт прокрутки, а не движение пальца: если страница
+     сдвинулась между касанием и отпусканием — это был скролл. Плюс короткий
+     карантин после последней прокрутки: click прилетает и по инерции, уже
+     после того, как палец оторван. */
+  var dx0=0,dy0=0,dt0=0,sy0=0,moved=false,lastScroll=0;
+
   if(touch){
+    window.addEventListener('scroll',function(){ lastScroll=Date.now(); },{passive:true});
+
     cv.addEventListener('pointerdown',function(e){
-      dx0=e.clientX; dy0=e.clientY; dt0=Date.now(); moved=false;
+      dx0=e.clientX; dy0=e.clientY; dt0=Date.now();
+      sy0=window.pageYOffset||0; moved=false;
     });
     cv.addEventListener('pointermove',function(e){
-      if(Math.abs(e.clientX-dx0)>10||Math.abs(e.clientY-dy0)>10) moved=true;
+      if(Math.abs(e.clientX-dx0)>8||Math.abs(e.clientY-dy0)>8) moved=true;
     });
+    /* жест отобран браузером под прокрутку — тапом он уже не станет */
+    cv.addEventListener('pointercancel',function(){ moved=true; });
+
     cv.addEventListener('click',function(){
-      if(moved||Date.now()-dt0>500) return;
+      if(moved) return;
+      if(Math.abs((window.pageYOffset||0)-sy0)>3) return;
+      if(Date.now()-lastScroll<400) return;
+      if(Date.now()-dt0>500) return;
       advance();
     });
   } else {
