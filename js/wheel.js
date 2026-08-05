@@ -19,9 +19,24 @@
     var now = wh.querySelector('[data-wh-now]');
     var btns = wh.querySelectorAll('[data-wh-dir]');
     var stage = wh.querySelector('.wh__stage');
+    var arcs = wh.querySelectorAll('.wh__arc');
     if (!screens.length || !stage) return;
 
-    var n = screens.length;
+    /* Дуг может быть две — сценарий возврата идёт двумя ролями сразу. Тогда
+       шаг общий, а экраны у сторон свои: у каждого экрана свой data-i, и на
+       шагах, где сторона ничего не делает, её экрана в разметке просто нет.
+       Число шагов в таком случае берём из data-steps, а не из числа
+       картинок: их больше, чем шагов, и в каждой дуге по-разному. */
+    var groups = [];
+    for (var g = 0; g < arcs.length; g++) {
+      var list = [], els = arcs[g].querySelectorAll('.wh__screen');
+      for (var e = 0; e < els.length; e++) {
+        list.push({ el: els[e], step: +els[e].getAttribute('data-i') });
+      }
+      if (list.length) groups.push({ arc: arcs[g], list: list });
+    }
+
+    var n = +wh.getAttribute('data-steps') || screens.length;
     var cur = -1;
     wh.style.setProperty('--steps', n);
     wh.classList.add('wh--on');
@@ -73,11 +88,22 @@
     function render(i) {
       if (i === cur) return;
       cur = i;
-      for (var s = 0; s < screens.length; s++) {
-        // is-on нужен узкому экрану: там дуги нет и всё, кроме активного
-        // экрана, прячется совсем. На десктопе класс ни на что не влияет.
-        screens[s].classList.toggle('is-on', s === i);
-        place(screens[s], s - i);
+      for (var g = 0; g < groups.length; g++) {
+        var list = groups[g].list;
+        // Активен последний экран, чей шаг уже наступил. Если у стороны на
+        // этом шаге экрана нет, held остаётся прежний — и это содержательно:
+        // пока владелец снимает и заполняет чеклист, у арендатора на экране
+        // не меняется ничего, потому что он ждёт.
+        var a = 0;
+        for (var k = 0; k < list.length; k++) if (list[k].step <= i) a = k;
+        for (k = 0; k < list.length; k++) {
+          // is-on нужен узкому экрану: там дуги нет и всё, кроме активного
+          // экрана, прячется совсем. На десктопе класс ни на что не влияет.
+          list[k].el.classList.toggle('is-on', k === a);
+          place(list[k].el, k - a);
+        }
+        // Сторона, которая на этом шаге не действует, приглушается целиком.
+        groups[g].arc.classList.toggle('is-idle', list[a].step !== i);
       }
       for (var t = 0; t < texts.length; t++) {
         texts[t].classList.toggle('is-on', t === i);

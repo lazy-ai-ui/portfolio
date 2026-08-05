@@ -79,6 +79,31 @@
     })(opens[i]);
   }
 
+  /* На телефоне экран флоу вынужденно мелкий: в высоту вьюпорта должны влезть
+     и картинка, и текст, и кнопки. Поэтому там сам экран открывается по
+     нажатию — размер перестаёт быть препятствием. На десктопе этого нет:
+     экран и так крупный, а случайный клик по картинке ничего не должен
+     делать. Размеры берём из атрибутов картинки, они стоят у всех экранов. */
+  var narrow = window.matchMedia('(max-width: 900px)');
+
+  document.addEventListener('click', function (e) {
+    if (!narrow.matches) return;
+    var fig = e.target.closest && e.target.closest('.wh__screen');
+    if (!fig || !fig.classList.contains('is-on')) return;
+    var img = fig.querySelector('img');
+    if (!img) return;
+    open({
+      getAttribute: function (a) {
+        if (a === 'data-cf-src') return img.getAttribute('src');
+        if (a === 'data-cf-alt') return img.getAttribute('alt');
+        if (a === 'data-cf-w') return img.getAttribute('width');
+        if (a === 'data-cf-h') return img.getAttribute('height');
+        return null;
+      },
+      focus: function () {}
+    });
+  });
+
   box.addEventListener('click', function (e) {
     // Клик мимо рамки закрывает. Внутри телефона — не закрывает: там
     // прокручивают карточку, и случайный клик не должен выбрасывать.
