@@ -42,17 +42,32 @@
     var roles = wh.querySelector('[data-wh-roles]');
     var roleBtns = roles ? roles.querySelectorAll('[data-wh-role]') : [];
     var cols = wh.querySelectorAll('.wh__col');
-    var sts = roles ? roles.querySelectorAll('[data-wh-st]') : [];
+    var st = roles ? roles.querySelector('[data-wh-st]') : null;
+    var rolePill = roles ? roles.querySelector('.sw__pill') : null;
+    var roleTabs = roles ? roles.querySelector('.sw__tabs') : null;
+    var roleAt = 0;
+
+    // Пилюля меряется по вкладке — ровно как в switcher.js: вкладки разной
+    // ширины, и на ровные 50% рассчитывать нельзя.
+    function movePill() {
+      if (!rolePill || !roleTabs || !roleBtns.length) return;
+      var tab = roleBtns[roleAt];
+      if (!tab.offsetWidth) return;   // переключатель скрыт — мерить нечего
+      rolePill.style.width = tab.offsetWidth + 'px';
+      rolePill.style.transform = 'translateX(' + (tab.offsetLeft - roleTabs.clientLeft) + 'px)';
+      rolePill.classList.add('on');
+    }
 
     function setRole(k, byUser) {
       if (!roles) return;
-      roles.setAttribute('data-at', String(k));
+      roleAt = k;
       for (var r = 0; r < roleBtns.length; r++) {
         var on = r === k;
         roleBtns[r].classList.toggle('is-on', on);
         roleBtns[r].setAttribute('aria-pressed', on ? 'true' : 'false');
       }
       for (var c = 0; c < cols.length; c++) cols[c].classList.toggle('is-side-on', c === k);
+      movePill();
       // Любое действие читателя отменяет автопоказ: он объясняет механику
       // тому, кто её не нашёл, а нашедшему только мешал бы.
       if (byUser) clearTimeout(hintTimer);
@@ -110,6 +125,7 @@
     function render(i) {
       if (i === cur) return;
       cur = i;
+      var waits = '';
       for (var g = 0; g < groups.length; g++) {
         var list = groups[g].list;
         // Активен последний экран, чей шаг уже наступил. Если у стороны на
@@ -127,12 +143,13 @@
         // Сторона, которая на этом шаге не действует, приглушается целиком.
         var idle = list[a].step !== i;
         groups[g].arc.classList.toggle('is-idle', idle);
-        // На узком экране приглушать нечего — видна одна сторона. Поэтому то
-        // же самое говорит подпись на переключателе: без неё, открыв экран
-        // арендатора на шагах приёмки, читатель не узнал бы, что тот ждёт, —
-        // а это и есть содержание блока.
-        if (sts[g]) sts[g].textContent = idle ? 'ждёт' : '';
+        // На узком экране приглушать нечего — видна одна сторона. То же самое
+        // говорит строка под переключателем: без неё, открыв экран арендатора
+        // на шагах приёмки, читатель не узнал бы, что тот ждёт, — а это и есть
+        // содержание блока.
+        if (idle && roleBtns[g]) waits = roleBtns[g].textContent;
       }
+      if (st) st.textContent = waits ? waits + ' ждёт' : '';
       for (var t = 0; t < texts.length; t++) {
         texts[t].classList.toggle('is-on', t === i);
       }
@@ -250,10 +267,13 @@
     // passive: обработчик ничего не отменяет, и браузер не ждёт его,
     // чтобы начать прокрутку.
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', fromScroll);
+    window.addEventListener('resize', function () { fromScroll(); movePill(); });
 
     render(0);
     fromScroll();
+    setRole(0);
+    // Первая установка пилюли — без проезда через всю ленту, как в switcher.js.
+    if (rolePill) setTimeout(function () { rolePill.classList.remove('no-anim'); }, 80);
     armHint();
 
     // Наружу для проверки: в панели предпросмотра прокрутка не применяется,
