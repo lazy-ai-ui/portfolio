@@ -95,13 +95,26 @@
 
     <article class="project project--flip">
       <a class="project__media" href="case-nearby.html" aria-label="Открыть кейс Nearby">
-        <!-- Пока без скриншотов: листы .sheet сами по себе — плашки цвета
-             тёмной и светлой темы, поэтому пустая пара читается как макет
-             в ожидании контента, а разворот по наведению работает уже сейчас.
-             Когда появятся картинки, они просто кладутся внутрь листов. -->
-        <div class="fan" aria-hidden="true">
-          <div class="sheet sheet--dark"></div>
-          <div class="sheet sheet--light"></div>
+        <!-- Флоу вместо обложки: четыре экрана сами проходят перед читателем.
+             Ролика как видеофайла здесь нет — те же webp, что в кейсе, только
+             мельче. Текст на экранах остаётся чётким, вес втрое меньше видео,
+             и автоплей не упирается в ограничения мобильных браузеров.
+
+             Соседние экраны видны по краям, как в колесике самого кейса: это
+             сразу говорит, что за карточкой лежит сценарий, а не один экран. -->
+        <div class="roll" aria-hidden="true" data-roll>
+          <figure class="roll__s" data-i="0">
+            <img src="assets/img/nearby/roll-1-feed.webp" width="480" height="1044" alt="" loading="lazy" decoding="async">
+          </figure>
+          <figure class="roll__s" data-i="1">
+            <img src="assets/img/nearby/roll-2-card.webp" width="480" height="1044" alt="" loading="lazy" decoding="async">
+          </figure>
+          <figure class="roll__s" data-i="2">
+            <img src="assets/img/nearby/roll-3-slot.webp" width="480" height="1044" alt="" loading="lazy" decoding="async">
+          </figure>
+          <figure class="roll__s" data-i="3">
+            <img src="assets/img/nearby/roll-4-checklist.webp" width="480" height="1366" alt="" loading="lazy" decoding="async">
+          </figure>
         </div>
       </a>
       <div class="project__body">
@@ -216,6 +229,7 @@
 <script src="js/hero-canvas.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/soon-canvas.js"></script>
+<script src="js/roll.js"></script>
 <script src="js/edge-canvas.js"></script>
 <script src="js/copy.js"></script>
 </body>
