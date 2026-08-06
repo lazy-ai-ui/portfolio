@@ -629,30 +629,59 @@
   list-style: none;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 40px;
+  /* Между карточками зазор меньше, чем был между колонками текста: границу
+     теперь держит подложка, а не воздух. */
+  gap: 20px;
 }
 
+/* Единственный блок кейса, где три пункта нужно охватить одним взглядом, а не
+   прочитать подряд, — поэтому здесь карточка с подложкой, а не пунктирная
+   отбивка, как у .tr и .cl. Тень мягкая и почти без смещения: приподнимает
+   карточку над тёплым фоном, но не превращает её в кнопку. */
+/* Подложка ровно та же, что у нижней навигации (.secnav__in в case.css):
+   полупрозрачное стекло с блюром, волосяной бордер и внутренний блик сверху.
+   Отличается только скругление — там пилюля по форме кнопок, здесь карточка. */
 .ch__i {
-  padding-top: 28px;
-  background-image: repeating-linear-gradient(to right,
-    rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
-  background-size: 100% 1px;
-  background-position: left top;
-  background-repeat: repeat-x;
+  padding: 26px 24px;
+  border-radius: 16px;
+  /* Плотнее навигации (там .66): та лежит на плывущем под ней контенте и
+     читается за счёт движения, а карточка стоит на ровном фоне — при той же
+     прозрачности она почти сливалась бы с ним. */
+  background: rgba(255, 255, 255, .82);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid rgba(11, 11, 12, .09);
+  box-shadow:
+    0 10px 32px rgba(11, 11, 12, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .7);
 }
 
-.ch__n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 7px;
-  border: 1px solid rgba(228, 87, 58, .42);
-  color: var(--accent);
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1;
+/* Без backdrop-filter стекло выродилось бы в мутное пятно — возвращаем
+   плотный фон, как это сделано для самой навигации. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ch__i { background: rgba(255, 255, 255, .95); }
+}
+
+/* Иконка вместо номера: три вызова читаются как набор, а не как
+   последовательность — порядок здесь ничего не значит. Линия в основном цвете
+   текста и без цветной плашки: карточка и так выделена подложкой, а акцент в
+   кейсе закреплён за номерами и ключевыми пометками. */
+.ch__ic {
+  display: block;
+  color: var(--ink);
+}
+
+/* block, иначе inline-svg получает отбивку под базовой линией и отступ до
+   заголовка оказывается больше заданного. */
+.ch__ic svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .ch__t {
@@ -672,7 +701,154 @@
 }
 
 @media (max-width: 900px) {
-  .ch { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .ch { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .ch__i { padding: 24px; }
+}
+
+/* ── Триады рассуждений ───────────────────────────────────────────────────
+   Четыре блока по всему кейсу («Три наблюдения», «Что решено намеренно»,
+   «Три решения блока», «Чего система не покрывает») были голыми h3 + абзац
+   в потоке. Номер в рамке — тот же, что у .ch__n и .cl__n, — превращает их
+   в счётный список и даёт скроллу якоря. Абзацы намеренно остались
+   абзацами: в карточках пришлось бы ужать текст вдвое, а контраст между
+   карточками на узлах и рассуждением в разборе — часть ритма кейса. */
+.tr {
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tr__i {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 0 20px;
+  align-items: start;
+  margin-top: 36px;
+  padding-top: 28px;
+  background-image: repeating-linear-gradient(to right,
+    rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
+  background-size: 100% 1px;
+  background-position: left top;
+  background-repeat: repeat-x;
+}
+
+.tr__i:first-child { margin-top: 0; }
+
+.tr__n {
+  grid-column: 1;
+  grid-row: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 7px;
+  border: 1px solid rgba(228, 87, 58, .42);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* Оптический сдвиг: строчная высота заголовка ниже рамки номера, без
+   поправки текст кажется приподнятым. */
+.tr__t {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 3px 0 0;
+  font-size: 22px;
+  line-height: 1.28;
+  font-weight: 500;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.tr__d {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 14px 0 0;
+  text-wrap: pretty;
+}
+
+@media (max-width: 900px) {
+  .tr__i { grid-template-columns: minmax(0, 1fr); }
+  .tr__n,
+  .tr__t,
+  .tr__d { grid-column: 1; }
+  .tr__n { grid-row: 1; }
+  .tr__t { grid-row: 2; margin-top: 16px; }
+  .tr__d { grid-row: 3; }
+}
+
+/* ── Сводка конкурентного анализа ─────────────────────────────────────────
+   Три цифры под таблицей: читатель, который таблицу не разбирал, всё равно
+   уносит вывод. Цифры не внешние — они посчитаны по строкам той же таблицы
+   выше, поэтому источник указан только там, где данные пришли снаружи. */
+.st {
+  margin: 56px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+}
+
+.st__i {
+  padding-top: 28px;
+  background-image: repeating-linear-gradient(to right,
+    rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
+  background-size: 100% 1px;
+  background-position: left top;
+  background-repeat: repeat-x;
+}
+
+.st__n {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(40px, 4.4vw, 58px);
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--accent);
+}
+
+/* «из 5» и «лет» — единица измерения, а не часть числа: тем же кеглем цифра
+   потеряла бы вес, ради которого блок и существует. */
+.st__of {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .08em;
+  color: var(--ink-3);
+  vertical-align: middle;
+}
+
+.st__t {
+  margin: 18px 0 0;
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.st__d {
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.st__src {
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+
+@media (max-width: 900px) {
+  .st { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 40px; }
 }
 
 /* ── Колесико: флоу по дуге ───────────────────────────────────────────────
@@ -701,22 +877,33 @@
   align-items: center;
 }
 
-/* Макет справа, текст слева. Порядок в разметке обратный — сначала экраны,
-   потом текст: без JS и без CSS кейс должен читаться как «картинка, потом
-   подпись к ней». Меняем местами сеткой, а не разметкой.
+/* Стороны чередуются: макет слева — макет справа — макет слева. Правило то
+   же, что держит лесенку проектов на главной (.project / .project--flip в
+   index.css), и начинается так же — с макета слева. Глаз не идёт по странице
+   одной вертикалью, а два колесика подряд с макетом на одной стороне не
+   сливаются в один длинный блок.
 
-   Правило то же, что держит лесенку проектов на главной: колонка с
-   изображением и колонка с текстом чередуются по сторонам, и глаз не идёт
-   по странице одной вертикалью. Два колесика подряд с макетом слева
-   читались как один длинный блок.
+   По умолчанию макет слева: в разметке .wh__arc идёт первым, потому что без
+   JS и CSS кейс должен читаться как «картинка, потом подпись к ней». Значит
+   естественный порядок сетки уже даёт нужную сторону, и переставлять надо
+   только колесики с .wh--right.
+
+   Колонки неравные — 1.35fr под макет против 1fr под текст, пропорция с
+   главной. Текст прижат к колонке с макетом (justify-self) и ограничен по
+   ширине: иначе подпись улетает к внешнему краю страницы, и между ней и
+   макетом, к которому она относится, оказывается вся ширина экрана.
 
    Колесико возврата не трогаем: там две дуги по краям и текст между ними,
    менять местами нечего. Медиазапрос обязателен: на телефоне у сцены своя
    сетка, а селектор здесь весит больше мобильного — без границы по ширине
    текст залезал бы в ряд макета. */
 @media (min-width: 901px) {
-  .wh:not(.wh--duo) .wh__stage > .wh__arc { grid-column: 2; }
-  .wh:not(.wh--duo) .wh__stage > .wh__side { grid-column: 1; grid-row: 1; }
+  .wh:not(.wh--duo) .wh__stage { grid-template-columns: 1.35fr minmax(0, 1fr); }
+  .wh:not(.wh--duo) .wh__side { max-width: 46ch; justify-self: start; }
+
+  .wh--right .wh__stage { grid-template-columns: minmax(0, 1fr) 1.35fr; }
+  .wh--right .wh__stage > .wh__arc { grid-column: 2; }
+  .wh--right .wh__stage > .wh__side { grid-column: 1; grid-row: 1; justify-self: end; }
 }
 
 /* Дуга. Экраны выкладываются абсолютно только после того, как модуль

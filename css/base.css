@@ -266,6 +266,17 @@ html.js-rv .rv--in{opacity:1;transform:none}
 .tbl caption{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--ink-2);padding:0 0 28px}
 
+/* Пока видна шапка, подпись набрана тем же моно-регистром и стоит прямо над
+   ней — две строки капителью подряд читаются как шапка, напечатанная дважды,
+   а во второй таблице подпись ещё и дословно повторяет названия колонок.
+   Ниже 760px thead скрыт (медиа-блок в конце файла), и подпись остаётся
+   единственным заголовком таблицы — поэтому скрываем только на широком
+   экране. Из разметки не убираем: по caption скринридер объявляет таблицу. */
+@media (min-width:761px){
+  .tbl caption{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+}
+
 .tbl th,.tbl td{vertical-align:top;padding:26px 24px 28px;font-weight:400}
 .tbl th:first-child,.tbl td:first-child{padding-left:0}
 .tbl th:last-child,.tbl td:last-child{padding-right:0}
