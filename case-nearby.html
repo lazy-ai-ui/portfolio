@@ -523,8 +523,8 @@
           </div>
 
           <div class="wh__nav">
-            <button class="wh__btn" type="button" data-wh-dir="-1">Назад</button>
-            <button class="wh__btn" type="button" data-wh-dir="1">Далее</button>
+            <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -602,8 +602,8 @@
           </div>
 
           <div class="wh__nav">
-            <button class="wh__btn" type="button" data-wh-dir="-1">Назад</button>
-            <button class="wh__btn" type="button" data-wh-dir="1">Далее</button>
+            <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>
       </div>
@@ -646,7 +646,6 @@
             <button class="sw__tab is-on" type="button" data-wh-role="0" aria-pressed="true">Арендатор</button>
             <button class="sw__tab" type="button" data-wh-role="1" aria-pressed="false">Владелец</button>
           </div>
-          <p class="wh__wait" data-wh-st></p>
         </div>
 
         <div class="wh__col is-side-on" aria-hidden="true">
@@ -664,6 +663,10 @@
 
         <div class="wh__side">
           <p class="wh__count"><span data-wh-now>1</span> / 10</p>
+          <!-- Состояние второй стороны. Стоит в нижней строке рядом со
+               счётчиком, а не под переключателем: сверху эта строка отнимала
+               высоту у самого макета, ради которого всё и переделывалось. -->
+          <p class="wh__wait" data-wh-st></p>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
@@ -722,8 +725,8 @@
           </div>
 
           <div class="wh__nav">
-            <button class="wh__btn" type="button" data-wh-dir="-1">Назад</button>
-            <button class="wh__btn" type="button" data-wh-dir="1">Далее</button>
+            <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>
 
@@ -776,8 +779,8 @@
           </div>
 
           <div class="wh__nav">
-            <button class="wh__btn" type="button" data-wh-dir="-1">Назад</button>
-            <button class="wh__btn" type="button" data-wh-dir="1">Далее</button>
+            <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>
       </div>

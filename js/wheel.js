@@ -42,7 +42,9 @@
     var roles = wh.querySelector('[data-wh-roles]');
     var roleBtns = roles ? roles.querySelectorAll('[data-wh-role]') : [];
     var cols = wh.querySelectorAll('.wh__col');
-    var st = roles ? roles.querySelector('[data-wh-st]') : null;
+    // Ищем по всему колесику, а не внутри переключателя: подпись стоит в
+    // нижней строке рядом со счётчиком, сверху она отнимала высоту у макета.
+    var st = wh.querySelector('[data-wh-st]');
     var rolePill = roles ? roles.querySelector('.sw__pill') : null;
     var roleTabs = roles ? roles.querySelector('.sw__tabs') : null;
     var roleAt = 0;
@@ -170,8 +172,19 @@
       var r = wh.getBoundingClientRect();
       var travel = wh.offsetHeight - stage.offsetHeight;
       if (travel <= 0) return;
-      var p = (-r.top) / travel;
-      var i = Math.round(p * (n - 1));
+      /* Зона нечувствительности. Раньше шаг был просто округлением позиции, и
+         на границе между шагами хватало нескольких пикселей в обратную
+         сторону, чтобы экран отскочил назад: палец на тач-скрине почти
+         никогда не идёт строго вниз, и на длинной прокрутке это ловилось
+         постоянно. Теперь шаг меняется, только если позиция ушла больше чем
+         на полшага, — дрожание руки в этот порог не попадает.
+
+         На последнем шаге это же правило снимает залипание, о котором просил
+         Фирдавс: дочитав до конца, читатель прокручивает страницу дальше, и
+         случайный ход вверх больше не возвращает его в середину сценария. */
+      var f = ((-r.top) / travel) * (n - 1);
+      var i = cur;
+      if (f > cur + .55 || f < cur - .55) i = Math.round(f);
       if (i < 0) i = 0;
       if (i > n - 1) i = n - 1;
       render(i);
