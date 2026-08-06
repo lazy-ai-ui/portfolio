@@ -887,7 +887,8 @@
 .wh__wait { display: none; }
 
 /* Шевроны — тоже мобильные: на десктопе у кнопок есть место на слова. */
-.wh__btn__i { display: none; }
+.wh__btn__i,
+.wh__flank { display: none; }
 
 .wh__nav {
   display: flex;
@@ -944,14 +945,24 @@
      вычитал, и кнопки шага уезжали под нижнюю навигацию. Отступы —
      их габариты плюс воздух: навбар 14px сверху + пилюля ~44px, нижняя
      навигация 12px снизу + пилюля ~44px. */
+  /* Три колонки: шеврон — макет — шеврон. Боковые колонки auto, поэтому
+     занимают ровно ширину кнопки, а макету достаётся всё остальное.
+
+     Сцена выходит из отступов страницы на всю ширину экрана: иначе средней
+     колонке остаётся 227px, а макету по высоте положено 258 — он вылезал бы
+     на шевроны. Заодно шевроны оказываются у самых краёв, где их и держит
+     большой палец. Текст отступы себе возвращает. */
   .wh__stage {
-    grid-template-columns: minmax(0, 1fr);
+    /* 20px — боковой отступ .wrap в base.css, другого значения у него нет
+       ни на одной ширине. */
+    margin-inline: -20px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-rows: minmax(0, 1fr) auto;
     height: 100svh;
     /* Обе фиксированные панели вычтены: навбар кончается на 49-м пикселе,
        нижняя навигация занимает 59 (пилюля 47 + отступ 12). Больше запаса не
        держим — каждый лишний пиксель здесь уходит из макета. */
-    padding: 55px 0 66px;
+    padding: 55px 6px 66px;
     gap: 10px;
     align-items: stretch;
   }
@@ -964,6 +975,13 @@
     height: auto;
     min-height: 0;
   }
+
+  /* Места в сетке для обычного колесика: макет в средней колонке, шевроны по
+     краям того же ряда, текст — во всю ширину под ними. */
+  .wh__stage > .wh__arc { grid-area: 1 / 2; }
+  .wh__flank--prev { grid-area: 1 / 1; }
+  .wh__flank--next { grid-area: 1 / 3; }
+  .wh__stage > .wh__side { grid-area: 2 / 1 / 3 / -1; }
 
   .wh--on .wh__arc {
     display: flex;
@@ -1050,16 +1068,19 @@
      «одна сторона работает, вторая ждёт» — переехало на сам переключатель
      подписью состояния, и видно даже когда открыт один экран. */
   .wh--duo .wh__stage {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-rows: auto minmax(0, 1fr) auto;
     /* Зазор приходится повторять: десктопное правило .wh--duo .wh__stage
        весит больше мобильного .wh__stage и молча возвращало 32px — два
        таких зазора съедали 44px высоты у макета. */
     gap: 10px;
   }
-  .wh--duo .wh__roles { grid-area: 1 / 1; }
-  .wh--duo .wh__col { grid-area: 2 / 1; }
-  .wh--duo .wh__side { grid-area: 3 / 1; }
+  /* У двух ролей рядов три: переключатель, макет с шевронами, текст. */
+  .wh--duo .wh__roles { grid-area: 1 / 1 / 2 / -1; }
+  .wh--duo .wh__col { grid-area: 2 / 2; }
+  .wh--duo .wh__flank--prev { grid-area: 2 / 1; }
+  .wh--duo .wh__flank--next { grid-area: 2 / 3; }
+  .wh--duo .wh__side { grid-area: 3 / 1 / 4 / -1; }
   .wh--duo .wh__col:not(.is-side-on) { display: none; }
   /* Роль подписана на переключателе — вторая подпись над экраном лишняя. */
   .wh--duo .wh__role { display: none; }
@@ -1094,30 +1115,62 @@
     text-overflow: ellipsis;
   }
 
-  /* Нижняя строка: счётчик и состояние слева, шевроны справа — одной полосой
-     вместо трёх этажей (счётчик над текстом, кнопки под ним). Три этажа
-     стоили около 40px, которые целиком уходили из макета. Порядок в разметке
-     остаётся десктопным, места назначены сеткой. */
+  /* Счётчик и состояние стороны — одной строкой над заголовком шага, через
+     буллит. Стояли внизу рядом с кнопками и вставали неровно: у моно-строк
+     разный кегль и разная базовая линия, а выравнивать их друг по другу
+     было не по чему. Над заголовком у них общая опора — его левый край. */
   .wh__side {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-rows: minmax(0, 1fr) auto;
-    align-items: end;
-    column-gap: 10px;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
-  .wh__texts { grid-area: 1 / 1 / 2 / -1; align-self: start; }
-  .wh__count { grid-area: 2 / 1; margin: 0; }
-  .wh__wait  { grid-area: 2 / 2; }
-  .wh__nav   { grid-area: 2 / 3; margin: 0; }
+  .wh__meta {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 0 10px;
+  }
 
-  /* Слова уступают место шевронам: кнопка становится кругом под палец,
-     44×44 — минимальная зона нажатия, и она же теперь занимает одну строку
-     вместе со счётчиком. Название остаётся в aria-label. */
-  .wh__btn__t { display: none; }
+  .wh__count { margin: 0; }
 
-  .wh__btn__i {
-    display: block;
+  .wh__wait::before {
+    content: '·';
+    margin-right: 8px;
+  }
+
+  /* Пустое состояние — не пустой буллит: на шагах, где действуют обе
+     стороны, строка состоит из одного счётчика. */
+  .wh__wait:empty { display: none; }
+
+  /* Кнопки со словами уступают место шевронам по бокам от макета —
+     см. .wh__flank ниже. */
+  .wh__nav { display: none; }
+
+  /* Шеврон стоит вплотную к макету, а не под текстом: орган управления рядом
+     с тем, чем управляет. 44×44 — минимальная зона нажатия под палец. */
+  .wh__flank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .wh__flank:disabled { color: var(--ink-3); cursor: default; }
+
+  .wh__flank:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wh__flank svg {
     width: 20px;
     height: 20px;
     fill: none;
@@ -1127,16 +1180,10 @@
     stroke-linejoin: round;
   }
 
-  .wh__btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-  }
-
-  .wh__side { max-width: none; min-width: 0; }
+  /* Текст возвращает себе отступы страницы, из которых вышла сцена:
+     6px уже добавила сама сцена, добираем 14 — итого те же 20, что у .wrap,
+     и заголовок шага стоит по одной вертикали с остальным текстом кейса. */
+  .wh__side { max-width: none; min-width: 0; padding-inline: 14px; }
 }
 
 /* Невысокий телефон (SE и подобные): текст занимает ту же высоту, а места

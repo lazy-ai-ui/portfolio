@@ -489,8 +489,16 @@
           <figure class="wh__screen" data-i="5"><img src="assets/img/nearby/booking-6-success.webp" width="804" height="1748" loading="lazy" alt="Подтверждение: заявка отправлена, статус можно отслеживать во вкладке сделок"></figure>
         </div>
 
+        <!-- Шевроны стоят по бокам от макета, а не под текстом: орган управления
+             рядом с тем, чем управляет. На десктопе их нет — там кнопки со словами
+             под текстом шага. -->
+        <button class="wh__flank wh__flank--prev" type="button" data-wh-dir="-1" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+        <button class="wh__flank wh__flank--next" type="button" data-wh-dir="1" aria-label="Далее"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+
         <div class="wh__side">
-          <p class="wh__count"><span data-wh-now>1</span> / 6</p>
+          <div class="wh__meta">
+            <p class="wh__count"><span data-wh-now>1</span> / 6</p>
+          </div>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
@@ -562,8 +570,16 @@
           <figure class="wh__screen" data-i="8"><img src="assets/img/nearby/handoff-10-success.webp" width="804" height="1748" loading="lazy" alt="Аренда началась: замечание о HDMI-кабеле сохранено, списано 949 рублей, залог 500 рублей заморожен до возврата"></figure>
         </div>
 
+        <!-- Шевроны стоят по бокам от макета, а не под текстом: орган управления
+             рядом с тем, чем управляет. На десктопе их нет — там кнопки со словами
+             под текстом шага. -->
+        <button class="wh__flank wh__flank--prev" type="button" data-wh-dir="-1" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+        <button class="wh__flank wh__flank--next" type="button" data-wh-dir="1" aria-label="Далее"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+
         <div class="wh__side">
-          <p class="wh__count"><span data-wh-now>1</span> / 9</p>
+          <div class="wh__meta">
+            <p class="wh__count"><span data-wh-now>1</span> / 9</p>
+          </div>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
@@ -676,12 +692,20 @@
           </div>
         </div>
 
+        <!-- Шевроны стоят по бокам от макета, а не под текстом: орган управления
+             рядом с тем, чем управляет. На десктопе их нет — там кнопки со словами
+             под текстом шага. -->
+        <button class="wh__flank wh__flank--prev" type="button" data-wh-dir="-1" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+        <button class="wh__flank wh__flank--next" type="button" data-wh-dir="1" aria-label="Далее"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+
         <div class="wh__side">
-          <p class="wh__count"><span data-wh-now>1</span> / 10</p>
-          <!-- Состояние второй стороны. Стоит в нижней строке рядом со
-               счётчиком, а не под переключателем: сверху эта строка отнимала
-               высоту у самого макета, ради которого всё и переделывалось. -->
-          <p class="wh__wait" data-wh-st></p>
+          <!-- Счётчик и состояние второй стороны идут одной строкой над
+               заголовком шага: под переключателем эта строка отнимала высоту
+               у самого макета, а внизу рядом с кнопками вставала неровно. -->
+          <div class="wh__meta">
+            <p class="wh__count"><span data-wh-now>1</span> / 10</p>
+            <p class="wh__wait" data-wh-st></p>
+          </div>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
@@ -773,8 +797,16 @@
           <figure class="wh__screen wh__screen--tall" data-i="1"><img src="assets/img/nearby/dispute-3-pending.webp" width="804" height="2602" loading="lazy" alt="Спор отправлен в поддержку и ожидает рассмотрения"></figure>
         </div>
 
+        <!-- Шевроны стоят по бокам от макета, а не под текстом: орган управления
+             рядом с тем, чем управляет. На десктопе их нет — там кнопки со словами
+             под текстом шага. -->
+        <button class="wh__flank wh__flank--prev" type="button" data-wh-dir="-1" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+        <button class="wh__flank wh__flank--next" type="button" data-wh-dir="1" aria-label="Далее"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+
         <div class="wh__side">
-          <p class="wh__count"><span data-wh-now>1</span> / 2</p>
+          <div class="wh__meta">
+            <p class="wh__count"><span data-wh-now>1</span> / 2</p>
+          </div>
 
           <div class="wh__texts">
             <div class="wh__text is-on" data-i="0">
