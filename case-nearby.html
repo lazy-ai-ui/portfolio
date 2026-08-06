@@ -886,31 +886,52 @@
 
     <h2 class="stub__t" style="margin-top:96px">Когда владелец не пришёл</h2>
 
-    <p class="lead">Самая частая тревога арендатора при возврате: вещь чужая, а человек не появился. Ветку показываю компактно — она важна, но не должна перевесить основную линию.</p>
+    <p class="lead">Самая частая тревога арендатора при возврате: вещь чужая, а человек не появился. Это тоже флоу, поэтому и показан он тем же способом, что передача и возврат.</p>
 
-    <ul class="chain">
-      <li class="chain__i">
-        <figure class="chain__ph">
-          <img src="assets/img/nearby/edge-1-delayed.webp" width="804" height="1748" loading="lazy" alt="Встреча задерживается: вы прождали 25 минут, товар остаётся у вас без штрафа за просрочку">
-        </figure>
-        <p class="chain__t">Цена ожидания снята сразу</p>
-        <p class="chain__d">«Вы прождали 25 минут. Товар остаётся у вас — без штрафа за просрочку». Это стоит выше любых кнопок: сначала снимается тревога, потом предлагается действие.</p>
-      </li>
-      <li class="chain__i">
-        <figure class="chain__ph">
-          <img src="assets/img/nearby/edge-2-reschedule.webp" width="804" height="1748" loading="lazy" alt="Перенос встречи: арендатор выбирает три удобных слота, владелец подтвердит один из них">
-        </figure>
-        <p class="chain__t">Ход делает тот, кто ждал</p>
-        <p class="chain__d">Арендатор предлагает три слота, владелец подтверждает один. Не переписка о том, кто когда сможет, а выбор из готового.</p>
-      </li>
-      <li class="chain__i">
-        <figure class="chain__ph">
-          <img src="assets/img/nearby/edge-3-scheduled.webp" width="804" height="1748" loading="lazy" alt="Встреча назначена на сегодня 17:00–18:00, аренда в статусе «Приостановлена»">
-        </figure>
-        <p class="chain__t">Тупика нет по умолчанию</p>
-        <p class="chain__d">Аренда уходит в статус «Приостановлена»: оплата не начисляется. Если владелец не ответит до срока, система назначит ближайший слот сама — молчание одной стороны не блокирует другую.</p>
-      </li>
-    </ul>
+    <div class="wh" id="wh-edge" data-steps="3">
+      <div class="wh__stage">
+        <div class="wh__arc" aria-hidden="true">
+          <figure class="wh__screen" data-i="0"><img src="assets/img/nearby/edge-1-delayed.webp" width="804" height="1748" loading="lazy" alt="Встреча задерживается: вы прождали 25 минут, товар остаётся у вас без штрафа за просрочку"></figure>
+          <figure class="wh__screen" data-i="1"><img src="assets/img/nearby/edge-2-reschedule.webp" width="804" height="1748" loading="lazy" alt="Перенос встречи: арендатор выбирает три удобных слота, владелец подтвердит один из них"></figure>
+          <figure class="wh__screen" data-i="2"><img src="assets/img/nearby/edge-3-scheduled.webp" width="804" height="1748" loading="lazy" alt="Встреча назначена на сегодня 17:00–18:00, аренда в статусе «Приостановлена»"></figure>
+        </div>
+
+        <!-- Шевроны стоят по бокам от макета, а не под текстом: орган управления
+             рядом с тем, чем управляет. На десктопе их нет — там кнопки со словами
+             под текстом шага. -->
+        <button class="wh__flank wh__flank--prev" type="button" data-wh-dir="-1" aria-label="Назад"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+        <button class="wh__flank wh__flank--next" type="button" data-wh-dir="1" aria-label="Далее"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+
+        <div class="wh__side">
+          <div class="wh__meta">
+            <p class="wh__count"><span data-wh-now>1</span> / 3</p>
+          </div>
+
+          <div class="wh__texts">
+            <div class="wh__text is-on" data-i="0">
+              <h3 class="wh__t">Цена ожидания снята сразу</h3>
+              <p class="wh__d">«Вы прождали 25 минут. Товар остаётся у вас — без штрафа за просрочку». Это стоит выше любых кнопок: сначала снимается тревога, потом предлагается действие.</p>
+              <p class="wh__d wh__d--s">«Вы прождали 25 минут. Товар остаётся у вас — без штрафа». Тревога снимается раньше любых кнопок.</p>
+            </div>
+            <div class="wh__text" data-i="1">
+              <h3 class="wh__t">Ход делает тот, кто ждал</h3>
+              <p class="wh__d">Арендатор предлагает три слота, владелец подтверждает один. Не переписка о том, кто когда сможет, а выбор из готового.</p>
+              <p class="wh__d wh__d--s">Арендатор предлагает три слота, владелец подтверждает один. Не переписка, а выбор из готового.</p>
+            </div>
+            <div class="wh__text" data-i="2">
+              <h3 class="wh__t">Тупика нет по умолчанию</h3>
+              <p class="wh__d">Аренда уходит в статус «Приостановлена»: оплата не начисляется. Если владелец не ответит до срока, система назначит ближайший слот сама — молчание одной стороны не блокирует другую.</p>
+              <p class="wh__d wh__d--s">Статус «Приостановлена», оплата не начисляется. Не ответит до срока — слот назначится сам: молчание одной стороны не блокирует другую.</p>
+            </div>
+          </div>
+
+          <div class="wh__nav">
+            <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <h2 class="stub__t" style="margin-top:96px">Чем бы это проверял</h2>
 
