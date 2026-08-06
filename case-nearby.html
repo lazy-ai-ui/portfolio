@@ -490,7 +490,6 @@
         </div>
 
         <div class="wh__side">
-          <p class="wh__tap">Нажмите на экран, чтобы открыть целиком</p>
           <p class="wh__count"><span data-wh-now>1</span> / 6</p>
 
           <div class="wh__texts">
@@ -558,7 +557,6 @@
         </div>
 
         <div class="wh__side">
-          <p class="wh__tap">Нажмите на экран, чтобы открыть целиком</p>
           <p class="wh__count"><span data-wh-now>1</span> / 9</p>
 
           <div class="wh__texts">
@@ -637,7 +635,18 @@
 
     <div class="wh wh--duo" id="wh-return" data-steps="10">
       <div class="wh__stage">
-        <div class="wh__col" aria-hidden="true">
+        <!-- Переключатель ролей живёт только на узком экране: там две дуги
+             рядом дают два экрана по 114–176px, которые нечем сравнивать.
+             Одна сторона крупно, вторая — за переключателем, а её состояние
+             («ждёт») подписано прямо на сегменте: тезис блока держится и
+             тогда, когда виден один экран. -->
+        <div class="wh__roles" data-wh-roles>
+          <span class="wh__roles__pill" aria-hidden="true"></span>
+          <button class="wh__roles__b is-on" type="button" data-wh-role="0" aria-pressed="true">Арендатор<span class="wh__roles__st" data-wh-st></span></button>
+          <button class="wh__roles__b" type="button" data-wh-role="1" aria-pressed="false">Владелец<span class="wh__roles__st" data-wh-st></span></button>
+        </div>
+
+        <div class="wh__col is-side-on" aria-hidden="true">
           <p class="wh__role">Арендатор</p>
           <div class="wh__arc">
             <figure class="wh__screen" data-i="0"><img src="assets/img/nearby/return-r1-active.webp" width="804" height="1748" loading="lazy" alt="Активная аренда у арендатора: срок, залог и частые вопросы о поломке и продлении"></figure>
@@ -651,7 +660,6 @@
         </div>
 
         <div class="wh__side">
-          <p class="wh__tap">Нажмите на экран, чтобы открыть целиком</p>
           <p class="wh__count"><span data-wh-now>1</span> / 10</p>
 
           <div class="wh__texts">
@@ -735,7 +743,6 @@
         </div>
 
         <div class="wh__side">
-          <p class="wh__tap">Нажмите на экран, чтобы открыть целиком</p>
           <p class="wh__count"><span data-wh-now>1</span> / 2</p>
 
           <div class="wh__texts">

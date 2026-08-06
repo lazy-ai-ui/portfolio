@@ -36,6 +36,28 @@
       if (list.length) groups.push({ arc: arcs[g], list: list });
     }
 
+    /* Переключатель ролей — только у колесика на две дуги и только на узком
+       экране (CSS его там же и показывает). Сегментов ровно два, они равны по
+       ширине, поэтому пилюля ездит на 100% и мерить нечего. */
+    var roles = wh.querySelector('[data-wh-roles]');
+    var roleBtns = roles ? roles.querySelectorAll('[data-wh-role]') : [];
+    var cols = wh.querySelectorAll('.wh__col');
+    var sts = roles ? roles.querySelectorAll('[data-wh-st]') : [];
+
+    function setRole(k, byUser) {
+      if (!roles) return;
+      roles.setAttribute('data-at', String(k));
+      for (var r = 0; r < roleBtns.length; r++) {
+        var on = r === k;
+        roleBtns[r].classList.toggle('is-on', on);
+        roleBtns[r].setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+      for (var c = 0; c < cols.length; c++) cols[c].classList.toggle('is-side-on', c === k);
+      // Любое действие читателя отменяет автопоказ: он объясняет механику
+      // тому, кто её не нашёл, а нашедшему только мешал бы.
+      if (byUser) clearTimeout(hintTimer);
+    }
+
     var n = +wh.getAttribute('data-steps') || screens.length;
     var cur = -1;
     wh.style.setProperty('--steps', n);
@@ -103,7 +125,13 @@
           place(list[k].el, k - a);
         }
         // Сторона, которая на этом шаге не действует, приглушается целиком.
-        groups[g].arc.classList.toggle('is-idle', list[a].step !== i);
+        var idle = list[a].step !== i;
+        groups[g].arc.classList.toggle('is-idle', idle);
+        // На узком экране приглушать нечего — видна одна сторона. Поэтому то
+        // же самое говорит подпись на переключателе: без неё, открыв экран
+        // арендатора на шагах приёмки, читатель не узнал бы, что тот ждёт, —
+        // а это и есть содержание блока.
+        if (sts[g]) sts[g].textContent = idle ? 'ждёт' : '';
       }
       for (var t = 0; t < texts.length; t++) {
         texts[t].classList.toggle('is-on', t === i);
@@ -140,6 +168,8 @@
 
     function goTo(i) {
       if (i < 0 || i > n - 1) return;
+      // Читатель уже листает сам — подсказывать нечего.
+      clearTimeout(hintTimer);
       if (narrow.matches) { render(i); return; }
       var travel = wh.offsetHeight - stage.offsetHeight;
       // Считаем от текущего положения на экране, а не через offsetTop:
@@ -184,6 +214,39 @@
       })(btns[b]);
     }
 
+    /* Автопоказ переключателя. Сегментированный контрол над экраном легко
+       принять за подпись, поэтому один раз он показывает себя сам: читатель
+       видит арендатора, через 5 секунд пилюля переезжает на владельца — и
+       становится понятно, что у шага две стороны.
+
+       Один раз за визит и только когда блок реально перед глазами: сработать
+       в невидимой части страницы значит потратить единственный показ впустую.
+       Щадящий режим механику не отменяет — она объясняет содержание, — но
+       переезд там мгновенный, за это отвечает CSS. */
+    var hintTimer = 0;
+    var HINT_KEY = 'nearby-roles-hint';
+
+    function armHint() {
+      if (!roles || !narrow.matches) return;
+      try { if (sessionStorage.getItem(HINT_KEY)) return; } catch (err) {}
+      if (!('IntersectionObserver' in window)) return;
+      var io = new IntersectionObserver(function (entries) {
+        for (var e = 0; e < entries.length; e++) {
+          if (!entries[e].isIntersecting) continue;
+          io.disconnect();
+          try { sessionStorage.setItem(HINT_KEY, '1'); } catch (err) {}
+          hintTimer = setTimeout(function () { setRole(1); }, 5000);
+        }
+      }, { threshold: .6 });
+      io.observe(stage);
+    }
+
+    for (var r = 0; r < roleBtns.length; r++) {
+      (function (btn, k) {
+        btn.addEventListener('click', function () { setRole(k, true); });
+      })(roleBtns[r], r);
+    }
+
     // passive: обработчик ничего не отменяет, и браузер не ждёт его,
     // чтобы начать прокрутку.
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -191,6 +254,7 @@
 
     render(0);
     fromScroll();
+    armHint();
 
     // Наружу для проверки: в панели предпросмотра прокрутка не применяется,
     // и без этого шаги не потрогать.

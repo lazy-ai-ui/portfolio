@@ -44,6 +44,16 @@
     }
   }
 
+  /* Подпись «Экран прокручивается» показываем, только если экран правда не
+     влезает в рамку. Постоянная подпись обещала прокрутку и на коротких
+     экранах — читатель тянул и ничего не происходило. Высота известна ещё до
+     загрузки картинки: width/height стоят у всех, браузер резервирует место
+     по пропорции. Перепроверяем по load — на случай, если атрибутов не будет. */
+  function markLong() {
+    if (!phone) return;
+    box.classList.toggle('is-long', phone.scrollHeight - phone.clientHeight > 8);
+  }
+
   function open(from) {
     warm(from);
     show(from);
@@ -53,6 +63,9 @@
     // Карточка всегда открывается сверху: читатель только что смотрел на
     // её первый экран в сценарии, и продолжение должно совпасть с ним.
     if (phone) phone.scrollTop = 0;
+    markLong();
+    var im = phone && phone.querySelector('img');
+    if (im && !im.complete) im.addEventListener('load', markLong, { once: true });
     var x = box.querySelector('[data-cf-close]');
     if (x) x.focus();
   }
