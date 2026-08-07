@@ -16,3 +16,10 @@ case nearby/**/desktop.ini
 .zcode/
 # локальные бекапы перед крупными правками — в деплой и в историю не нужны
 .backup/
+
+# NMT methodology (external, not part of the site)
+Next-Move-Theory-Canon/
+.claude/skills/nmt-*/
+.claude/skills/*-CONTRACT.md
+
+Skills-Results/
