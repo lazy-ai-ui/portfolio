@@ -413,6 +413,25 @@ function init(anno,DATA){
     openTip(tip,tips[i].dataset.side);
     reveal(tip);
     setHint();
+    panTo(i);
+  }
+
+  /* В полноэкранном режиме на телефоне сцена шире экрана и ездит вбок:
+     дашборд в 350px нечитаем, поэтому там он развёрнут до 1100px. Значит
+     следующая точка запросто оказывается за кадром, и без подводки кнопка
+     «Вперёд» выглядит сломанной — аннотация открылась, а где она, непонятно.
+
+     Считать смещение руками не выходит: следом за открытием выноски идёт
+     reveal(), который тоже двигает контейнер, и ручная арифметика по
+     scrollLeft разъезжалась с ним. scrollIntoView отдаёт расчёт браузеру,
+     а block:'nearest' держит вертикаль на месте — едем только вбок. */
+  function panTo(i){
+    var box=anno.closest('.shade');
+    if(!box || box.scrollWidth<=box.clientWidth) return;
+    if(!spots[i].scrollIntoView) return;
+    spots[i].scrollIntoView({
+      behavior:reduce?'auto':'smooth', block:'nearest', inline:'center'
+    });
   }
 
   /* ---------- связь со шторкой «было / стало» ---------- */
@@ -488,6 +507,15 @@ function init(anno,DATA){
     shade.classList.add('on');
     modalOpen=true;
     full.textContent='Свернуть ⤡';
+
+    /* Увеличенный просмотр — это разговор про новый экран: аннотации живут
+       на нём. Если шторка ещё стоит на старом (а на входе она стоит именно
+       там, и уезжает только после автопроезда), то все точки помечены
+       is-covered и выключены — тап по ним не делает ровно ничего, и режим
+       выглядит сломанным. Поэтому на открытии уводим шторку сами.
+       Проверка на cmpBox обязательна: экран поиска шторки не имеет, и без
+       неё его «Развернуть» дёргало бы шторку соседнего блока. */
+    if(cmpBox) document.dispatchEvent(new CustomEvent('cmp:reveal',{detail:{x:30}}));
   }
 
   function closeModal(){

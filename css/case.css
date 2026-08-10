@@ -8,7 +8,7 @@
 
 .brief{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
 .brief__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 16px}
+  color:var(--ink-label);margin:0 0 16px}
 .brief__t{font-family:var(--display);font-weight:500;font-size:clamp(19px,1.85vw,25px);
   line-height:1.38;letter-spacing:-.015em;margin:0;text-wrap:pretty}
 .brief__t--dim{color:var(--ink-2)}
@@ -17,14 +17,14 @@
 .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;
   margin:44px 0 0;padding:24px 0 0;border-top:1px solid var(--hair)}
 .meta dt{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 10px}
+  color:var(--ink-label);margin:0 0 10px}
 .meta dd{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink);margin:0;line-height:1.85}
 
 /* ---- section chrome ---- */
 .labelrow{margin:96px 0 40px}
 
 /* ---- overview ---- */
-.ov{display:grid;grid-template-columns:1.85fr 1fr;gap:20px;align-items:stretch}
+.ov{display:grid;grid-template-columns:1.85fr 1fr;gap:20px;align-items:start}
 .ov__shots{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:20px}
 .shot{border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--hair);
   box-shadow:0 18px 44px rgba(11,11,12,.08)}
@@ -33,12 +33,18 @@
 .shot--empty{aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;
   background:#EFEDEA;box-shadow:none}
 .shot--empty span{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-3)}
+  color:var(--ink-label)}
 /* подпись показываем, только если картинку не удалось загрузить */
 .shot > span{display:none}
 .shot--empty > span{display:block}
 
-.facts{display:grid;grid-template-rows:repeat(3,1fr);gap:20px}
+/* Карточки больше не растягиваются под высоту скриншотов: три ряда по 1fr
+   давали 381px коробки на 115px содержимого, и колонка читалась как три
+   пустые плашки. Теперь высота своя, а колонка прилипает — пока листаешь
+   два высоких экрана, цифры остаются перед глазами. Так пустота становится
+   поведением, а не дырой. */
+.facts{display:grid;grid-template-rows:repeat(3,auto);gap:20px;
+  position:sticky;top:96px;align-self:start}
 /* без ховера: карточка ничего не открывает, подъём обещал бы клик */
 .fact{background:var(--surface);border:1px solid var(--hair);border-radius:16px;
   padding:26px 24px;display:flex;flex-direction:column;justify-content:center}
@@ -46,7 +52,7 @@
   color:var(--ink);margin:0 0 14px}
 .fact__v{font-family:var(--display);font-weight:600;font-size:clamp(34px,3.6vw,52px);
   letter-spacing:-.04em;line-height:1;margin:0 0 14px}
-.fact__v small{font-size:.42em;font-weight:500;letter-spacing:-.01em;color:var(--ink-3);
+.fact__v small{font-size:.42em;font-weight:500;letter-spacing:-.01em;color:var(--ink-label);
   vertical-align:.28em;margin-right:.12em}
 .fact__d{font-size:14px;line-height:1.55;color:var(--ink-2);margin:0;text-wrap:pretty}
 
@@ -82,7 +88,7 @@
   padding:28px 28px 30px}
 .jtbd__card .pill{display:inline-block;margin:0 0 22px}
 .jtbd__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 8px}
+  color:var(--ink-label);margin:0 0 8px}
 .jtbd__t{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0;text-wrap:pretty}
 /* стрелка держит цепочку: из задачи следует требование, из него — решение */
 .jtbd__arrow{font-family:var(--mono);font-size:14px;line-height:1;color:var(--accent);
@@ -101,7 +107,7 @@
 .stub{padding:0}
 .stub__t{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.8vw,36px);
   letter-spacing:-.03em;margin:0 0 12px;text-wrap:balance}
-.stub__d{font-size:15px;color:var(--ink-3);margin:0}
+.stub__d{font-size:15px;color:var(--ink-label);margin:0}
 
 /* ---------- кратко о кейсе ----------
    Кейсы длинные, и это осознанно: доказательства занимают место. Но длина не
@@ -116,14 +122,14 @@
    понадобился и в RackTables: два кейса — уже общий словарь. */
 .tldr{margin:64px 0 0;padding:28px 0 0;border-top:1px solid var(--hair)}
 .tldr__k{margin:0 0 20px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--ink-3)}
+  text-transform:uppercase;color:var(--ink-label)}
 .tldr__l{margin:0}
 .tldr__l > div{display:grid;grid-template-columns:132px minmax(0,1fr);gap:0 44px;padding:14px 0;
   background-image:linear-gradient(to right,var(--ink-3) 2px,transparent 2px);
   background-size:7px 1px;background-repeat:repeat-x;background-position:0 0}
 .tldr__l > div:first-child{background-image:none}
 .tldr__l dt{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-3);padding-top:4px}
+  color:var(--ink-label);padding-top:4px}
 .tldr__l dd{margin:0;font-size:17px;line-height:1.5;color:var(--ink);text-wrap:pretty}
 .tldr__go{margin:24px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
   text-transform:uppercase}
@@ -147,7 +153,7 @@
 .steps li{counter-increment:s;display:grid;grid-template-columns:24px minmax(0,1fr);gap:0 12px;
   align-content:start;font-size:17px;line-height:1.5;color:var(--ink);text-wrap:pretty}
 .steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:10px;
-  letter-spacing:.16em;color:var(--ink-3);padding-top:6px}
+  letter-spacing:.16em;color:var(--ink-label);padding-top:6px}
 /* итог шага — во вторую колонку, под названием, тем же кеглем, что и подписи */
 .steps li span{grid-column:2;display:block;margin-top:5px;font-size:14px;line-height:1.55;
   color:var(--ink-2)}
@@ -162,7 +168,7 @@
 .req__k{margin:0 0 6px;font-family:var(--display);font-weight:500;font-size:17px;
   letter-spacing:-.015em;color:var(--ink)}
 .req__d{margin:0 0 22px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--ink-3)}
+  text-transform:uppercase;color:var(--ink-label)}
 .req__list{margin:0;padding:0;list-style:none;counter-reset:r}
 .req__list li{counter-increment:r;display:grid;grid-template-columns:24px minmax(0,1fr);
   gap:0 12px;padding:15px 0;font-size:15px;line-height:1.6;color:var(--ink-2);
@@ -172,7 +178,7 @@
   background-size:100% 1px;background-position:left top;background-repeat:repeat-x}
 .req__list li:first-child{background-image:none;padding-top:0}
 .req__list li::before{content:counter(r,decimal-leading-zero);font-family:var(--mono);
-  font-size:10px;letter-spacing:.16em;color:var(--ink-3);padding-top:5px}
+  font-size:10px;letter-spacing:.16em;color:var(--ink-label);padding-top:5px}
 @media (max-width:760px){
   .req{grid-template-columns:minmax(0,1fr);gap:40px 0;margin-top:52px}
 }
@@ -183,7 +189,7 @@
    держат кегль и разделители, а не смена фона. */
 .outcome{padding:8px 0 0;color:var(--ink)}
 .outcome__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 22px}
+  color:var(--ink-label);margin:0 0 22px}
 /* 26ch хватало короткому тезису RackTables, но длинный ломался в четыре
    строки и вставал узким столбиком у левого края. 38ch держит те же две-три
    строки при любой длине; balance доводит их до равной длины. */
@@ -193,7 +199,7 @@
 .outcome__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;
   padding-top:40px;border-top:1px solid var(--hair)}
 .outcome__h{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 20px}
+  color:var(--ink-label);margin:0 0 20px}
 
 /* колонка с непроверенным — лёгкая карточка, статус вынесен в плашку,
    а не в цвет заголовка: акцент точечный, не заливка целого блока */
@@ -217,7 +223,7 @@
 .outcome__foot{display:flex;align-items:center;justify-content:space-between;gap:20px;
   flex-wrap:wrap;margin-top:52px;padding-top:26px;border-top:1px solid var(--hair)}
 .outcome__foot p{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-3);margin:0}
+  color:var(--ink-label);margin:0}
 .outcome__links{display:flex;flex-wrap:wrap;gap:12px 28px}
 .outcome__links a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
   color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink-3);
@@ -283,7 +289,8 @@
 
 @media (max-width:1000px){
   .ov{grid-template-columns:1fr}
-  .facts{grid-template-columns:repeat(3,1fr);grid-template-rows:auto}
+  /* колонка легла в строку под скриншотами — липнуть ей больше некуда */
+  .facts{grid-template-columns:repeat(3,1fr);grid-template-rows:auto;position:static}
 }
 @media (max-width:900px){
   .chead{padding-top:24px}
@@ -296,6 +303,16 @@
   .secnav{bottom:12px;padding:0 10px;justify-content:flex-start}
   .secnav a{padding:10px 13px;font-size:10px;letter-spacing:.1em}
   .tail{height:120px}
+}
+
+/* Шесть разделов не помещались в 355px: полоса уезжала вбок, и первым за
+   край уходил «Обзор» — без всякого намёка, что её можно листать. Ужимаем
+   отбивки и трекинг ровно настолько, чтобы влезли все шесть, и прокрутка
+   пропадает вместе со скрытым пунктом. Высоту в 33px не трогаем: минимум
+   по размеру цели она проходит, а 44px превратили бы пилюлю в панель. */
+@media (max-width:420px){
+  .secnav__in{gap:2px;padding:5px}
+  .secnav a{padding:10px 8px;letter-spacing:.05em}
 }
 
 /* ---------- блок «Интервью» ---------- */
@@ -321,7 +338,7 @@
 .tbl--cmp .tbl__who{display:block;font-family:var(--display);font-weight:500;font-size:17px;
   letter-spacing:-.015em;color:var(--ink);text-transform:none}
 .tbl--cmp .tbl__who small{display:block;margin-top:6px;font-family:var(--mono);font-size:10px;
-  letter-spacing:.16em;color:var(--ink-3)}
+  letter-spacing:.16em;color:var(--ink-label)}
 .tbl--cmp th[scope=row]{width:132px}
 .tbl--cmp td{width:calc((100% - 132px) / 2)}
 
@@ -353,7 +370,7 @@
   .ivsum{grid-template-columns:minmax(0,1fr);row-gap:18px;padding-top:22px}
   .ivsum__c,.ivsum__c:last-child{padding:0}
   .ivsum__who{display:block;margin:0 0 7px;font-family:var(--mono);font-size:10px;
-    letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+    letter-spacing:.16em;text-transform:uppercase;color:var(--ink-label)}
 }
 
 /* цитата — голосом респондента, поэтому крупнее и не приглушённая */
@@ -363,7 +380,15 @@
 /* вывод из интервью: отбивка меньше секционной, чтобы читался как часть
    блока «Интервью», а не как новый раздел */
 .iv__sub{margin-top:64px}
-.iv__ins{margin-top:34px}
+/* Колонку инсайтов ставим на ту же вертикаль, что и пунктир между
+   респондентами: таблица делит ширину как 132px + две равные, а список по
+   умолчанию — как две равные с зазором 44px, и вертикали расходились на 44px.
+   Зазор в 132px даёт колонки той же ширины, что у респондентов, и правая
+   встаёт ровно под пунктир. */
+.iv__ins{margin-top:34px;column-gap:132px}
+@media (max-width:760px){
+  .iv__ins{column-gap:0}
+}
 .iv__note{margin-top:52px}
 
 /* ---------- конкурентный анализ ---------- */
@@ -385,6 +410,28 @@
   .tbl--market th,.tbl--market td{padding:20px 12px 22px}
 }
 
+/* Аналоги раскладываем в карточки раньше остальных таблиц. Общий порог в
+   base.css — 760px, и он верен для таблицы респондентов: у неё две колонки,
+   и на 800px в них по 284px. У аналогов колонок вчетверо больше, на тех же
+   800px выходит по 153px — 18–20 символов в строке и ячейки в 10–12 строк.
+   Место кончается вдвое раньше, значит и порог у них свой.
+   Правила повторяют блок из base.css: общего механизма «сложить эту таблицу
+   на другой ширине» в проекте нет, а заводить его ради одного случая дороже,
+   чем продублировать девять строк. */
+@media (min-width:761px) and (max-width:1000px){
+  .tbl.tbl--market table,.tbl.tbl--market tbody,.tbl.tbl--market tr,
+  .tbl.tbl--market th,.tbl.tbl--market td{display:block;width:auto}
+  .tbl.tbl--market thead{display:none}
+  .tbl.tbl--market caption{display:block;width:auto}
+  .tbl.tbl--market tbody tr{padding:20px 0 24px}
+  .tbl.tbl--market th[scope=row]{width:auto;padding:0 0 14px}
+  .tbl.tbl--market td{width:auto;padding:0 0 18px;font-size:15px}
+  .tbl.tbl--market td:last-child{padding-bottom:0}
+  .tbl.tbl--market td::before{content:attr(data-col);display:block;
+    font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-label);margin-bottom:7px}
+}
+
 @media (max-width:760px){
   .tbl--q{margin-bottom:48px}
   .tbl--q th{width:56px}
@@ -400,15 +447,19 @@
    Живёт прямо на аннотированном макете: сцена одна, шторка одновременно
    показывает разницу и открывает аннотации нового экрана. */
 .cmp{--pos:0%}
-/* старый экран — маленький скриншот другой пропорции, поэтому вписываем
-   целиком, а не режем по краям */
+/* Старый экран шире нового: 1903x976 против 2200x1564, то есть 1.95 против
+   1.41. При contain он вписывался целиком, и сверху с снизу оставалось по
+   полосе подложки в 156px, а сами интерфейсы шли в разном масштабе — стык
+   шторки не совмещал ни одной горизонтали, и приём распадался на две
+   картинки рядом. Режем по правому краю: масштаб сторон сходится, а левая
+   часть, которую шторка и показывает, остаётся целой. */
 .cmp__before{position:absolute;inset:0;z-index:1;
   clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
-.anno__frame .cmp__before img{object-fit:contain;background:#E9E6E2}
+.anno__frame .cmp__before img{object-fit:cover;object-position:left top;background:#E9E6E2}
 .cmp__before span{display:none}
 .cmp__before.is-missing{display:flex;align-items:center;justify-content:center;background:#E9E6E2}
 .cmp__before.is-missing span{display:block;font-family:var(--mono);font-size:11px;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-label);white-space:nowrap}
 
 .cmp__tag{position:absolute;top:14px;z-index:2;
   font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
@@ -434,11 +485,14 @@
 .cmp__bar:focus-visible{outline:none}
 .cmp__bar:focus-visible span{outline:2px solid var(--ink);outline-offset:3px}
 
-/* Вводная строка раздела: держим в одну строку на десктопе,
-   поэтому без ограничения по ширине — текст короткий сам по себе. */
-/* balance, а не pretty: выравнивает строки между собой, поэтому на узком
-   экране не остаётся короткого «хвоста» в две трети строки */
-.lead{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0 0 32px;text-wrap:balance}
+/* Вводная строка раздела. Ширину держим по мере, а не по колонке: без неё
+   строка растягивалась на все 1280px, а это 130–157 символов при норме 45–75,
+   и глаз терял начало следующей строки. 62ch — та же мера, что у оговорки.
+   pretty, а не balance: balance выравнивает строки между собой и хорош для
+   заголовка в две-три строки, а это абзац — здесь важнее убрать висячее
+   слово в конце. */
+.lead{font-size:15px;line-height:1.62;color:var(--ink-2);margin:0 0 32px;
+  max-width:62ch;text-wrap:pretty}
 
 /* ---- ссылка на кликабельный прототип ----
    Стоит после ленты шагов: сначала проходишь флоу как читатель, а желание
@@ -550,11 +604,16 @@
    решение» здесь нет, поэтому и отбивки снизу быть не должно */
 .tip__t--one{margin:0}
 .tip__k2{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 8px}
+  color:var(--ink-label);margin:0 0 8px}
 .tip__t2{font-size:14px;line-height:1.55;color:var(--ink-2);margin:0;text-wrap:pretty}
 
-.anno__bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 0}
-.anno__hint{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-3);margin:0;
+/* Панель шире кадра выглядит как элемент страницы, а не как управление
+   макетом: подпись и кнопки уезжали на четверть экрана от краёв рамки.
+   Та же формула ширины, что у .anno__stage, поэтому края совпадают
+   попиксельно при любой пропорции экрана. */
+.anno__bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0 0;
+  max-width:min(100%, calc(var(--shot-fit) * var(--shot-r)));margin-inline:auto;width:100%}
+.anno__hint{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-label);margin:0;
   white-space:nowrap}
 .anno__nav{display:flex;gap:8px}
 /* стрелка не должна отрываться от слова — иначе кнопка ломается на две строки */
@@ -575,8 +634,8 @@
 /* .anno переезжает внутрь как есть — точки, выноски и кнопки едут с ним */
 .shade > .anno{width:100%;--shot-fit:78vh}
 .shade > .anno--search{--shot-fit:82vh}
-.shade .anno__bar{max-width:min(100%, calc(var(--shot-fit) * var(--shot-r)));
-  margin-inline:auto;width:100%}
+/* ширину панели больше не переопределяем: базовое правило .anno__bar само
+   считает её от --shot-fit, а здесь --shot-fit просто другой */
 /* На широком экране выноска всплывает прямо на макете, нижняя не нужна.
    На узком — она единственный способ прочитать аннотацию, поэтому внутри
    модалки её обязательно оставляем (раньше пряталась и клик «не работал»). */
@@ -593,6 +652,36 @@ body.shade-open{overflow:hidden}
   .shade{padding:12px;align-items:flex-start;overflow-y:auto;
     -webkit-overflow-scrolling:touch}
   .shade > .anno{margin:auto 0}
+
+  /* Полноэкранный режим на телефоне давал 351px против 335px в потоке —
+     кнопка «Развернуть» не давала ничего. Причина в том, что кадр упирался
+     в ширину экрана, а дашборд шириной 2200px в 350px нечитаем в принципе.
+     Поэтому здесь кадр перестаёт влезать в экран и разворачивается до
+     ширины, на которой подписи различимы, а подложка возит его вбок.
+     Точки и выноски позиционируются в процентах от сцены, поэтому едут
+     вместе с макетом и остаются на своих местах. */
+  /* justify-content:center здесь обязателен к отмене: при центрировании
+     флексом ребёнок шире контейнера вылезает за оба края, и левая часть
+     становится недостижимой прокруткой — уезжает в отрицательные координаты. */
+  .shade{overflow-x:auto;justify-content:flex-start}
+  .shade > .anno{width:max-content}
+  /* Высоту кадра задаём явно, ширину считает aspect-ratio. Раньше здесь
+     стояла ширина в 1100px, кадр занимал экран целиком, и выноска уходила
+     под нижний край: тап по точке показывал объяснение метров на девятьсот
+     ниже — со стороны выглядело, будто аннотация не работает вовсе.
+     Теперь под кадром обязаны поместиться панель и выноска, а увеличение
+     идёт настолько, насколько это оставляет им место. */
+  .shade .anno__stage{width:auto;height:50vh;max-width:none}
+  /* Панель и выноска остаются по ширине экрана: возить их вбок незачем, а
+     выноска иначе растягивалась на всю сцену в 1100px и уезжала за левый
+     край вместе с ней — текст аннотации было просто не прочитать. */
+  /* margin-inline:auto из базового правила здесь центрировал бы панель по
+     сцене в 1100px и уводил её за правый край — прижимаем к левому. */
+  .shade .anno__bar,.shade .anno__mobile{position:sticky;left:0;
+    width:calc(100vw - 24px);max-width:none;margin-inline:0}
+
+  /* пальцем по кнопке в 37px попадать неудобно, а места под панелью хватает */
+  .anno__nav button{min-height:44px}
 }
 @media (prefers-reduced-motion: reduce){ .shade{transition:none} }
 
@@ -679,11 +768,11 @@ body.shade-open{overflow:hidden}
 .flow__step:focus-visible .flow__t{outline:2px solid var(--accent);outline-offset:4px}
 
 .flow__n{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 8px}
+  color:var(--ink-label);margin:0 0 8px}
 .flow__t{font-family:var(--display);font-weight:500;font-size:17px;line-height:1.3;
-  letter-spacing:-.015em;color:var(--ink-3);margin:0 0 8px;
+  letter-spacing:-.015em;color:var(--ink-label);margin:0 0 8px;
   transition:color .22s ease;text-wrap:balance}
-.flow__d{font-size:14px;line-height:1.62;color:var(--ink-3);margin:0;max-width:48ch;
+.flow__d{font-size:14px;line-height:1.62;color:var(--ink-label);margin:0;max-width:48ch;
   transition:color .22s ease;text-wrap:pretty}
 /* активный шаг набирает контраст, остальные уходят в фон */
 .flow__step.on .flow__t{color:var(--ink)}
@@ -729,7 +818,7 @@ body.shade-open{overflow:hidden}
 .claim{margin:44px 0 0;padding:28px;border:1px solid var(--hair);border-radius:16px;
   background:var(--surface)}
 .claim__k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);margin:0 0 14px}
+  color:var(--ink-label);margin:0 0 14px}
 .claim__t{font-family:var(--display);font-weight:500;font-size:clamp(17px,1.6vw,21px);
   line-height:1.45;letter-spacing:-.01em;margin:0;text-wrap:pretty}
 .claim__t b{color:var(--accent);font-weight:500}

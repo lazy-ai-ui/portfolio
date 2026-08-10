@@ -105,7 +105,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
 .nav a{position:relative;
   font-family:var(--mono);font-size:var(--pill-fs);line-height:var(--pill-lh);
   letter-spacing:.16em;text-transform:uppercase;
-  text-decoration:none;color:var(--ink-3);transition:color .2s}
+  text-decoration:none;color:var(--ink-label);transition:color .2s}
 .nav a:focus-visible{color:var(--ink)}
 @media (hover: hover){
   .nav a:hover{color:var(--ink)}
@@ -250,7 +250,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
 
 .labelrow{display:flex;flex-direction:column;gap:16px;margin-bottom:56px}
 .sect__label,.work__label,.about__label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--ink-3);margin:0}
+  text-transform:uppercase;color:var(--ink-label);margin:0}
 
 /* ---- таблицы ----------------------------------------------------------
    Не коробка с рамками, а сетка на самом фоне страницы: строки разделены
@@ -283,7 +283,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
 
 /* шапка: только мелкая моно-подпись, без заливки */
 .tbl thead th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ink-3);padding-top:0;padding-bottom:18px}
+  color:var(--ink-label);padding-top:0;padding-bottom:18px}
 
 /* Разделитель строк — тот же род, но на ступень тише секционного .rule:
    квадраты 5px с шагом 12 → штрихи 2px с шагом 7, высота 5px → 1px,
@@ -308,7 +308,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
 
 /* подпись строки слева */
 .tbl__k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-3);white-space:nowrap}
+  color:var(--ink-label);white-space:nowrap}
 
 /* итоговая строка — то, ради чего таблицу и читают */
 .tbl__sum td{color:var(--ink)}
@@ -333,5 +333,5 @@ html.js-rv .rv--in{opacity:1;transform:none}
   .tbl.tbl--stack td:last-child{padding-bottom:0}
   .tbl.tbl--stack td::before{content:attr(data-col);display:block;
     font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink-3);margin-bottom:7px}
+    color:var(--ink-label);margin-bottom:7px}
 }
