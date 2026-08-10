@@ -2,10 +2,10 @@
    селекторов побеждает этот файл, см. грабли в PROJECT_CONTEXT.md. */
 
 /* ── Карточки случаев ─────────────────────────────────────────────────────
-   Таблицы здесь нет намеренно: её колонка «когда выяснилось» повторяла бы
-   ось шкалы. Сравнение по времени уже сделано выше, поэтому карточке
-   остаётся то, чего на шкале нет, — что именно произошло и слова человека.
-   Ничего не спрятано: цитата видна сразу, наводить никуда не нужно. */
+   Здесь только то, что произошло, и слова самого человека. Шага сделки в
+   карточке нет: он назван в лиде выше одной строкой, отдельная шкала под
+   это не окупалась. Ничего не спрятано: цитата видна сразу, наводить
+   никуда не нужно. */
 
 .ev {
   display: grid;
@@ -28,8 +28,8 @@
   background-repeat: repeat-x;
 }
 
-/* Номер — тот же квадрат, что метка на шкале, поэтому связь читается
-   без легенды. */
+/* Номер нумерует случаи, чтобы на них можно было ссылаться в тексте
+   («в третьем владелец знал»). */
 .ev__n {
   display: inline-flex;
   align-items: center;
@@ -55,6 +55,19 @@
   font-size: 17px;
   line-height: 1.4;
   color: var(--ink);
+}
+
+/* Исход сделки стоит в заголовке карточки, а не в подписи внизу: читатель
+   должен знать его до цитаты, иначе цитата читается вслепую. Буллит-разделитель
+   рисуется псевдоэлементом, чтобы не зависеть от пробелов в разметке. */
+.ev__st {
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.ev__st::before {
+  content: "•";
+  margin: 0 .5em 0 .15em;
+  color: var(--ink-3);
 }
 
 .ev__d {
@@ -1525,285 +1538,32 @@
   color: var(--ink);
 }
 
-/* ── Шкала сделки ────────────────────────────────────────────────────────
-   Показывает, на каком шаге пути ломались реальные сделки. Движение здесь
-   не декоративное: линия рисуется слева направо, и метки садятся в правой
-   половине — читатель видит закономерность раньше, чем прочитает вывод. */
+/* Строка в «Если коротко» шла на 1049px — около 123 знаков при комфортных
+   60–75. Пока в ячейках стояло по одному тезису, это сходило с рук; с тремя
+   предложениями глаз теряет начало следующей строки, а этот блок обязан
+   сканироваться. Ограничение в ch, а не в пикселях: считаем знаки, а не ширину.
+   Пустота справа — нормальная плата, так свёрстаны длинные кейсы. */
+.tldr__l dd { max-width: 64ch; }
 
-.tl {
-  margin: 56px 0 40px;
-}
+/* В case.css выделение в шапке кейса сделано цветом акцента при том же весе.
+   Здесь нужно наоборот: вес, а не цвет — акцент в шапке спорит с цветными
+   элементами ниже и читается как ссылка. Переопределяем только для Nearby. */
+.chead .brief__t b { color: inherit; font-weight: 700; }
 
-/* Полоса с делениями. Высота фиксирована: внутри абсолютные дети, и на
-   мобилке родителю нельзя ставить static — улетят к .shade (см. грабли). */
-.tl__track {
-  position: relative;
-  height: 164px;
-}
+/* Типографика прозы — по нижним блокам кейса, где всё в порядке: .claim__d,
+   .flow__d и .phase__d стоят на pretty с явным max-width. У .lead в case.css
+   стоял balance — он выравнивает строки по длине и на трёх строках даёт рваный
+   правый край, из-за чего лид под заголовком выглядел сломанным. Ширина 72ch —
+   как у .claim__d, чтобы абзац и утверждение читались одной колонкой. */
+.lead { text-wrap: pretty; }
 
-/* Зона, после которой отступать поздно. Заголовок стоит над осью, а не
-   внутри полосы: на оси в этом месте сидит метка, и подпись налезала на неё.
-   Появляется после линии, поэтому задержка больше, чем у самой линии. */
-.tl__late {
-  position: absolute;
-  left: 55%;
-  right: 0;
-  top: 34px;
-  bottom: 0;
-  background: rgba(228, 87, 58, .05);
-  border-left: 1px dashed rgba(228, 87, 58, .45);
-  opacity: 0;
-  transition: opacity .5s ease .75s;
-}
-
-.tl__late-k {
-  position: absolute;
-  left: 0;
-  top: 4px;
-  padding-left: 12px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--accent);
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity .5s ease .75s;
-}
-
-.tl.is-in .tl__late-k { opacity: 1; }
-
-/* Сама ось. Пунктир — тот же словарь, что у разделителей секций. */
-.tl__line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 92px;
-  height: 3px;
-  background-image: radial-gradient(circle, rgba(11, 11, 12, .30) 1.5px, transparent 1.6px);
-  background-size: 12px 3px;
-  background-repeat: repeat-x;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform .8s cubic-bezier(.22, .61, .36, 1);
-}
-
-.tl__stages {
-  position: absolute;
-  inset: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.tl__stage {
-  position: absolute;
-  top: 104px;
-  left: var(--x);
-  transform: translate(-50%, 6px);
-  opacity: 0;
-  transition: opacity .45s ease, transform .45s ease;
-  transition-delay: calc(.28s + var(--i) * .07s);
-  font-size: 13px;
-  line-height: 1.3;
-  color: rgba(11, 11, 12, .58);
-  text-align: center;
-  white-space: nowrap;
-}
-
-/* Засечка под каждым делением — связывает подпись с осью. */
-.tl__stage::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -12px;
-  width: 1px;
-  height: 8px;
-  background: rgba(11, 11, 12, .30);
-}
-
-/* Метки случаев. Квадрат с коралловым контуром — тот же элемент, что
-   номер строки в таблицах, поэтому связь «метка → строка» читается сама. */
-.tl__mark {
-  position: absolute;
-  top: 92px;
-  left: var(--x);
-  width: 22px;
-  height: 22px;
-  margin: -11px 0 0 -11px;
-  display: grid;
-  place-items: center;
-  border-radius: 5px;
-  background: var(--bg);
-  border: 1.5px solid var(--accent);
-  color: var(--accent);
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1;
-  opacity: 0;
-  transform: translateY(-14px) scale(.7);
-  /* Задержка задана по свойствам, а не общим transition-delay: она нужна
-     только появлению (метки садятся после того, как нарисовалась ось).
-     Если повесить её на всё сразу, ховер начинает срабатывать через
-     секунду — особенно заметно при уходе курсора. Цвет реагирует без
-     задержки и с той же длительностью, что номер карточки (.ev__n),
-     поэтому подсветка в двух местах идёт синхронно. */
-  transition:
-    opacity .4s ease calc(.9s + var(--i) * .13s),
-    transform .5s cubic-bezier(.34, 1.4, .64, 1) calc(.9s + var(--i) * .13s),
-    background-color .18s ease,
-    color .18s ease,
-    box-shadow .18s ease;
-}
-
-/* Метка случая, на карточку которого сейчас наведён курсор.
-   Класс вешает js/evidence.js. */
-.tl__mark.is-on {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 0 0 4px rgba(228, 87, 58, .14);
-}
-
-.tl__cap {
-  margin-top: 8px;
-  font-size: 13px;
-  color: rgba(11, 11, 12, .58);
-}
-
-/* Запуск: класс вешает js/timeline.js после появления блока в кадре. */
-.tl.is-in .tl__line { transform: scaleX(1); }
-.tl.is-in .tl__late { opacity: 1; }
-.tl.is-in .tl__stage { opacity: 1; transform: translate(-50%, 0); }
-.tl.is-in .tl__mark { opacity: 1; transform: translateY(0) scale(1); }
-
-/* Мобилка — не уменьшенный десктоп: подписи делений не помещаются в ряд,
-   поэтому ось разворачивается в вертикальную. */
-/* Мобильная шкала — не повёрнутая десктопная, а своя раскладка.
-
-   Что было сломано: метки стояли в той же колонке, что ось и подписи, и
-   ложились на текст; полоса «отступать поздно» начиналась посреди строки и
-   накрывала подписи; её заголовок сидел внутри полосы и сталкивался с
-   делениями. Плюс проценты не сходились: деления лежали в гриде с зазором
-   18px, а метки позиционировались долей высоты — центры строк при непустом
-   gap на эти доли не приходятся (арифметика сходится только при gap: 0).
-
-   Решение: у меток своя колонка справа, зазор строк убран в их собственные
-   отступы, заголовок зоны вынесен над её верхней границей — в правый угол,
-   где выше 55% ничего нет. Точные позиции меток сохранены: случай 1 стоит
-   между «Договорённостью» и «Встречей», а не притянут к строке. */
-@media (max-width: 720px) {
-  .tl__track {
-    height: auto;
-    /* Слева место под ось, справа — колонка меток. Вертикальных отступов
-       нет намеренно: от верха padding-box считаются проценты меток, и
-       любой отступ сверху сдвинул бы их все. */
-    padding: 0 46px 0 34px;
-  }
-
-  .tl__line {
-    left: 10px;
-    right: auto;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    height: auto;
-    background-size: 3px 12px;
-    background-repeat: repeat-y;
-    transform: scaleY(0);
-    transform-origin: center top;
-  }
-
-  .tl.is-in .tl__line { transform: scaleY(1); }
-
-  .tl__late {
-    left: 0;
-    right: 0;
-    top: 55%;
-    bottom: 0;
-    border-left: 0;
-    border-top: 1px dashed rgba(228, 87, 58, .45);
-  }
-
-  /* Заголовок зоны — над её верхней границей и прижат вправо: выше 55% в
-     колонке меток пусто, а подписи делений левее и туда не достают. Внутри
-     полосы он неизбежно садился на строку. */
-  .tl__late-k {
-    left: auto;
-    right: 0;
-    top: auto;
-    bottom: 100%;
-    margin-bottom: 8px;
-    padding-left: 0;
-  }
-
-  .tl__stages {
-    position: static;
-    display: grid;
-    gap: 0;
-  }
-
-  /* Зазор строк — их собственный padding, а не gap: только так центры пяти
-     равных строк приходятся ровно на 10/30/50/70/90% высоты, и метки
-     встают напротив своих делений. 18px на строку заодно разводят метки
-     60% и 70% так, чтобы квадраты не касались друг друга. */
-  .tl__stage {
-    position: relative;
-    left: auto;
-    top: auto;
-    padding: 18px 0;
-    transform: translateY(6px);
-    text-align: left;
-    white-space: normal;
-  }
-
-  .tl__stage::before { display: none; }
-
-  .tl.is-in .tl__stage { transform: translateY(0); }
-
-  /* Метки — соседи списка делений, а не его дети, поэтому позицию по
-     вертикали берут из той же переменной: на десктопе это доля ширины,
-     здесь — доля высоты. Своя колонка справа: в общей они ложились на
-     подписи, а связь «метка → карточка» на телефоне держится только
-     номером — ховера тут нет. */
-  .tl__mark {
-    position: absolute;
-    top: var(--x);
-    left: auto;
-    right: 0;
-    margin: -11px 0 0;
-    transform: translateX(10px) scale(.7);
-  }
-
-  .tl.is-in .tl__mark { transform: translateX(0) scale(1); }
-}
-
-/* Движение выключается целиком: содержание от него не зависит. */
-@media (prefers-reduced-motion: reduce) {
-  .tl__line { transform: none; transition: none; }
-  .tl__late,
-  .tl__stage,
-  .tl__mark { opacity: 1; transform: none; transition: none; }
-  .tl__stage { transform: translate(-50%, 0); }
-  .tl__mark { transform: none; }
-}
-
-@media (prefers-reduced-motion: reduce) and (max-width: 720px) {
-  .tl__stage { transform: none; }
-}
-
-/* ---------- утверждение над «Если коротко» ----------
-   Одна строка, ради которой существует весь кейс. Крупнее списка под ней,
-   но не заголовок: это тезис, а не название раздела. Ширина ограничена
-   в ch, а не в пикселях — на широком экране строка в 130 знаков не читается. */
-.tldr__t {
-  margin: 0 0 28px;
-  max-width: 34ch;
-  font-size: 26px;
-  line-height: 1.25;
-  letter-spacing: -.01em;
-  color: var(--ink);
-  text-wrap: balance;
-}
+#problem > p,
+#problem > .lead,
+#research > p,
+#research > .lead { max-width: 72ch; }
 @media (max-width: 760px) {
-  .tldr__t { max-width: none; font-size: 21px; margin-bottom: 24px; }
+  #problem > p,
+  #problem > .lead,
+  #research > p,
+  #research > .lead { max-width: none; }
 }

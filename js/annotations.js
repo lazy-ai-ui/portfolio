@@ -6,39 +6,62 @@
    ячейки, смыкаются без зазоров и белеют до цвета --surface — в этот момент
    под ними включается настоящий фон выноски, и подмена не видна. */
 (function(){
-  var stage=document.getElementById('annoStage');
-  if(!stage) return;
-
-  var hint=document.getElementById('annoHint');
-  var prev=document.getElementById('annoPrev');
-  var next=document.getElementById('annoNext');
-  var full=document.getElementById('annoFull');
-  var mob=document.getElementById('annoMobile');
-  var anno=document.getElementById('anno');
-
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var ASSEMBLE=540, DISASSEMBLE=365, HANDOFF=190;
 
-  var DATA=[
+  /* Аннотированных экранов на странице несколько, поэтому тексты лежат
+     здесь по id блока, а сама механика запускается для каждого своя.
+     Выноска бывает двух видов: пара «инсайт и решение» на главном экране
+     и одна строка там, где экран говорит сам за себя. */
+  var SETS={};
+
+  SETS.anno=[
     { x:27, y:20,
-      insight:'Пользователь приходит в систему за оценкой состояния, а не за изучением структуры.',
-      solution:'Infrastructure Health: четыре ключевых показателя с пометкой, что именно не так — сразу на входе.' },
+      insight:'Инженер заходит узнать, всё ли в порядке, а не изучать структуру дата-центра.',
+      solution:'Infrastructure Health прямо на входе: четыре показателя и пометка, что именно не так.' },
     { x:43, y:5,
-      insight:'Человек заранее знает, что ищет, но вынужден идти в обход через навигацию и разделы.',
-      solution:'Глобальный поиск по IP, имени, VLAN и тегу — с любого известного параметра, а не только по точному названию.' },
+      insight:'Инженер заранее знает, что ищет, но добирается до этого через разделы и навигацию.',
+      solution:'Поиск по IP, имени, VLAN и тегу: искать можно по любому известному параметру, а не только по точному названию.' },
     { x:50, y:50,
-      insight:'При инциденте информацию приходится собирать вручную из нескольких источников.',
-      solution:'Alerts, Audit Log и Capacity на одном уровне: что случилось, кто менял конфиг и насколько загружены стойки.' },
+      insight:'При инциденте картину приходится собирать руками из разных мест.',
+      solution:'Alerts, Audit Log и Capacity рядом: что случилось, кто менял конфиг, насколько загружены стойки.' },
     { x:52, y:85,
-      insight:'Пользователи возвращаются к одним и тем же объектам и повторяют одни и те же действия.',
+      insight:'Инженер возвращается к тем же объектам и повторяет те же действия.',
       solution:'Continue working и Quick actions: последние объекты и частые операции в один клик, без навигации.' }
   ];
+
+  SETS.annoSearch=[
+    { x:49, y:3,
+      line:'Достаточно ввести кусок информации, и система сама сориентирует, с чем работал недавно.' },
+    { x:27, y:30,
+      line:'Результаты разложены по типам, а не свалены в один список: видно, где адрес, где устройство, где стойка.' },
+    { x:27, y:47,
+      line:'Сразу понятно, сколько всего нашлось и куда идти дальше, если нужен весь список.' }
+  ];
+
+  document.querySelectorAll('.anno').forEach(function(root){
+    var set=SETS[root.id];
+    if(set) init(root,set);
+  });
+
+function init(anno,DATA){
+  var stage=anno.querySelector('.anno__stage');
+  if(!stage) return;
+
+  var hint=anno.querySelector('.anno__hint');
+  var prev=anno.querySelector('[data-anno-prev]');
+  var next=anno.querySelector('[data-anno-next]');
+  var full=anno.querySelector('[data-anno-full]');
+  var mob=anno.querySelector('.anno__mobile');
 
   var cur=-1;          /* -1 — ничего не открыто */
   var spots=[], tips=[];
 
   function bodyHTML(d){
+    if(d.line){
+      return '<div class="tip__body"><p class="tip__t tip__t--one">'+d.line+'</p></div>';
+    }
     return '<div class="tip__body">'+
              '<p class="tip__k">Инсайт из интервью</p>'+
              '<p class="tip__t">'+d.insight+'</p>'+
@@ -358,6 +381,13 @@
   function go(i){
     i=(i+DATA.length)%DATA.length;
 
+    /* точка ещё под старым экраном — просим шторку доехать до неё,
+       и на время проезда запрещаем автозакрытие */
+    if(spots[i].classList.contains('is-covered')){
+      revealGuard=Date.now()+700;
+      document.dispatchEvent(new CustomEvent('cmp:reveal',{detail:{x:DATA[i].x}}));
+    }
+
     if(cur>-1 && cur!==i){
       var p=cur;
       spots[p].classList.remove('on');
@@ -383,6 +413,28 @@
     openTip(tip,tips[i].dataset.side);
     reveal(tip);
     setHint();
+  }
+
+  /* ---------- связь со шторкой «было / стало» ---------- */
+  /* Аннотация принадлежит новому экрану, поэтому появляется ровно тогда,
+     когда шторка до неё дошла, и гаснет, если её снова закрыли старым. */
+  var cmpBox=anno.querySelector('.cmp');
+  var revealGuard=0;
+
+  function applyCover(p){
+    DATA.forEach(function(d,i){
+      var covered = d.x-1.2 < p;      /* точка левее шторки: её закрыл старый экран */
+      spots[i].classList.toggle('is-covered',covered);
+      spots[i].disabled=covered;
+      if(covered && cur===i && Date.now()>revealGuard) close();
+    });
+  }
+
+  /* экран без шторки: точки видны всегда */
+  if(cmpBox){
+    document.addEventListener('cmp:pos',function(e){ applyCover(e.detail.pos); });
+    var startPos=parseFloat(cmpBox.dataset.pos);
+    applyCover(isNaN(startPos) ? 0 : startPos);
   }
 
   prev.addEventListener('click',function(e){ e.stopPropagation(); go(cur<0?DATA.length-1:cur-1); });
@@ -465,6 +517,7 @@
   });
 
   setHint();
+}
 })();
 
 /* оговорка «что ещё стоит проверить» */

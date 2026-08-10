@@ -404,67 +404,57 @@
   <section id="solution">
     <div class="labelrow"><p class="sect__label">Решение</p><hr class="rule"></div>
 
-    <h2 class="stub__t">Что было до</h2>
-    <p class="lead">Экран открывался каталогом разделов — <span class="mark">оценки состояния на входе</span> не было.</p>
-
-    <div class="cmp" id="cmp">
-      <div class="cmp__stage">
-        <img src="assets/img/case-dashboard-light.webp" alt="Главный экран после редизайна"
-             width="2200" height="1564" loading="lazy" decoding="async">
-        <div class="cmp__before">
-          <img src="assets/img/racktables-before.webp" alt="Главный экран RackTables до редизайна"
-               width="1903" height="976" loading="lazy" decoding="async"
-               onerror="this.closest('.cmp__before').classList.add('is-missing');this.remove()">
-          <span>скриншот «до» не подложен</span>
-        </div>
-        <span class="cmp__tag cmp__tag--before">Было</span>
-        <span class="cmp__tag cmp__tag--after">Стало</span>
-        <button class="cmp__bar" id="cmpBar" type="button" role="slider"
-                aria-label="Сравнение экрана до и после редизайна"
-                aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-          <span aria-hidden="true">↔</span>
-        </button>
-      </div>
-    </div>
-
     <h2 class="stub__t">Главный экран отвечает на четыре вопроса, с которыми в систему заходят</h2>
-    <p class="lead">Каждая аннотация — барьер из интервью и то, как он закрыт.</p>
+    <p class="lead">Раньше главный экран был просто каталогом из 12 разделов без контекста, и непонятно, с чего начать. Теперь он сразу даёт оценку состояния дата-центра, показывает активные проблемы и позволяет сразу перейти к недавним действиям.</p>
 
     <div class="anno" id="anno">
       <div class="anno__stage" id="annoStage">
-        <div class="anno__frame">
-          <img src="assets/img/case-dashboard-light.webp" alt="Главный экран RackTables с аннотациями"
+        <div class="anno__frame cmp" id="cmp">
+          <img src="assets/img/case-dashboard-light.webp" alt="Главный экран RackTables после редизайна, с аннотациями"
                width="2200" height="1564" decoding="async">
+          <div class="cmp__before">
+            <img src="assets/img/racktables-before.webp" alt="Главный экран RackTables до редизайна"
+                 width="1903" height="976" loading="lazy" decoding="async"
+                 onerror="this.closest('.cmp__before').classList.add('is-missing');this.remove()">
+            <span>скриншот «до» не подложен</span>
+          </div>
+          <span class="cmp__tag cmp__tag--before">Было</span>
+          <span class="cmp__tag cmp__tag--after">Стало</span>
+          <button class="cmp__bar" id="cmpBar" type="button" role="slider"
+                  aria-label="Сравнение экрана до и после редизайна"
+                  aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span aria-hidden="true">↔</span>
+          </button>
         </div>
       </div>
 
       <div class="anno__bar">
-        <p class="anno__hint" id="annoHint">4 аннотации</p>
+        <p class="anno__hint">4 аннотации</p>
         <div class="anno__nav">
-          <button type="button" id="annoFull" class="is-wide">Развернуть ⤢</button>
-          <button type="button" id="annoPrev">← Назад</button>
-          <button type="button" id="annoNext">Вперёд →</button>
+          <button type="button" data-anno-full class="is-wide">Развернуть ⤢</button>
+          <button type="button" data-anno-prev>← Назад</button>
+          <button type="button" data-anno-next>Вперёд →</button>
         </div>
       </div>
 
-      <div class="anno__mobile" id="annoMobile"></div>
+      <div class="anno__mobile"></div>
     </div>
 
     <div class="claim">
       <p class="claim__k">Что это даёт</p>
-      <p class="claim__t">Оценка состояния, активные проблемы и переход к действию — <b>на одном экране</b>.</p>
+      <p class="claim__t">Состояние, активные проблемы и первый шаг к починке видно <b>сразу, без перехода в разделы</b>.</p>
       <div class="caveat" id="caveat">
         <button class="caveat__btn" type="button" id="caveatBtn" aria-expanded="false" aria-controls="caveatBody">
           Что ещё стоит проверить
         </button>
         <div class="caveat__body" id="caveatBody">
-          <p>Это свойства макета — их видно по прототипу. Ускоряют ли они реакцию на инцидент, покажут только тесты на инженерах.</p>
+          <p>Это свойства макета, их видно по прототипу. Ускоряют ли они реакцию на инцидент, покажут только тесты на инженерах.</p>
         </div>
       </div>
     </div>
 
     <h2 class="stub__t" style="margin-top:96px">Разрешение конфликта IP-адреса</h2>
-    <p class="lead">Один адрес назначен двум устройствам, оба работают нестабильно. От алерта до закрытия три клика — плюс предупреждение, если выбрать рискованный адрес.</p>
+    <p class="lead">Один адрес назначен двум устройствам, оба работают нестабильно. От алерта до закрытия три клика. Если инженер выберет рискованный адрес, система предупредит.</p>
 
     <div class="flow" data-flow>
       <div class="flow__screen">
@@ -487,27 +477,27 @@
         <button class="flow__step" type="button" role="tab" aria-selected="true">
           <p class="flow__n">Шаг 01</p>
           <p class="flow__t">Конфликт виден с главной</p>
-          <p class="flow__d">Критический алерт первым в списке на дашборде: «192.168.1.15 is used by multiple devices». В раздел идти не нужно.</p>
+          <p class="flow__d">Проблему находит система, а не человек.</p>
         </button>
         <button class="flow__step" type="button" role="tab" aria-selected="false">
           <p class="flow__n">Шаг 02</p>
           <p class="flow__t">Видно, кто назначил каждый адрес</p>
-          <p class="flow__d">У первого устройства есть автор и время. У второго записи нет — адрес выставили руками, в обход системы. Ровно та слепая зона, про которую говорили на интервью.</p>
+          <p class="flow__d">У второго устройства изменения делали вне RackTables. Та самая боль из интервью.</p>
         </button>
         <button class="flow__step" type="button" role="tab" aria-selected="false">
           <p class="flow__n">Шаг 03</p>
           <p class="flow__t">Система предлагает адреса сама</p>
-          <p class="flow__d">Свободные адреса из той же подсети с пометкой, какой безопаснее: один свободен две недели, другой освободился сорок минут назад.</p>
+          <p class="flow__d">Система подсказывает удобные адреса и помогает закрыть проблему быстрее.</p>
         </button>
         <button class="flow__step" type="button" role="tab" aria-selected="false">
           <p class="flow__n">Шаг 04</p>
-          <p class="flow__t">Рискованный выбор объясняют</p>
-          <p class="flow__d">Возьмёшь недавно освободившийся — система объяснит про DNS-кеш и чем это грозит. И только потом разрешит продолжить.</p>
+          <p class="flow__t">Система объясняет риск</p>
+          <p class="flow__d">Если взять только что освободившийся адрес, система предупредит.</p>
         </button>
         <button class="flow__step" type="button" role="tab" aria-selected="false">
           <p class="flow__n">Шаг 05</p>
           <p class="flow__t">Алерт закрыт, след остался</p>
-          <p class="flow__d">Адрес переназначен, конфликт снят. Изменение попало в историю устройства и в Audit Log: видно, кто и что сделал.</p>
+          <p class="flow__d">Историю изменений видно во вкладке устройства.</p>
         </button>
       </div>
 
@@ -519,7 +509,7 @@
     </div>
 
     <h2 class="stub__t" style="margin-top:96px">Смена статуса устройства</h2>
-    <p class="lead">Устройство выключили в обход системы, причина неизвестна. Система просит объяснение при возврате в онлайн — или честно помечает, что его нет.</p>
+    <p class="lead">Устройство выключили в обход системы, причина неизвестна. Система спросит её при включении, а если ответа нет, честно это пометит.</p>
 
     <div class="flow" data-flow>
       <div class="flow__screen">
@@ -540,22 +530,22 @@
         <button class="flow__step" type="button" role="tab" aria-selected="true">
           <p class="flow__n">Шаг 01</p>
           <p class="flow__t">Проблема видна до открытия карточки</p>
-          <p class="flow__d">На входе в раздел — «1 device offline without explanation». В разбивке Offline отдельная строка Unexplained. Искать не нужно.</p>
+          <p class="flow__d">Инженеру не нужно открывать карточку, чтобы узнать о проблеме.</p>
         </button>
         <button class="flow__step" type="button" role="tab" aria-selected="false">
           <p class="flow__n">Шаг 02</p>
           <p class="flow__t">У записи нет автора</p>
-          <p class="flow__d">В истории статусов запись без имени и без причины — устройство выключили в обход системы. Тот самый барьер из интервью: «залез руками и поменял».</p>
+          <p class="flow__d">Устройство выключили мимо системы. Ровно об этом говорили на интервью.</p>
         </button>
         <button class="flow__step" type="button" role="tab" aria-selected="false">
           <p class="flow__n">Шаг 03</p>
           <p class="flow__t">Система просит причину</p>
-          <p class="flow__d">Вернуть в онлайн можно, только указав причину. Пропустить разрешено — но отказ тоже попадёт в историю и будет виден команде.</p>
+          <p class="flow__d">Причину спрашивают в момент включения, а не потом. Пропустить можно, но это тоже попадёт в историю.</p>
         </button>
         <button class="flow__step" type="button" role="tab" aria-selected="false">
           <p class="flow__n">Шаг 04</p>
-          <p class="flow__t">Причина дописана задним числом</p>
-          <p class="flow__d">Что не знали — осталось как есть, что узнали — добавлено. История не переписывается: рядом и запись без причины, и появившееся объяснение.</p>
+          <p class="flow__t">История не переписывается</p>
+          <p class="flow__d">Старая запись остаётся на месте, объяснение просто добавляется рядом.</p>
         </button>
       </div>
 
@@ -565,6 +555,29 @@
       </a>
       </div>
     </div>
+
+    <h2 class="stub__t" style="margin-top:96px">Поиск по любому известному параметру</h2>
+    <p class="lead">Инженер помнит кусок адреса или имя устройства. Этого достаточно, чтобы найти нужное.</p>
+
+    <div class="anno anno--search" id="annoSearch">
+      <div class="anno__stage">
+        <div class="anno__frame">
+          <img src="assets/img/case-search.png" alt="Экран поиска: результаты по адресам, устройствам и стойкам"
+               width="2880" height="2140" loading="lazy" decoding="async">
+        </div>
+      </div>
+
+      <div class="anno__bar">
+        <p class="anno__hint">3 аннотации</p>
+        <div class="anno__nav">
+          <button type="button" data-anno-full class="is-wide">Развернуть ⤢</button>
+          <button type="button" data-anno-prev>← Назад</button>
+          <button type="button" data-anno-next>Вперёд →</button>
+        </div>
+      </div>
+
+      <div class="anno__mobile"></div>
+    </div>
   </section>
 
   <section id="result">
@@ -572,36 +585,36 @@
 
     <div class="outcome">
       <p class="outcome__k">Что получилось</p>
-      <h2 class="outcome__t">Экран отвечает на вопрос, с которым в систему заходят: всё ли в порядке — и что делать дальше.</h2>
+      <h2 class="outcome__t">Главное изменение простое: система сама показывает, что не так, и ведёт к следующему шагу.</h2>
 
       <div class="outcome__grid">
         <div class="outcome__col">
-          <p class="outcome__h">Видно на макетах</p>
+          <p class="outcome__h">Что сделал</p>
           <ul class="outcome__list">
-            <li><b>Вход в систему.</b> Четыре показателя и активные проблемы вместо каталога из 12 разделов.</li>
-            <li><b>Конфликт IP.</b> Разрешается в три клика прямо из алерта, без похода в разделы.</li>
-            <li><b>Обход системы.</b> Перестаёт быть невидимым: приложение просит причину, отказ фиксирует.</li>
+            <li><b>Вход в систему.</b> Вместо каталога разделов состояние и активные проблемы.</li>
+            <li><b>Конфликт IP.</b> Разбирается прямо из алерта.</li>
+            <li><b>Обход системы.</b> Виден и попадает в историю, даже если причину не указали.</li>
           </ul>
         </div>
 
         <div class="outcome__col">
-          <p class="outcome__h">Это покажут только тесты</p>
+          <p class="outcome__h">Чего пока не знаю</p>
           <div class="outcome__col--hypo">
           <span class="outcome__tag">Гипотеза</span>
           <ul class="outcome__list">
-            <li><b>Скорость реакции.</b> Быстрее ли инженер реагирует на инцидент — продукт не выходил в прод, замеров нет.</li>
-            <li><b>Набор показателей.</b> Хватит ли четырёх — собраны на двух интервью, и не станет ли обязательная причина раздражать на рутинных работах.</li>
+            <li><b>Скорость реакции.</b> Стал ли инженер быстрее, я не знаю: продукт не выходил в прод, замеров нет.</li>
+            <li><b>Набор показателей.</b> Хватит ли четырёх, покажут тесты: они собраны на двух интервью. Ещё вопрос, не начнёт ли обязательная причина раздражать на рутинных работах.</li>
           </ul>
           </div>
         </div>
 
         <div class="outcome__col">
-          <p class="outcome__h">Рефлексия</p>
+          <p class="outcome__h">Что доделал бы</p>
           <ul class="outcome__list outcome__list--steps">
-            <li>Коридорные тесты на 5–7 инженерах: время до первого действия и до причины инцидента.</li>
-            <li>Проверил бы экран на дата-центре другого масштаба: 1468 устройств — один сценарий из многих.</li>
-            <li>Довёл бы визуал: плотность таблиц, иконки, ритм отступов — сейчас это макет на токенах, а не отрисованный до конца интерфейс.</li>
-            <li>Собрал бы состояния для передачи в разработку: пустые, ошибки, загрузка.</li>
+            <li>Провёл бы коридорные тесты на 5–7 инженерах.</li>
+            <li>Проверил бы экран на дата-центре другого масштаба: 1468 устройств это один сценарий из многих.</li>
+            <li>Довёл бы UI: поработал бы с цветом, ритмом отступов и типографикой в некоторых местах.</li>
+            <li>Собрал бы все состояния для передачи в разработку.</li>
           </ul>
         </div>
       </div>

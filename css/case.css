@@ -396,23 +396,15 @@
   .tbl--market .tbl__who{font-size:17px}
 }
 
-/* ---------- сравнение «было / стало» ---------- */
-.cmp{--shot-w:2200;--shot-h:1564;--shot-fit:56vh;--pos:50%;margin:0 0 44px}
-.cmp__stage{position:relative;
-  aspect-ratio:var(--shot-w) / var(--shot-h);
-  max-width:min(100%, calc(var(--shot-fit) * 1.4066));
-  margin-inline:auto;border-radius:16px;overflow:hidden;
-  background:var(--surface);border:1px solid var(--hair);
-  box-shadow:0 18px 44px rgba(11,11,12,.08);
-  cursor:ew-resize;touch-action:pan-y;
-  -webkit-user-select:none;user-select:none}
-.cmp__stage img{position:absolute;inset:0;width:100%;height:100%;display:block;
-  object-fit:cover;pointer-events:none}
+/* ---------- сравнение «было / стало» ----------
+   Живёт прямо на аннотированном макете: сцена одна, шторка одновременно
+   показывает разницу и открывает аннотации нового экрана. */
+.cmp{--pos:0%}
 /* старый экран — маленький скриншот другой пропорции, поэтому вписываем
    целиком, а не режем по краям */
 .cmp__before{position:absolute;inset:0;z-index:1;
   clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
-.cmp__before img{object-fit:contain;background:#E9E6E2}
+.anno__frame .cmp__before img{object-fit:contain;background:#E9E6E2}
 .cmp__before span{display:none}
 .cmp__before.is-missing{display:flex;align-items:center;justify-content:center;background:#E9E6E2}
 .cmp__before.is-missing span{display:block;font-family:var(--mono);font-size:11px;
@@ -478,7 +470,6 @@
 }
 
 @media (max-width:760px){
-  .cmp{--shot-fit:42vh}
   .cmp__tag{font-size:9px;padding:6px 10px;top:10px}
   .cmp__tag--before{left:10px}
   .cmp__tag--after{right:10px}
@@ -487,19 +478,25 @@
 
 /* ---------- аннотированный экран ---------- */
 /* пропорция макета дашборда: 2200x1564 ≈ 1.4066 */
-.anno{--shot-w:2200;--shot-h:1564;--shot-fit:62vh;margin:0}
+.anno{--shot-w:2200;--shot-h:1564;--shot-fit:62vh;--shot-r:1.4066;margin:0}
+/* экран поиска длиннее дашборда, поэтому своя пропорция и своя высота */
+.anno--search{--shot-w:2880;--shot-h:2140;--shot-fit:70vh;--shot-r:1.3458}
 
 /* Сцена не обрезает содержимое — иначе точки у краёв и выноски срезаются.
    Скругление и тень живут на внутренней рамке. */
 .anno__stage{position:relative;
   /* держим высоту в пределах экрана, чтобы кнопки перелистывания и весь макет были видны */
   aspect-ratio:var(--shot-w) / var(--shot-h);
-  max-width:min(100%, calc(var(--shot-fit) * 1.4066));
+  max-width:min(100%, calc(var(--shot-fit) * var(--shot-r)));
   margin-inline:auto}
 .anno__frame{position:absolute;inset:0;border-radius:16px;overflow:hidden;
   background:var(--surface);border:1px solid var(--hair);
   box-shadow:0 18px 44px rgba(11,11,12,.08)}
-.anno__frame img{width:100%;height:100%;object-fit:cover;display:block}
+/* курсор и запрет выделения нужны только там, где рамку тянут шторкой */
+.anno__frame.cmp{cursor:ew-resize;touch-action:pan-y;
+  -webkit-user-select:none;user-select:none}
+.anno__frame img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;pointer-events:none}
 
 .hs{position:absolute;width:30px;height:30px;border-radius:50%;transform:translate(-50%,-50%);
   border:0;cursor:pointer;padding:0;
@@ -507,7 +504,7 @@
   background:var(--accent);color:#fff;
   box-shadow:0 2px 10px rgba(11,11,12,.28), 0 0 0 3px rgba(255,255,255,.75);
   animation:hsPulse 2.8s ease-in-out infinite;
-  transition:background .2s ease,color .2s ease,transform .2s ease;z-index:3}
+  transition:background .2s ease,color .2s ease,transform .2s ease,opacity .28s ease;z-index:3}
 .hs:nth-of-type(2){animation-delay:.35s}
 .hs:nth-of-type(3){animation-delay:.7s}
 .hs:nth-of-type(4){animation-delay:1.05s}
@@ -515,6 +512,10 @@
 .hs.on{background:var(--ink);color:var(--on-dark);animation:none;
   box-shadow:0 2px 12px rgba(11,11,12,.4), 0 0 0 4px rgba(255,255,255,.9)}
 .hs::after{content:"";position:absolute;inset:-9px;border-radius:50%}
+/* точку ещё закрывает старый экран: она принадлежит новому и до него
+   шторка не дошла */
+.hs.is-covered{opacity:0;pointer-events:none;animation:none;
+  transform:translate(-50%,-50%) scale(.5)}
 
 /* медленная пульсация: видно, что точка есть и на неё можно нажать */
 @keyframes hsPulse{
@@ -545,6 +546,9 @@
 .tip__k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--accent);margin:0 0 8px}
 .tip__t{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 16px;text-wrap:pretty}
+/* выноска из одной строки: экран говорит сам за себя, пары «инсайт и
+   решение» здесь нет, поэтому и отбивки снизу быть не должно */
+.tip__t--one{margin:0}
 .tip__k2{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--ink-3);margin:0 0 8px}
 .tip__t2{font-size:14px;line-height:1.55;color:var(--ink-2);margin:0;text-wrap:pretty}
@@ -570,7 +574,8 @@
 .shade.on{opacity:1;visibility:visible}
 /* .anno переезжает внутрь как есть — точки, выноски и кнопки едут с ним */
 .shade > .anno{width:100%;--shot-fit:78vh}
-.shade .anno__bar{max-width:min(100%, calc(var(--shot-fit) * 1.4066));
+.shade > .anno--search{--shot-fit:82vh}
+.shade .anno__bar{max-width:min(100%, calc(var(--shot-fit) * var(--shot-r)));
   margin-inline:auto;width:100%}
 /* На широком экране выноска всплывает прямо на макете, нижняя не нужна.
    На узком — она единственный способ прочитать аннотацию, поэтому внутри
