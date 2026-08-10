@@ -39,11 +39,9 @@
 .shot--empty > span{display:block}
 
 .facts{display:grid;grid-template-rows:repeat(3,1fr);gap:20px}
+/* без ховера: карточка ничего не открывает, подъём обещал бы клик */
 .fact{background:var(--surface);border:1px solid var(--hair);border-radius:16px;
-  padding:26px 24px;display:flex;flex-direction:column;justify-content:center;
-  transition:transform .32s cubic-bezier(.22,.8,.2,1),box-shadow .32s ease}
-/* еле заметный подъём: даёт отклик, но не тянет внимание на себя */
-.fact:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(11,11,12,.07)}
+  padding:26px 24px;display:flex;flex-direction:column;justify-content:center}
 .fact__k{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-.01em;
   color:var(--ink);margin:0 0 14px}
 .fact__v{font-family:var(--display);font-weight:600;font-size:clamp(34px,3.6vw,52px);
@@ -138,6 +136,45 @@
   .tldr__l > div{grid-template-columns:minmax(0,1fr);gap:8px}
   .tldr__l dt{padding-top:0}
   .tldr__l dd{font-size:16px}
+}
+
+/* Список шагов в две колонки: восемь пунктов в столбик заняли бы целый экран
+   до первого макета. Номера — мономаркером, чтобы не спорить с текстом. */
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 44px}
+/* align-content:start — иначе карточка тянется под высоту ряда, и лишнее
+   место уходит в зазор между названием шага и его итогом */
+.steps li{counter-increment:s;display:grid;grid-template-columns:24px minmax(0,1fr);gap:0 12px;
+  align-content:start;font-size:17px;line-height:1.5;color:var(--ink);text-wrap:pretty}
+.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;color:var(--ink-3);padding-top:6px}
+/* итог шага — во вторую колонку, под названием, тем же кеглем, что и подписи */
+.steps li span{grid-column:2;display:block;margin-top:5px;font-size:14px;line-height:1.55;
+  color:var(--ink-2)}
+@media (max-width:760px){
+  .steps{grid-template-columns:minmax(0,1fr);gap:16px}
+  .steps li{font-size:16px}
+}
+
+/* Требования и гипотезы: две колонки со сквозной нумерацией, требование 01
+   закрывается гипотезой 01. Разделитель строк тот же пунктир, что в таблицах. */
+.req{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 56px;margin-top:72px}
+.req__k{margin:0 0 6px;font-family:var(--display);font-weight:500;font-size:17px;
+  letter-spacing:-.015em;color:var(--ink)}
+.req__d{margin:0 0 22px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3)}
+.req__list{margin:0;padding:0;list-style:none;counter-reset:r}
+.req__list li{counter-increment:r;display:grid;grid-template-columns:24px minmax(0,1fr);
+  gap:0 12px;padding:15px 0;font-size:15px;line-height:1.6;color:var(--ink-2);
+  text-wrap:pretty;
+  background-image:repeating-linear-gradient(to right,
+    rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
+  background-size:100% 1px;background-position:left top;background-repeat:repeat-x}
+.req__list li:first-child{background-image:none;padding-top:0}
+.req__list li::before{content:counter(r,decimal-leading-zero);font-family:var(--mono);
+  font-size:10px;letter-spacing:.16em;color:var(--ink-3);padding-top:5px}
+@media (max-width:760px){
+  .req{grid-template-columns:minmax(0,1fr);gap:40px 0;margin-top:52px}
 }
 
 /* ---------- итог ----------
@@ -269,7 +306,14 @@
    текст в обеих таблицах начинается и переносится одинаково. */
 .tbl--q{margin-bottom:76px}
 .tbl--q th{width:132px;padding-top:24px}
-.tbl--q td{font-size:17px;line-height:1.58;color:var(--ink)}
+/* ширину второй колонки задаём явно: при table-layout:fixed браузер иначе
+   делит таблицу пополам и вопрос уезжает на середину экрана */
+.tbl--q td{width:calc(100% - 132px);font-size:17px;line-height:1.58;color:var(--ink)}
+/* Подписи этих двух таблиц оставляем видимыми на десктопе: у таблицы вопросов
+   шапки нет вообще, а у таблицы ответов подпись не повторяет названия колонок,
+   зато держит пару «какие вопросы задавал» → «какие ответы получил». */
+.tbl--q caption,.tbl--cmp caption{position:static;width:auto;height:auto;margin:0;
+  padding:0 0 28px;overflow:visible;clip:auto;clip-path:none;white-space:normal}
 
 /* сравнение респондентов: два столбца, поля построчно */
 .tbl--cmp thead th{padding-bottom:18px}
@@ -281,10 +325,45 @@
 .tbl--cmp th[scope=row]{width:132px}
 .tbl--cmp td{width:calc((100% - 132px) / 2)}
 
+/* Респондентов разделяет вертикальный пунктир: тот же штрих 2px с шагом 7,
+   что у строк таблицы, только развёрнутый по вертикали. Идёт от имён в шапке
+   до инсайта, поэтому две колонки не сливаются в сплошной текст. */
+@media (min-width:761px){
+  .tbl--cmp thead th:last-child,.tbl--cmp tbody td:last-child,.ivsum__c:last-child{
+    background-image:repeating-linear-gradient(to bottom,
+      rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
+    background-size:1px 100%;background-position:left top;background-repeat:repeat-y}
+}
+
+/* Инсайт стоит под таблицей, но по её же сетке и с её же пунктиром сверху:
+   структурно это мой вывод, а не ответ респондента, визуально — ещё строка. */
+.ivsum{display:grid;grid-template-columns:132px minmax(0,1fr) minmax(0,1fr);
+  padding-top:26px;
+  background-image:repeating-linear-gradient(to right,
+    rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
+  background-size:100% 1px;background-position:left top;background-repeat:repeat-x}
+.ivsum__k{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent)}
+.ivsum__c{padding:0 24px}
+.ivsum__c:last-child{padding-right:0}
+.ivsum__who{display:none}
+.ivsum__t{margin:0;font-size:15px;line-height:1.62;color:var(--ink);text-wrap:pretty}
+.ivsum__t b{font-weight:500}
+@media (max-width:760px){
+  .ivsum{grid-template-columns:minmax(0,1fr);row-gap:18px;padding-top:22px}
+  .ivsum__c,.ivsum__c:last-child{padding:0}
+  .ivsum__who{display:block;margin:0 0 7px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+}
+
 /* цитата — голосом респондента, поэтому крупнее и не приглушённая */
 .tbl__quote td{font-family:var(--display);font-weight:500;font-size:17px;line-height:1.45;
   letter-spacing:-.015em;color:var(--ink)}
 
+/* вывод из интервью: отбивка меньше секционной, чтобы читался как часть
+   блока «Интервью», а не как новый раздел */
+.iv__sub{margin-top:64px}
+.iv__ins{margin-top:34px}
 .iv__note{margin-top:52px}
 
 /* ---------- конкурентный анализ ---------- */
@@ -664,6 +743,4 @@ body.shade-open{overflow:hidden}
 .caveat__body p{font-size:14px;line-height:1.6;color:var(--ink-2);margin:14px 0 0;max-width:62ch}
 @media (prefers-reduced-motion: reduce){
   .caveat__body,.tip{transition:none}
-  .fact{transition:none}
-  .fact:hover{transform:none}
 }
