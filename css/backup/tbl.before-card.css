@@ -1,0 +1,98 @@
+/* БЕКАП. Состояние компонента .tbl из base.css (строки 255–337) до перевода
+   таблицы на светлую подложку. Файл нигде не подключён — только для отката:
+   вернуть этот блок на место соответствующего блока в css/base.css. */
+
+/* ---- таблицы ----------------------------------------------------------
+   Не коробка с рамками, а сетка на самом фоне страницы: строки разделены
+   той же пунктирной строкой из квадратиков, что и .rule, номер — квадрат
+   с коралловым контуром. Строка «собирается» по наведению: подложка
+   становится белой, квадрат заливается акцентом.
+   Класс общий, рассчитан и на кейсы, и на главную. */
+.tbl{margin:0;overflow-x:auto}
+/* fixed — чтобы заданная ширина левой колонки соблюдалась точно и текст
+   во всех таблицах начинался с одной вертикали */
+.tbl table{width:100%;border-collapse:collapse;text-align:left;table-layout:fixed}
+/* заголовок таблицы — на одной ступени с метками секций (.sect__label) */
+.tbl caption{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-2);padding:0 0 28px}
+
+/* Пока видна шапка, подпись набрана тем же моно-регистром и стоит прямо над
+   ней — две строки капителью подряд читаются как шапка, напечатанная дважды,
+   а во второй таблице подпись ещё и дословно повторяет названия колонок.
+   Ниже 760px thead скрыт (медиа-блок в конце файла), и подпись остаётся
+   единственным заголовком таблицы — поэтому скрываем только на широком
+   экране. Из разметки не убираем: по caption скринридер объявляет таблицу. */
+@media (min-width:761px){
+  .tbl caption{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+}
+
+.tbl th,.tbl td{vertical-align:top;padding:26px 24px 28px;font-weight:400}
+.tbl th:first-child,.tbl td:first-child{padding-left:0}
+.tbl th:last-child,.tbl td:last-child{padding-right:0}
+
+/* шапка: только мелкая моно-подпись, без заливки */
+.tbl thead th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-label);padding-top:0;padding-bottom:18px}
+
+/* Разделитель строк — тот же род, но на ступень тише секционного .rule:
+   квадраты 5px с шагом 12 → штрихи 2px с шагом 7, высота 5px → 1px,
+   плотность .30 → .16. Секцию делит крупный пунктир, строку внутри — мелкий,
+   поэтому таблица не разваливается на отдельные блоки. */
+.tbl tbody tr{
+  background-image:repeating-linear-gradient(to right,
+    rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
+  background-size:100% 1px;background-position:left bottom;background-repeat:repeat-x}
+.tbl tbody tr:last-child{background-image:none}
+
+.tbl td{font-size:15px;line-height:1.62;color:var(--ink-2);text-wrap:pretty}
+.tbl td b{font-weight:500;color:var(--ink)}
+/* колонка держит комфортную длину строки, а не всю ширину таблицы */
+.tbl__txt{margin:0;max-width:62ch;text-wrap:pretty}
+
+/* номер строки — квадрат из общего словаря */
+.tbl__n{display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:7px;flex:none;
+  font-family:var(--mono);font-size:12px;line-height:1;
+  color:var(--accent);border:1px solid rgba(228,87,58,.42);background:transparent}
+
+/* подпись строки слева */
+.tbl__k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-label);white-space:nowrap}
+
+/* итоговая строка — то, ради чего таблицу и читают */
+.tbl__sum td{color:var(--ink)}
+.tbl__sum .tbl__k{color:var(--accent)}
+
+/* На узком экране сравнение не скроллим вбок, а разворачиваем в карточки:
+   название колонки подставляется из data-col. */
+/* Селекторы удвоены (.tbl.tbl--stack) намеренно: колоночные ширины и отбивки
+   конкретных таблиц живут в case.css, который подключается позже, и при равном
+   весе перебивали бы эти правила — ячейка получала бы десктопную ширину вроде
+   calc((100% - 132px)/4) и схлопывалась на телефоне до одного слова в строке. */
+@media (max-width:760px){
+  .tbl.tbl--stack table,.tbl.tbl--stack tbody,.tbl.tbl--stack tr,
+  .tbl.tbl--stack th,.tbl.tbl--stack td{display:block;width:auto}
+  .tbl.tbl--stack thead{display:none}
+  /* у table:display:block подпись перестаёт наследовать ширину таблицы
+     и сжимается по содержимому — рвётся на слова при пустом месте справа */
+  .tbl.tbl--stack caption{display:block;width:auto}
+  .tbl.tbl--stack tbody tr{padding:20px 0 24px}
+  .tbl.tbl--stack th[scope=row]{width:auto;padding:0 0 14px}
+  .tbl.tbl--stack td{padding:0 0 18px}
+  .tbl.tbl--stack td:last-child{padding-bottom:0}
+  .tbl.tbl--stack td::before{content:attr(data-col);display:block;
+    font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-label);margin-bottom:7px}
+}
+
+/* Дополнение к бекапу: ширины .tbl--rivals из css/nearby.css (~строки 499–505)
+   на момент бекапа — при откате проверить и их.
+@media (min-width: 761px) {
+  .tbl--rivals table { table-layout: fixed; }
+  .tbl--rivals th:first-child,
+  .tbl--rivals td:first-child { width: 132px; }
+  .tbl--rivals th:nth-child(2),
+  .tbl--rivals td:nth-child(2) { width: 36%; }
+}
+*/

@@ -344,14 +344,14 @@
 .tbl--cmp th[scope=row]{width:132px}
 .tbl--cmp td{width:calc((100% - 132px) / 2)}
 
-/* Респондентов разделяет вертикальный пунктир: тот же штрих 2px с шагом 7,
-   что у строк таблицы, только развёрнутый по вертикали. Идёт от имён в шапке
-   до инсайта, поэтому две колонки не сливаются в сплошной текст. */
+/* Колонки респондентов разделены общей вертикалью .tbl из base.css, свой
+   пунктир здесь больше не нужен — две линии в одном месте давали грязь.
+   Инсайту под таблицей линию задаём вручную: он идёт по её сетке, но
+   таблицей не является, поэтому правило base на него не распространяется. */
 @media (min-width:761px){
-  .tbl--cmp thead th:last-child,.tbl--cmp tbody td:last-child,.ivsum__c:last-child{
-    background-image:repeating-linear-gradient(to bottom,
-      rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
-    background-size:1px 100%;background-position:left top;background-repeat:repeat-y}
+  .ivsum__c:last-child{
+    background-image:linear-gradient(rgba(11,11,12,.05),rgba(11,11,12,.05));
+    background-size:1px 100%;background-position:left top;background-repeat:no-repeat}
 }
 
 /* Инсайт стоит под таблицей, но по её же сетке и с её же пунктиром сверху:
@@ -401,7 +401,7 @@
 .tbl--market{--label-col:132px}
 .tbl--market thead th:first-child,.tbl--market th[scope=row]{width:var(--label-col)}
 .tbl--market td{width:calc((100% - var(--label-col)) / 4);font-size:14px;line-height:1.6}
-.tbl--market th,.tbl--market td{padding:22px 24px 24px}
+.tbl--market th,.tbl--market td{padding:22px 24px}
 .tbl--market th:first-child,.tbl--market td:first-child{padding-left:0}
 .tbl--market th:last-child,.tbl--market td:last-child{padding-right:0}
 .tbl--market .tbl__who{display:block;font-family:var(--display);font-weight:500;font-size:16px;
@@ -409,7 +409,7 @@
 
 @media (max-width:1100px){
   .tbl--market td{font-size:13px}
-  .tbl--market th,.tbl--market td{padding:20px 12px 22px}
+  .tbl--market th,.tbl--market td{padding:20px 12px}
 }
 
 /* Аналоги раскладываем в карточки раньше остальных таблиц. Общий порог в
@@ -421,26 +421,46 @@
    на другой ширине» в проекте нет, а заводить его ради одного случая дороже,
    чем продублировать девять строк. */
 @media (min-width:761px) and (max-width:1000px){
+  /* Общая подложка снимается с контейнера и переходит на строку — тот же
+     приём, что в base.css ниже 760px: одна карточка на пять аналогов
+     растягивается в сплошную заливку, и край перестаёт читаться границей. */
+  .tbl.tbl--market{background:none;border:0;border-radius:0;padding:0;box-shadow:none}
   .tbl.tbl--market table,.tbl.tbl--market tbody,.tbl.tbl--market tr,
   .tbl.tbl--market th,.tbl.tbl--market td{display:block;width:auto}
   .tbl.tbl--market thead{display:none}
-  .tbl.tbl--market caption{display:block;width:auto}
-  .tbl.tbl--market tbody tr{padding:20px 0 24px}
-  .tbl.tbl--market th[scope=row]{width:auto;padding:0 0 14px}
-  .tbl.tbl--market td{width:auto;padding:0 0 18px;font-size:15px}
+  .tbl.tbl--market caption{display:block;width:auto;padding-bottom:20px}
+  .tbl.tbl--market tbody tr{
+    padding:22px 20px;margin-bottom:12px;
+    background:var(--surface);border:1px solid var(--hair);border-radius:12px;
+    box-shadow:0 1px 2px rgba(11,11,12,.03);background-image:none}
+  .tbl.tbl--market tbody tr:last-child{margin-bottom:0}
+  .tbl.tbl--market th[scope=row]{width:auto;padding:0 0 18px}
+  /* вертикаль колонок из base здесь оставила бы полоску слева у каждого блока */
+  .tbl.tbl--market td{width:auto;padding:0 0 18px;font-size:15px;line-height:1.5;
+    background-image:none}
   .tbl.tbl--market td:last-child{padding-bottom:0}
   .tbl.tbl--market td::before{content:attr(data-col);display:block;
     font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink-label);margin-bottom:7px}
+    color:var(--ink);margin-bottom:6px}
 }
 
 @media (max-width:760px){
   .tbl--q{margin-bottom:48px}
   .tbl--q th{width:56px}
   .tbl--q td{font-size:16px}
-  .tbl th,.tbl td{padding:20px 14px 22px}
+  .tbl th,.tbl td{padding:20px 14px}
+  /* края ячеек отдаёт карточка .tbl, иначе к её 18px прибавляются эти 14 */
+  .tbl th:first-child,.tbl td:first-child{padding-left:0}
+  .tbl th:last-child,.tbl td:last-child{padding-right:0}
   .tbl caption{padding-bottom:20px}
   .iv__note{margin-top:36px}
+  /* В карточке заголовок строки («Инструменты», «Цитата») стоит над именами
+     респондентов, но набран той же мелкой моно, что и они, только тише —
+     иерархия читалась перевёрнутой. На узком экране это уже не подпись
+     в служебной колонке, а заголовок карточки, поэтому и набор другой. */
+  .tbl.tbl--stack.tbl--cmp th[scope=row] .tbl__k{
+    font-family:var(--display);font-size:17px;font-weight:500;
+    letter-spacing:-.015em;text-transform:none;color:var(--ink)}
   .tbl--market td{font-size:15px}
   .tbl--market .tbl__who{font-size:17px}
 }

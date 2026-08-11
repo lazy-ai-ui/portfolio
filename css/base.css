@@ -253,12 +253,21 @@ html.js-rv .rv--in{opacity:1;transform:none}
   text-transform:uppercase;color:var(--ink-label);margin:0}
 
 /* ---- таблицы ----------------------------------------------------------
-   Не коробка с рамками, а сетка на самом фоне страницы: строки разделены
-   той же пунктирной строкой из квадратиков, что и .rule, номер — квадрат
-   с коралловым контуром. Строка «собирается» по наведению: подложка
-   становится белой, квадрат заливается акцентом.
+   Карточка на светлой подложке поверх песочного --bg: на голом фоне текст
+   трёх колонок читался как разлитая по странице проза без границ. Подложка
+   даёт таблице край, внутренний отступ и общий контейнер — строки видно как
+   строки одной сущности. Разделители внутри те же пунктирные, что и раньше,
+   на ступень тише секционного .rule.
    Класс общий, рассчитан и на кейсы, и на главную. */
-.tbl{margin:0;overflow-x:auto}
+.tbl{
+  margin:0;overflow-x:auto;
+  background:var(--surface);
+  border:1px solid var(--hair);
+  border-radius:14px;
+  padding:28px 32px;
+  /* тень почти на пределе различимости: подложка должна отделиться от фона,
+     а не всплыть над ним — страница остаётся плоской */
+  box-shadow:0 1px 2px rgba(11,11,12,.03)}
 /* fixed — чтобы заданная ширина левой колонки соблюдалась точно и текст
    во всех таблицах начинался с одной вертикали */
 .tbl table{width:100%;border-collapse:collapse;text-align:left;table-layout:fixed}
@@ -277,7 +286,12 @@ html.js-rv .rv--in{opacity:1;transform:none}
     overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 }
 
-.tbl th,.tbl td{vertical-align:top;padding:26px 24px 28px;font-weight:400}
+/* Внешние отступы теперь на самой карточке, поэтому ячейкам остаётся только
+   внутренняя разрядка. Отступы симметричны по обеим осям: строку в карточке
+   держат линейки сверху и снизу, и при разной вертикали текст съезжал к
+   верхней. Вертикаль сжата с прежних 26/28: на подложке воздух вокруг текста
+   уже не нужен, и пять строк влезают в экран целиком. */
+.tbl th,.tbl td{vertical-align:top;padding:22px 24px;font-weight:400}
 .tbl th:first-child,.tbl td:first-child{padding-left:0}
 .tbl th:last-child,.tbl td:last-child{padding-right:0}
 
@@ -285,15 +299,33 @@ html.js-rv .rv--in{opacity:1;transform:none}
 .tbl thead th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-label);padding-top:0;padding-bottom:18px}
 
-/* Разделитель строк — тот же род, но на ступень тише секционного .rule:
-   квадраты 5px с шагом 12 → штрихи 2px с шагом 7, высота 5px → 1px,
-   плотность .30 → .16. Секцию делит крупный пунктир, строку внутри — мелкий,
-   поэтому таблица не разваливается на отдельные блоки. */
+/* Разделитель строк — сплошная линейка, как в обычной таблице, но сильно
+   приглушённая (.07): на белой подложке пунктир читался как ещё один слой
+   фактуры и спорил с секционным .rule. Пунктир остаётся языком страницы,
+   таблица внутри карточки говорит нейтральной линией. */
 .tbl tbody tr{
-  background-image:repeating-linear-gradient(to right,
-    rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
+  background-image:linear-gradient(rgba(11,11,12,.07),rgba(11,11,12,.07));
   background-size:100% 1px;background-position:left bottom;background-repeat:repeat-x}
 .tbl tbody tr:last-child{background-image:none}
+
+/* Вертикальные разделители колонок — та же линейка, но ещё на треть тише
+   (.07 → .05): горизонталь режет таблицу на строки и должна быть слышнее,
+   вертикаль только придерживает колонки. Линия рисуется фоном самой ячейки
+   по левому краю, поэтому ложится поверх строчной линейки, не перекрывая её:
+   красится ровно 1px, остальное прозрачно. Первой колонке не нужна — слева
+   от неё край карточки. В стековом режиме колонок нет, отсюда медиазапрос. */
+@media (min-width:761px){
+  .tbl th:not(:first-child),.tbl td:not(:first-child){
+    background-image:linear-gradient(rgba(11,11,12,.05),rgba(11,11,12,.05));
+    background-size:1px 100%;background-position:left top;background-repeat:no-repeat}
+}
+/* Низ последней строки отдан карточке — иначе 22px ячейки складываются
+   с 28px подложки и внизу появляется пустая полоса. Только на широком экране:
+   в стековом режиме ячейки идут одна под другой, и обнулять их нижний отступ
+   значит слепить последнюю карточку-строку в один абзац. */
+@media (min-width:761px){
+  .tbl tbody tr:last-child th,.tbl tbody tr:last-child td{padding-bottom:0}
+}
 
 .tbl td{font-size:15px;line-height:1.62;color:var(--ink-2);text-wrap:pretty}
 .tbl td b{font-weight:500;color:var(--ink)}
@@ -321,17 +353,39 @@ html.js-rv .rv--in{opacity:1;transform:none}
    весе перебивали бы эти правила — ячейка получала бы десктопную ширину вроде
    calc((100% - 132px)/4) и схлопывалась на телефоне до одного слова в строке. */
 @media (max-width:760px){
+  /* Одна подложка на всю таблицу давала белую простыню в полтора экрана:
+     край переставал работать границей, видно было только заливку. Поэтому
+     карточкой становится строка, а .tbl — прозрачным контейнером. Подпись
+     таблицы при этом сама встаёт над карточками, а не внутри первой. */
+  .tbl{padding:22px 18px;border-radius:12px}
+  .tbl.tbl--stack{background:none;border:0;border-radius:0;padding:0;box-shadow:none}
   .tbl.tbl--stack table,.tbl.tbl--stack tbody,.tbl.tbl--stack tr,
   .tbl.tbl--stack th,.tbl.tbl--stack td{display:block;width:auto}
   .tbl.tbl--stack thead{display:none}
   /* у table:display:block подпись перестаёт наследовать ширину таблицы
      и сжимается по содержимому — рвётся на слова при пустом месте справа */
-  .tbl.tbl--stack caption{display:block;width:auto}
-  .tbl.tbl--stack tbody tr{padding:20px 0 24px}
-  .tbl.tbl--stack th[scope=row]{width:auto;padding:0 0 14px}
-  .tbl.tbl--stack td{padding:0 0 18px}
+  .tbl.tbl--stack caption{display:block;width:auto;padding-bottom:20px}
+
+  .tbl.tbl--stack tbody tr{
+    padding:22px 20px;margin-bottom:12px;
+    background:var(--surface);
+    border:1px solid var(--hair);
+    border-radius:12px;
+    box-shadow:0 1px 2px rgba(11,11,12,.03);
+    /* строчная линейка десктопа здесь не нужна: строки разведены зазором */
+    background-image:none}
+  .tbl.tbl--stack tbody tr:last-child{margin-bottom:0}
+
+  /* Внутри карточки один ритм: имя сервиса → 18 → пара «метка + текст»,
+     между парами 18, между меткой и её текстом 6. Раньше 14/18/7 при
+     line-height 1.62 читались как случайные — пара не собиралась в блок. */
+  .tbl.tbl--stack th[scope=row]{width:auto;padding:0 0 18px}
+  .tbl.tbl--stack td{padding:0 0 18px;line-height:1.5}
   .tbl.tbl--stack td:last-child{padding-bottom:0}
+  /* Метка колонки — не служебная подпись, а единственный ориентир в карточке:
+     на десктопе её держит шапка, здесь она повторяется у каждой строки.
+     Поэтому вместо приглушённого --ink-label полный --ink. */
   .tbl.tbl--stack td::before{content:attr(data-col);display:block;
     font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink-label);margin-bottom:7px}
+    color:var(--ink);margin-bottom:6px}
 }
