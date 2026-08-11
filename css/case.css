@@ -354,13 +354,14 @@
     background-size:1px 100%;background-position:left top;background-repeat:no-repeat}
 }
 
-/* Инсайт стоит под таблицей, но по её же сетке и с её же пунктиром сверху:
-   структурно это мой вывод, а не ответ респондента, визуально — ещё строка. */
+/* Инсайт стоит под таблицей, по её же сетке и с её же линейкой сверху:
+   структурно это мой вывод, а не ответ респондента, визуально — ещё строка.
+   Линейка та же сплошная .07, что делит строки таблицы, — прежний пунктир
+   после перехода таблицы на подложку читался как чужая деталь. */
 .ivsum{display:grid;grid-template-columns:132px minmax(0,1fr) minmax(0,1fr);
   padding-top:26px;
-  background-image:repeating-linear-gradient(to right,
-    rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
-  background-size:100% 1px;background-position:left top;background-repeat:repeat-x}
+  background-image:linear-gradient(rgba(11,11,12,.07),rgba(11,11,12,.07));
+  background-size:100% 1px;background-position:left top;background-repeat:no-repeat}
 .ivsum__k{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--accent)}
 .ivsum__c{padding:0 24px}
@@ -369,7 +370,10 @@
 .ivsum__t{margin:0;font-size:15px;line-height:1.62;color:var(--ink);text-wrap:pretty}
 .ivsum__t b{font-weight:500}
 @media (max-width:760px){
-  .ivsum{grid-template-columns:minmax(0,1fr);row-gap:18px;padding-top:22px}
+  /* Линейки сверху здесь нет: таблица развёрнута в карточки, инсайт отделён
+     от последней из них зазором, и черта была бы второй границей подряд. */
+  .ivsum{grid-template-columns:minmax(0,1fr);row-gap:18px;padding-top:22px;
+    background-image:none}
   .ivsum__c,.ivsum__c:last-child{padding:0}
   .ivsum__who{display:block;margin:0 0 7px;font-family:var(--mono);font-size:10px;
     letter-spacing:.16em;text-transform:uppercase;color:var(--ink-label)}
