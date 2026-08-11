@@ -3,19 +3,13 @@
    система частиц сама произносит «PRODUCT DESIGNER», собираясь в надпись,
    и она же перестраивается в макеты интерфейсов по ховеру. Настоящий h1
    остаётся в разметке как .sr-only — канвас недоступен скринридеру.
-   Факты (город, возраст, статус) — в плавающей пилюле .statuspill ниже. */
+   Факты (город, статус) живут только в контактах внизу страницы. */
 .hero{
   position:relative;
   min-height:min(88vh,860px);
   display:block;padding:0 0 24px;
 }
 
-/* Точка статуса и её пульс: переиспользуется пилюлей .statuspill.
-   Класс .status (отдельный блок в хиро) убран — статус переехал в пилюлю. */
-.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none;
-  animation:pulse 2.6s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.82)}}
-@media (prefers-reduced-motion: reduce){ .dot{animation:none} }
 .accent{color:var(--accent)}
 
 /* Скрэмбл-строка убрана: частицы — чистая метафора (хаос становится порядком),
@@ -28,53 +22,6 @@
 #fig{display:block;width:100%;height:100%;cursor:pointer;touch-action:manipulation}
 
 #fig:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
-
-/* ---------- пилюля статуса ----------
-   Плавает в правом верхнем углу, отдельно от навбара. Стекло то же, что у
-   .nav и .totop: та же подложка, размытие, бордер и тень — один язык. На
-   десктопе показывает статус и факты одной строкой; на мобиле свёрнута до
-   статуса, при тапе раскрывает «Самара · 25».
-   Поведение (скрытие по скроллу и в зоне «Обо мне») — в navbar.js. */
-.statuspill{position:fixed;top:14px;right:24px;z-index:50;
-  display:flex;align-items:center;
-  padding:var(--pill-py) var(--pill-px);border-radius:999px;
-  background:rgba(246,244,241,.62);
-  -webkit-backdrop-filter:blur(22px) saturate(1.8);
-  backdrop-filter:blur(22px) saturate(1.8);
-  border:1px solid rgba(11,11,12,.08);
-  box-shadow:0 8px 26px rgba(11,11,12,.08), inset 0 1px 0 rgba(255,255,255,.55);
-  transition:transform .42s cubic-bezier(.2,.8,.2,1), opacity .3s ease}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .statuspill{background:rgba(246,244,241,.94)}
-}
-/* скрытие: по скроллу вниз или в зоне «Обо мне» (классы вешает navbar.js) */
-.statuspill.hidden{transform:translateY(calc(-100% - 22px));opacity:0;pointer-events:none}
-.statuspill__head{display:flex;align-items:center;gap:8px;margin:0;padding:0;
-  background:none;border:0;cursor:pointer;
-  font-family:var(--mono);font-size:var(--pill-fs);letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink);line-height:var(--pill-lh)}
-.statuspill__head:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
-/* nowrap обязателен: на мобиле подпись схлопывается в max-width:0, и без него
-   «Самара · 25» переносилась по слову внутри нулевой ширины — три строки под
-   overflow:hidden, из-за чего свёрнутая пилюля была на 25px выше навбара. */
-.statuspill__detail{font-family:var(--mono);font-size:var(--pill-fs);letter-spacing:.16em;text-transform:uppercase;
-  white-space:nowrap;
-  color:var(--ink-2);line-height:var(--pill-lh);
-  /* разделитель между статусом и фактами — мелкая точка в цвет волоска */
-  margin-left:6px;padding-left:14px;border-left:1px solid var(--hair)}
-@media (prefers-reduced-motion: reduce){ .statuspill{transition:opacity .01s} }
-
-/* На мобиле пилюля сворачивается: виден только статус. Факты раскрываются
-   по тапу (.statuspill--open), иначе правый угол занят слишком многим. */
-@media (max-width:520px){
-  .statuspill{top:auto;bottom:18px;right:12px}
-  .statuspill__detail{
-    /* плавное раскрытие по ширине: max-width 0 → содержимому */
-    max-width:0;margin-left:0;padding-left:0;border-left:0;overflow:hidden;
-    opacity:0;transition:max-width .32s cubic-bezier(.2,.8,.2,1),opacity .24s ease,padding-left .32s}
-  .statuspill--open .statuspill__detail{
-    max-width:140px;margin-left:8px;padding-left:14px;border-left:1px solid var(--hair);opacity:1}
-}
 
 /* На узких экранах сцена ниже: две строки капса всё равно упираются в
    ширину, а лишняя высота только отодвигала бы проекты за первый экран. */
@@ -108,6 +55,11 @@
   border-bottom:1px solid rgba(11,11,12,.30);padding-bottom:3px;
   transition:color .2s,border-color .2s}
 .project__cta:hover,.project__cta:focus-visible{color:var(--accent);border-color:var(--accent)}
+/* Занимает место «Читать кейс», но читается как статус, а не как действие:
+   рамка вместо подчёркивания и приглушённый цвет, чтобы не звать на клик. */
+.project__soon{display:inline-block;margin:22px 0 0;font-family:var(--mono);font-size:11px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  border:1px solid rgba(11,11,12,.18);border-radius:999px;padding:6px 12px}
 
 .fan{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;
   background:#EDEAE6;display:flex;align-items:center;justify-content:center}

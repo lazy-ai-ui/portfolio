@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "portfolio-static",
+      "name": "portfolio",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-l", "5050", "."],
-      "port": 5050
+      "runtimeArgs": ["-y", "serve", "-l", "4321", "."],
+      "port": 4321
     }
   ]
 }
