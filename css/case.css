@@ -278,8 +278,10 @@
 .secnav__pill.no-anim{transition:none}
 
 .secnav a{position:relative;z-index:1;flex:none;
-  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  text-decoration:none;color:var(--ink-2);padding:11px 16px;border-radius:999px;
+  font-family:var(--mono);font-size:var(--pill-fs);line-height:var(--pill-lh);
+  letter-spacing:.12em;text-transform:uppercase;
+  /* по высоте совпадает с верхним навбаром: 6px обёртки + 5px здесь = --pill-py */
+  text-decoration:none;color:var(--ink-2);padding:5px 14px;border-radius:999px;
   transition:color .28s ease;white-space:nowrap}
 .secnav a:hover{color:var(--ink)}
 .secnav a.active{color:var(--on-dark)}
@@ -301,7 +303,7 @@
   .facts{grid-template-columns:1fr}
   .phases{grid-template-columns:1fr;gap:32px}
   .secnav{bottom:12px;padding:0 10px;justify-content:flex-start}
-  .secnav a{padding:10px 13px;font-size:10px;letter-spacing:.1em}
+  .secnav a{padding:5px 12px;letter-spacing:.1em}
   .tail{height:120px}
 }
 
@@ -312,7 +314,7 @@
    по размеру цели она проходит, а 44px превратили бы пилюлю в панель. */
 @media (max-width:420px){
   .secnav__in{gap:2px;padding:5px}
-  .secnav a{padding:10px 8px;letter-spacing:.05em}
+  .secnav a{padding:5px 8px;letter-spacing:.05em}
 }
 
 /* ---------- блок «Интервью» ---------- */
