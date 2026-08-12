@@ -1554,7 +1554,6 @@
 .note,
 .tr__t, .tr__d,
 .tk__from, .tk__fix,
-.cl__obs, .cl__out, .cl__prod,
-#limits > p {
+.cl__obs, .cl__out, .cl__prod {
   max-width: 62ch;
 }
