@@ -42,12 +42,6 @@
   font-family: var(--mono);
   font-size: 12px;
   line-height: 1;
-  transition: background-color .18s ease, color .18s ease;
-}
-
-.ev__c:hover .ev__n {
-  background: var(--accent);
-  color: #fff;
 }
 
 .ev__t {
@@ -61,13 +55,13 @@
    должен знать его до цитаты, иначе цитата читается вслепую. Буллит-разделитель
    рисуется псевдоэлементом, чтобы не зависеть от пробелов в разметке. */
 .ev__st {
-  color: var(--ink-3);
+  color: var(--ink-label);
   white-space: nowrap;
 }
 .ev__st::before {
   content: "•";
   margin: 0 .5em 0 .15em;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 .ev__d {
@@ -92,7 +86,7 @@
   margin: 14px 0 0;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 @media (max-width: 900px) {
@@ -100,14 +94,6 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 32px;
   }
-}
-
-/* Ховер — реакция на прямое действие, а не самостоятельное движение:
-   живёт ровно столько, сколько на карточке курсор. На тач-устройствах
-   не нужен, поэтому закрыт медиазапросом — иначе подсветка залипает
-   после тапа. */
-@media (hover: none) {
-  .ev__c:hover .ev__n { background: transparent; color: var(--accent); }
 }
 
 /* ── Свитчер контента ─────────────────────────────────────────────────────
@@ -196,7 +182,7 @@
   font-size: 11px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 /* Колонки намеренно не равны — ни по ширине, ни по высоте. Слева то, что
@@ -233,7 +219,7 @@
   font-size: 10px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 .sw__d {
@@ -265,7 +251,7 @@
   font-size: 10px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 /* Гипотеза — вывод из разговора, поэтому отбита сверху пунктиром, а не
@@ -284,6 +270,9 @@
   text-wrap: pretty;
 }
 
+/* Ярлык набран 10px, а это не «крупный текст»: акцент дал бы 3.34:1 при
+   норме 4.5:1. Коралловый в блоке остаётся линейкой слева — приём виден,
+   слово читается. То же решение у .cl__pk и .tk__fix .tk__k. */
 .sw__hk {
   display: block;
   margin-bottom: 8px;
@@ -291,7 +280,7 @@
   font-size: 10px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--ink-label);
 }
 
 @media (max-width: 900px) {
@@ -355,15 +344,6 @@
   line-height: 1;
 }
 
-/* Третий вывод — единственный, который превратился не в отдельную функцию,
-   а в структуру двух флоу. Отмечен заливкой номера: это указатель на связь
-   с разделами ниже, а не украшение. */
-.cl__i--key .cl__n {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-}
-
 .cl__t {
   margin: 20px 0 0;
   font-size: 22px;
@@ -380,7 +360,7 @@
   letter-spacing: .12em;
   text-transform: uppercase;
   line-height: 1.5;
-  color: var(--accent);
+  color: var(--ink-label);
 }
 
 .cl__obs,
@@ -420,7 +400,7 @@
   font-size: 10px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--ink-label);
 }
 
 @media (max-width: 900px) {
@@ -451,7 +431,7 @@
   font-size: 10px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 .qa__bad,
@@ -555,10 +535,10 @@
   font-size: 10px;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
-.tk__fix .tk__k { color: var(--accent); }
+.tk__fix .tk__k { color: var(--ink-label); }
 
 /* ── Три вызова ───────────────────────────────────────────────────────── */
 
@@ -590,9 +570,9 @@
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   backdrop-filter: blur(24px) saturate(1.8);
   border: 1px solid rgba(11, 11, 12, .09);
-  box-shadow:
-    0 10px 32px rgba(11, 11, 12, .10),
-    inset 0 1px 0 rgba(255, 255, 255, .7);
+  /* Тень только отрывает карточку от фона на пару пикселей. Прежняя
+     (0 10px 32px / .10) на трёх карточках подряд читалась как шум. */
+  box-shadow: 0 1px 3px rgba(11, 11, 12, .05);
 }
 
 /* Без backdrop-filter стекло выродилось бы в мутное пятно — возвращаем
@@ -768,7 +748,7 @@
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: .08em;
-  color: var(--ink-3);
+  color: var(--ink-label);
   vertical-align: middle;
 }
 
@@ -794,7 +774,7 @@
   font-size: 11px;
   line-height: 1.5;
   letter-spacing: .04em;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 @media (max-width: 900px) {
@@ -984,7 +964,7 @@
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: .18em;
-  color: var(--ink-3);
+  color: var(--ink-label);
 }
 
 /* Тексты лежат стопкой в одной ячейке: высота блока не скачет при смене
@@ -1270,7 +1250,7 @@
     font-size: 10px;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: var(--ink-3);
+    color: var(--ink-label);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1566,4 +1546,35 @@
   #problem > .lead,
   #research > p,
   #research > .lead { max-width: none; }
+}
+
+/* ── Итог ─────────────────────────────────────────────────────────────────
+   Колонок в этом кейсе две, а не три, как в RackTables: колонка с гипотезами
+   убрана. Базовое правило живёт в общем case.css, поэтому переопределяем
+   здесь — файл подключён только к этой странице. */
+.outcome__grid {
+  grid-template-columns: repeat(2, 1fr);
+  /* Линейка из case.css отделяла заголовок от трёх колонок с подписями.
+     Подписи «Видно на макетах» больше нет, и линейка повисла сразу под
+     заголовком, деля его с его же содержимым. Отбивку держит воздух. */
+  border-top: 0;
+  padding-top: 0;
+}
+
+@media (max-width: 900px) {
+  .outcome__grid { grid-template-columns: 1fr; }
+}
+
+/* ── Мера строки ──────────────────────────────────────────────────────────
+   На 1440px колонка контента 1280px, и текст в ней шёл 106–169 знаков при
+   норме 60–75. Читатель терял начало следующей строки — особенно в сноске
+   .note (13px, 169 знаков). 62ch — та же мера, что у .lead в case.css, а не
+   новое число: блоки кейса должны рвать строку по одной вертикали.
+   На узких экранах правило не срабатывает, там колонка и так уже колонки. */
+.note,
+.tr__t, .tr__d,
+.tk__from, .tk__fix,
+.cl__obs, .cl__out, .cl__prod,
+#limits > p {
+  max-width: 62ch;
 }
