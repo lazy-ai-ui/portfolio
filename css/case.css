@@ -164,14 +164,20 @@
 
 /* Требования и гипотезы: две колонки со сквозной нумерацией, требование 01
    закрывается гипотезой 01. Разделитель строк тот же пунктир, что в таблицах. */
-.req{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 56px;margin-top:72px}
+/* строки требований и гипотез выровнены попарно: обе колонки и оба списка
+   наследуют строки внешней сетки через subgrid, поэтому пункт 01 слева всегда
+   стоит на одной высоте с пунктом 01 справа */
+.req{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:auto auto repeat(4,auto);gap:0 56px;margin-top:72px}
+.req>div{display:grid;grid-row:1/-1;grid-template-rows:subgrid}
 .req__k{margin:0 0 6px;font-family:var(--display);font-weight:500;font-size:17px;
   letter-spacing:-.015em;color:var(--ink)}
 .req__d{margin:0 0 22px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--ink-label)}
-.req__list{margin:0;padding:0;list-style:none;counter-reset:r}
+.req__list{margin:0;padding:0;list-style:none;counter-reset:r;
+  display:grid;grid-row:3/-1;grid-template-rows:subgrid}
 .req__list li{counter-increment:r;display:grid;grid-template-columns:24px minmax(0,1fr);
-  gap:0 12px;padding:15px 0;font-size:15px;line-height:1.6;color:var(--ink-2);
+  gap:0 12px;align-content:start;padding:15px 0;font-size:15px;line-height:1.6;color:var(--ink-2);
   text-wrap:pretty;
   background-image:repeating-linear-gradient(to right,
     rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
@@ -180,7 +186,10 @@
 .req__list li::before{content:counter(r,decimal-leading-zero);font-family:var(--mono);
   font-size:10px;letter-spacing:.16em;color:var(--ink-label);padding-top:5px}
 @media (max-width:760px){
-  .req{grid-template-columns:minmax(0,1fr);gap:40px 0;margin-top:52px}
+  /* на узком экране колонки идут друг под другом, выравнивать нечего */
+  .req{grid-template-columns:minmax(0,1fr);grid-template-rows:none;gap:40px 0;margin-top:52px}
+  .req>div{display:block;grid-row:auto}
+  .req__list{display:block;grid-row:auto;grid-template-rows:none}
 }
 
 /* ---------- итог ----------
