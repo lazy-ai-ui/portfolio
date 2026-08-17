@@ -40,11 +40,11 @@ html.js-rv .rv--in{opacity:1;transform:none}
   display:inline-flex;align-items:center;gap:8px;
   padding:calc(11px + 6px) calc(16px + 6px);border-radius:999px;cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink-2);background:rgba(255,255,255,.66);
+  color:var(--ink-2);background:var(--glass);
   -webkit-backdrop-filter:blur(24px) saturate(1.8);
   backdrop-filter:blur(24px) saturate(1.8);
-  border:1px solid rgba(11,11,12,.09);
-  box-shadow:0 10px 32px rgba(11,11,12,.10), inset 0 1px 0 rgba(255,255,255,.7);
+  border:1px solid var(--glass-hair);
+  box-shadow:var(--shadow-glass);
   opacity:0;visibility:hidden;transform:translateY(10px);
   transition:opacity .28s ease,transform .28s cubic-bezier(.22,.8,.2,1),
              visibility .28s,color .2s ease}
@@ -52,7 +52,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
 .totop:hover{color:var(--ink)}
 .totop b{font-weight:400;color:var(--accent);font-size:13px;line-height:1}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .totop{background:rgba(255,255,255,.95)}
+  .totop{background:var(--glass-solid)}
 }
 @media (max-width:900px){
   .totop{right:12px;bottom:78px;padding:10px 13px;font-size:10px;letter-spacing:.1em}
@@ -86,21 +86,23 @@ html.js-rv .rv--in{opacity:1;transform:none}
   display:flex;justify-content:center;pointer-events:none;
   transition:transform .42s cubic-bezier(.2,.8,.2,1), opacity .3s ease}
 .navbar.hidden{transform:translateY(calc(-100% - 22px));opacity:0}
+/* Обёртка нужна ровно за тем, чтобы переключателю темы было от чего вставать
+   absolute: сам навбар растянут во всю ширину, и правого края у него нет. */
+.navbar__in{position:relative;display:flex;align-items:center;pointer-events:none}
 
 /* Полустекло: подложку делаем прозрачнее, а читаемость возвращаем размытием
    и подъёмом насыщенности. Ниже .62 текст начинает проигрывать тёмному хиро,
    который проезжает под навбаром, поэтому дальше не разбавляем. */
 .nav{pointer-events:auto;display:flex;align-items:center;gap:30px;
   padding:var(--pill-py) var(--pill-px);border-radius:999px;
-  background:rgba(246,244,241,.62);
+  background:var(--nav-glass);
   -webkit-backdrop-filter:blur(22px) saturate(1.8);
   backdrop-filter:blur(22px) saturate(1.8);
-  border:1px solid rgba(11,11,12,.08);
-  box-shadow:0 8px 26px rgba(11,11,12,.08),
-             inset 0 1px 0 rgba(255,255,255,.55)}
+  border:1px solid var(--nav-hair);
+  box-shadow:var(--shadow-nav)}
 /* если браузер не умеет backdrop-filter — возвращаем плотный фон */
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .nav{background:rgba(246,244,241,.94)}
+  .nav{background:var(--nav-glass-solid)}
 }
 .nav a{position:relative;
   font-family:var(--mono);font-size:var(--pill-fs);line-height:var(--pill-lh);
@@ -112,6 +114,171 @@ html.js-rv .rv--in{opacity:1;transform:none}
 }
 .nav .back{color:var(--ink)}
 .nav__l{display:flex;gap:20px}
+
+/* ---- переключатель темы ----
+   Состояний три: как в системе, светлая, тёмная. Солнце и луна — паттерн,
+   который не надо объяснять, а системное состояние показано самим устройством,
+   с которого страницу открыли. Отсюда четыре рисунка на три состояния.
+
+   Управлений два, по способу ввода. Пальцем удобнее одна кнопка, которая
+   перебирает состояния по кругу: три мишени по 18px в навбаре не нажать, а
+   раскрытия по наведению на тач-экране просто нет. Мышью, наоборот, перебор
+   вслепую раздражает — там сегментный переключатель, где все три состояния
+   видны сразу и выбор делается за одно нажатие.
+
+   Высота обоих гасится отрицательным полем: пилюля навбара обязана совпадать
+   по высоте с пилюлей статуса на главной, и лишние пиксели развели бы их. Поле
+   считается от тех же переменных, что и строка, поэтому держится и на узком
+   экране, где кегль меньше.
+
+   Без JS не показываем ни то, ни другое: нажимать было бы не на что. Признак —
+   атрибут, который ставит инлайновый скрипт в <head>, то есть до отрисовки. */
+
+.nav__theme,
+.themectl{display:none}
+
+/* --- кнопка перебора (палец) --- */
+:root[data-theme-mode] .nav__theme{
+  position:relative;flex:none;display:flex;align-items:center;justify-content:center;
+  width:16px;height:16px;margin-left:-10px;padding:0;border:0;background:none;
+  margin-block:calc((var(--pill-fs) * var(--pill-lh) - 16px) / 2);
+  color:var(--ink-label);cursor:pointer;transition:color .2s ease}
+.nav__theme:focus-visible{color:var(--ink);outline:none}
+@media (hover: hover){
+  .nav__theme:hover{color:var(--ink)}
+}
+
+/* Значки лежат стопкой и меняются перетеканием, а не подменой: мгновенная
+   подмена на месте читается как сбой отрисовки, особенно когда рядом ничего
+   больше не двигается. Уходящий сворачивается и уходит поворотом, приходящий
+   приезжает оттуда же с небольшой задержкой — иначе они накладываются в
+   середине и на полкадра видно оба. */
+.nav__theme svg{
+  position:absolute;top:0;left:0;width:16px;height:16px;
+  fill:none;stroke:currentColor;stroke-width:1.3;
+  stroke-linecap:round;stroke-linejoin:round;
+  opacity:0;transform:scale(.4) rotate(-110deg);
+  transition:opacity .2s ease, transform .34s var(--pt-ease-out)}
+
+:root[data-theme-mode="light"] .nav__theme .i--sun,
+:root[data-theme-mode="dark"] .nav__theme .i--moon,
+:root[data-theme-mode="system"] .nav__theme .i--desktop{
+  opacity:1;transform:none;transition-delay:.09s}
+
+/* «Как в системе» рисуем тем устройством, с которого пришли: на телефоне
+   монитор не объясняет ничего. Различаем по указателю, а не по ширине окна —
+   узкое окно на десктопе остаётся десктопом. */
+@media (pointer: coarse){
+  :root[data-theme-mode="system"] .nav__theme .i--desktop{
+    opacity:0;transform:scale(.4) rotate(-110deg);transition-delay:0s}
+  :root[data-theme-mode="system"] .nav__theme .i--phone{
+    opacity:1;transform:none;transition-delay:.09s}
+}
+
+/* --- сегментный переключатель (мышь) ---
+   Отдельная пилюля рядом с навбаром, а не внутри него. Внутри она заставляла
+   навбар дышать на сорок пикселей при каждом наведении, и ссылки разъезжались.
+   Снаружи навбар стоит неподвижно и точно по центру: пилюля выстроена absolute
+   от его правого края и растёт вправо, ни на что не влияя.
+
+   Оформление взято у нижней навигации кейсов — стекло, волосяная рамка, едущая
+   подложка под выбранным, — но стекло здесь навбарное: пилюля стоит с ним
+   вплотную и обязана быть из того же материала.
+
+   Высота считается из тех же переменных, что и навбар, поэтому пилюли стоят на
+   одной линии при любом кегле и не расходятся на узком экране.
+
+   Ниже 760px переключатель уступает место кнопке перебора: навбар по центру,
+   пилюля справа от него, и в узком окне раскрытая пилюля уехала бы за край. */
+@media (hover: hover) and (pointer: fine) and (min-width: 760px){
+  :root[data-theme-mode] .nav__theme{display:none}
+
+  :root[data-theme-mode] .themectl{
+    --open:0;
+    --tc-seg:24px;
+    position:absolute;left:100%;top:0;
+    display:flex;align-items:stretch;
+    height:calc(var(--pill-py) * 2 + var(--pill-fs) * var(--pill-lh) + 2px);
+    margin-left:10px;padding:6px;border-radius:999px;
+    background:var(--nav-glass);
+    -webkit-backdrop-filter:blur(22px) saturate(1.8);
+    backdrop-filter:blur(22px) saturate(1.8);
+    border:1px solid var(--nav-hair);
+    box-shadow:var(--shadow-nav);
+    pointer-events:auto;overflow:hidden}
+
+  /* Раскрытие держится на одной переменной: ширина и прозрачность сегментов и
+     сдвиг подложки считаются от неё, поэтому состояний в разметке нет и
+     разъехаться нечему.
+
+     Наведение читается тремя способами, и все три нужны. :hover — обычный
+     случай. Класс is-open ставит js/theme.js: смена темы идёт под View
+     Transitions, живой документ на полсекунды подменяется снимком, и после
+     возврата :hover не восстановлен, пока мышь не двинулась — пилюля
+     схлопывалась прямо под курсором. :has(:focus-visible) — для клавиатуры,
+     и именно focus-visible: на :focus-within пилюля залипала бы раскрытой
+     после выбора мышью, потому что фокус остаётся на нажатом сегменте.
+
+     Правила разнесены построчно намеренно: браузер, не знающий :has(),
+     выбросил бы весь список селекторов вместе с наведением. */
+  :root[data-theme-mode] .themectl:hover{--open:1}
+  :root[data-theme-mode] .themectl.is-open{--open:1}
+  :root[data-theme-mode] .themectl:has(:focus-visible){--open:1}
+
+  :root[data-theme-mode="system"] .themectl{--seg:0}
+  :root[data-theme-mode="light"] .themectl{--seg:1}
+  :root[data-theme-mode="dark"] .themectl{--seg:2}
+
+  /* Подложка выбранного — та же, что под активным разделом внизу кейса. В
+     свёрнутом виде сдвиг обнуляется вместе с --open: сегмент там ровно один и
+     стоит в начале дорожки. */
+  .themectl__ind{
+    position:absolute;top:6px;bottom:6px;left:6px;width:var(--tc-seg);
+    border-radius:999px;background:var(--contrast);pointer-events:none;
+    transform:translateX(calc(var(--open) * var(--seg,0) * var(--tc-seg)));
+    transition:transform .44s cubic-bezier(.22,.8,.2,1)}
+
+  .themectl__b{
+    position:relative;z-index:1;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    width:calc(var(--open) * var(--tc-seg));height:100%;
+    padding:0;border:0;border-radius:999px;background:none;
+    color:var(--ink-label);cursor:pointer;overflow:hidden;opacity:var(--open);
+    transition:width .34s var(--pt-ease-out), opacity .22s ease, color .28s ease}
+  .themectl__b svg{
+    flex:none;width:16px;height:16px;
+    fill:none;stroke:currentColor;stroke-width:1.4;
+    stroke-linecap:round;stroke-linejoin:round}
+  .themectl__b:hover{color:var(--ink)}
+  /* Цветом фокус здесь не показать: выбранный сегмент и так на подложке и
+     цвет у него занят. Поэтому обводка, и внутрь, чтобы не разрезать пилюлю. */
+  .themectl__b:focus-visible{outline:1.5px solid var(--accent);outline-offset:-3px}
+
+  /* Выбранный сегмент виден всегда: в свёрнутом виде он и есть вся пилюля.
+     Опознаётся по атрибуту темы на <html>, а не по aria-pressed — атрибут
+     стоит с инлайнового скрипта, то есть до первой отрисовки, а aria-pressed
+     расставит js/theme.js уже после загрузки, и на первом кадре схлопнулись бы
+     все три. */
+  :root[data-theme-mode="system"] .themectl__b[data-theme-set="system"],
+  :root[data-theme-mode="light"] .themectl__b[data-theme-set="light"],
+  :root[data-theme-mode="dark"] .themectl__b[data-theme-set="dark"]{
+    width:var(--tc-seg);opacity:1;color:var(--on-contrast)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .themectl__ind{transition:none}
+}
+
+/* Значки лежат спрайтом: они нужны дважды на странице — в кнопке перебора и в
+   сегментном переключателе. Прятать спрайт через display:none нельзя, тогда
+   <use> в части браузеров перестаёт его находить. */
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+
+@media (prefers-reduced-motion: reduce){
+  .nav__theme svg,
+  .themectl__b,
+  .themectl__b::before{transition:none}
+}
 
 /* ---- пиксельный ховер ----
    Раньше ссылка просто темнела. Теперь под ней слева направо собирается
@@ -131,7 +298,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
   background-image:
     linear-gradient(var(--accent) 0 0),
     repeating-linear-gradient(to right,
-      rgba(11,11,12,.45) 0 3px, transparent 3px 8px);
+      var(--rule-strong) 0 3px, transparent 3px 8px);
   background-size:3px 3px, auto auto;
   background-position:right center, left center;
   background-repeat:no-repeat, repeat-x;
@@ -156,7 +323,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
 /* ---- словарь: строка из квадратиков вместо линии ---- */
 .rule{height:5px;border:0;margin:0;
   background-image:repeating-linear-gradient(to right,
-    rgba(11,11,12,.30) 0 5px, transparent 5px 12px);
+    var(--rule) 0 5px, transparent 5px 12px);
   -webkit-mask-image:linear-gradient(to right,transparent,#000 8%,#000 82%,transparent);
   mask-image:linear-gradient(to right,transparent,#000 8%,#000 82%,transparent)}
 
@@ -267,7 +434,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
   padding:28px 32px;
   /* тень почти на пределе различимости: подложка должна отделиться от фона,
      а не всплыть над ним — страница остаётся плоской */
-  box-shadow:0 1px 2px rgba(11,11,12,.03)}
+  box-shadow:var(--shadow-0)}
 /* fixed — чтобы заданная ширина левой колонки соблюдалась точно и текст
    во всех таблицах начинался с одной вертикали */
 .tbl table{width:100%;border-collapse:collapse;text-align:left;table-layout:fixed}
@@ -304,7 +471,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
    фактуры и спорил с секционным .rule. Пунктир остаётся языком страницы,
    таблица внутри карточки говорит нейтральной линией. */
 .tbl tbody tr{
-  background-image:linear-gradient(rgba(11,11,12,.07),rgba(11,11,12,.07));
+  background-image:linear-gradient(var(--tint-2),var(--tint-2));
   background-size:100% 1px;background-position:left bottom;background-repeat:repeat-x}
 .tbl tbody tr:last-child{background-image:none}
 
@@ -316,7 +483,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
    от неё край карточки. В стековом режиме колонок нет, отсюда медиазапрос. */
 @media (min-width:761px){
   .tbl th:not(:first-child),.tbl td:not(:first-child){
-    background-image:linear-gradient(rgba(11,11,12,.05),rgba(11,11,12,.05));
+    background-image:linear-gradient(var(--tint-1),var(--tint-1));
     background-size:1px 100%;background-position:left top;background-repeat:no-repeat}
 }
 /* Низ последней строки отдан карточке — иначе 22px ячейки складываются
@@ -336,7 +503,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
 .tbl__n{display:inline-flex;align-items:center;justify-content:center;
   width:34px;height:34px;border-radius:7px;flex:none;
   font-family:var(--mono);font-size:12px;line-height:1;
-  color:var(--accent);border:1px solid rgba(228,87,58,.42);background:transparent}
+  color:var(--accent);border:1px solid var(--accent-line);background:transparent}
 
 /* подпись строки слева */
 .tbl__k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
@@ -371,7 +538,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
     background:var(--surface);
     border:1px solid var(--hair);
     border-radius:12px;
-    box-shadow:0 1px 2px rgba(11,11,12,.03);
+    box-shadow:var(--shadow-0);
     /* строчная линейка десктопа здесь не нужна: строки разведены зазором */
     background-image:none}
   .tbl.tbl--stack tbody tr:last-child{margin-bottom:0}

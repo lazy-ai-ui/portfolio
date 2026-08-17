@@ -100,9 +100,21 @@
   var narrow = window.matchMedia('(max-width: 900px)');
 
   document.addEventListener('click', function (e) {
-    if (!narrow.matches) return;
     var fig = e.target.closest && e.target.closest('.wh__screen');
     if (!fig || !fig.classList.contains('is-on')) return;
+
+    /* У шагов, где экран есть целиком, клик по макету делает ровно то же, что
+       кнопка «развернуть»: сам макет — самая очевидная цель нажатия. Кнопку
+       ищем видимую, то есть относящуюся к текущему шагу. Работает на любой
+       ширине: раскрывать длинный экран есть смысл и на десктопе. */
+    var wh = fig.closest && fig.closest('.wh');
+    var more = wh && wh.querySelector('.wh__nav .wh__more[data-i]:not([hidden])');
+    if (more) { open(more); return; }
+
+    // Остальные экраны раскрываются как есть и только на телефоне: там макет
+    // вынужденно мелкий. На десктопе он и так крупный, и случайный клик по
+    // картинке ничего делать не должен.
+    if (!narrow.matches) return;
     var img = fig.querySelector('img');
     if (!img) return;
     open({

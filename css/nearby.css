@@ -47,7 +47,7 @@
   width: 34px;
   height: 34px;
   border-radius: 7px;
-  border: 1px solid rgba(228, 87, 58, .42);
+  border: 1px solid var(--accent-line);
   color: var(--accent);
   font-family: var(--mono);
   font-size: 12px;
@@ -85,7 +85,7 @@
 .ev__q {
   margin: 24px 0 0;
   padding-left: 18px;
-  border-left: 2px solid rgba(228, 87, 58, .42);
+  border-left: 2px solid var(--accent-line);
   font-size: 15px;
   line-height: 1.62;
   color: var(--ink);
@@ -127,7 +127,7 @@
   gap: 4px;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(11, 11, 12, .05);
+  background: var(--tint-1);
 }
 
 /* Подложка активной вкладки переезжает вместо перекраски — та же механика и
@@ -140,7 +140,7 @@
   height: calc(100% - 8px);
   width: 0;
   border-radius: 999px;
-  background: var(--dark);
+  background: var(--contrast);
   pointer-events: none;
   transform: translateX(0);
   opacity: 0;
@@ -174,7 +174,7 @@
   outline-offset: 2px;
 }
 
-.sw__tab.is-on { color: var(--on-dark); }
+.sw__tab.is-on { color: var(--on-contrast); }
 
 .sw__panel {
   margin-top: 40px;
@@ -225,7 +225,7 @@
   padding-left: 28px;
   margin-left: -28px;
   background-image: repeating-linear-gradient(to bottom,
-    rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
+    var(--rule-soft) 0 2px, transparent 2px 7px);
   background-size: 1px 100%;
   background-position: left top;
   background-repeat: repeat-y;
@@ -251,7 +251,7 @@
 .sw__q {
   margin: 24px 0 0;
   padding-left: 18px;
-  border-left: 2px solid rgba(228, 87, 58, .42);
+  border-left: 2px solid var(--accent-line);
   font-size: 17px;
   line-height: 1.55;
   color: var(--ink);
@@ -278,7 +278,7 @@
   margin: 24px 0 0;
   padding-top: 24px;
   background-image: repeating-linear-gradient(to right,
-    rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
+    var(--rule-soft) 0 2px, transparent 2px 7px);
   background-size: 100% 1px;
   background-position: left top;
   background-repeat: repeat-x;
@@ -313,7 +313,7 @@
     padding: 32px 0 0;
     margin-left: 0;
     background-image: repeating-linear-gradient(to right,
-      rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
+      var(--rule-soft) 0 2px, transparent 2px 7px);
     background-size: 100% 1px;
     background-repeat: repeat-x;
   }
@@ -342,7 +342,7 @@
   padding: 40px 0;
   /* Отбивка сверху — тот же мелкий пунктир, что делит строки таблиц. */
   background-image: repeating-linear-gradient(to right,
-    rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
+    var(--rule-soft) 0 2px, transparent 2px 7px);
   background-size: 100% 1px;
   background-position: left top;
   background-repeat: repeat-x;
@@ -355,7 +355,7 @@
   width: 34px;
   height: 34px;
   border-radius: 7px;
-  border: 1px solid rgba(228, 87, 58, .42);
+  border: 1px solid var(--accent-line);
   color: var(--accent);
   font-family: var(--mono);
   font-size: 12px;
@@ -404,7 +404,7 @@
 .cl__prod {
   margin: 24px 0 0;
   padding-left: 18px;
-  border-left: 2px solid rgba(228, 87, 58, .42);
+  border-left: 2px solid var(--accent-line);
   font-size: 15px;
   line-height: 1.62;
   color: var(--ink);
@@ -478,7 +478,7 @@
 .tk__fix {
   margin: 0;
   padding-left: 18px;
-  border-left: 2px solid rgba(11, 11, 12, .12);
+  border-left: 2px solid var(--hair);
   font-size: 15px;
   line-height: 1.62;
   color: var(--ink-2);
@@ -534,19 +534,19 @@
   /* Плотнее навигации (там .66): та лежит на плывущем под ней контенте и
      читается за счёт движения, а карточка стоит на ровном фоне — при той же
      прозрачности она почти сливалась бы с ним. */
-  background: rgba(255, 255, 255, .82);
+  background: rgba(var(--surface-rgb), .82);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   backdrop-filter: blur(24px) saturate(1.8);
-  border: 1px solid rgba(11, 11, 12, .09);
+  border: 1px solid rgba(var(--ink-rgb),.09);
   /* Тень только отрывает карточку от фона на пару пикселей. Прежняя
      (0 10px 32px / .10) на трёх карточках подряд читалась как шум. */
-  box-shadow: 0 1px 3px rgba(11, 11, 12, .05);
+  box-shadow: var(--shadow-1);
 }
 
 /* Без backdrop-filter стекло выродилось бы в мутное пятно — возвращаем
    плотный фон, как это сделано для самой навигации. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .ch__i { background: rgba(255, 255, 255, .95); }
+  .ch__i { background: var(--glass-solid); }
 }
 
 /* Иконка вместо номера: три вызова читаются как набор, а не как
@@ -613,7 +613,7 @@
   margin-top: 36px;
   padding-top: 28px;
   background-image: repeating-linear-gradient(to right,
-    rgba(11, 11, 12, .16) 0 2px, transparent 2px 7px);
+    var(--rule-soft) 0 2px, transparent 2px 7px);
   background-size: 100% 1px;
   background-position: left top;
   background-repeat: repeat-x;
@@ -630,7 +630,7 @@
   width: 34px;
   height: 34px;
   border-radius: 7px;
-  border: 1px solid rgba(228, 87, 58, .42);
+  border: 1px solid var(--accent-line);
   color: var(--accent);
   font-family: var(--mono);
   font-size: 12px;
@@ -962,9 +962,28 @@
   pointer-events: auto;
 }
 
-/* Кнопка раскрытия карточки живёт в тексте шага, поэтому ей нужен отступ
-   от абзаца — у .wh__nav он свой. */
-.wh__more { margin-top: 24px; }
+/* ── Пара зеркальных предложений про выдачу и возврат ─────────────────────
+   Абзац шире общей меры строки: два предложения должны встать целиком, каждое
+   в свою строку, а по общей мере они не помещаются. Остальной текст блока
+   меру не меняет. */
+.lead--pair { max-width: none; }
+.lead--pair .nb { display: block; white-space: nowrap; }
+
+/* Ниже 1100px предложения в строку уже не влезают, и nowrap выдавил бы их
+   за край колонки. Там абзац возвращается к обычной мере и обычному переносу. */
+@media (max-width: 1100px) {
+  .lead--pair { max-width: 62ch; }
+  .lead--pair .nb { display: inline; white-space: normal; }
+}
+
+/* Кнопка раскрытия стоит в ряду навигации между «Назад» и «Далее». Текст
+   держим в одну строку: рядом с короткими кнопками перенос выглядел бы
+   случайным. */
+.wh__more { white-space: nowrap; }
+
+/* На шаге, где экран открывается целиком, курсор говорит, что по макету
+   можно нажать. */
+.wh--openable .wh__screen.is-on { cursor: pointer; }
 
 .wh__t {
   margin: 0;
@@ -1350,7 +1369,7 @@
   gap: 20px;
   flex-direction: column;
   padding: 24px;
-  background: rgba(11, 11, 12, .66);
+  background: var(--scrim);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   opacity: 0;
@@ -1393,7 +1412,7 @@
      совпадения не бывает, и любая заливка под картинкой вылезала бы в углах
      светлым серпом. Картинка кладётся прямо на подложку. */
   background: transparent;
-  box-shadow: 0 24px 60px rgba(11, 11, 12, .38);
+  box-shadow: var(--shadow-modal);
   /* Полосы прокрутки нет намеренно: рамка изображает телефон, а подпись под
      ней говорит, что карточка листается. */
   scrollbar-width: none;
@@ -1425,7 +1444,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(237, 235, 232, .26);
+  border: 1px solid rgba(var(--on-dark-rgb), .26);
   border-radius: 999px;
   background: transparent;
   color: var(--on-dark-2);

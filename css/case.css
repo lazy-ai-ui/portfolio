@@ -27,11 +27,11 @@
 .ov{display:grid;grid-template-columns:1.85fr 1fr;gap:20px;align-items:start}
 .ov__shots{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:20px}
 .shot{border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--hair);
-  box-shadow:0 18px 44px rgba(11,11,12,.08)}
+  box-shadow:var(--shadow-card)}
 .shot--wide{grid-column:1 / -1}
 .shot img{width:100%;height:auto;display:block}
 .shot--empty{aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;
-  background:#EFEDEA;box-shadow:none}
+  background:var(--placeholder-2);box-shadow:none}
 .shot--empty span{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--ink-label)}
 /* подпись показываем, только если картинку не удалось загрузить */
@@ -180,7 +180,7 @@
   gap:0 12px;align-content:start;padding:15px 0;font-size:15px;line-height:1.6;color:var(--ink-2);
   text-wrap:pretty;
   background-image:repeating-linear-gradient(to right,
-    rgba(11,11,12,.16) 0 2px, transparent 2px 7px);
+    var(--rule-soft) 0 2px, transparent 2px 7px);
   background-size:100% 1px;background-position:left top;background-repeat:repeat-x}
 .req__list li:first-child{background-image:none;padding-top:0}
 .req__list li::before{content:counter(r,decimal-leading-zero);font-family:var(--mono);
@@ -215,7 +215,7 @@
 .outcome__col--hypo{background:var(--surface);border:1px solid var(--hair);
   border-radius:12px;padding:18px}
 .outcome__tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent);border:1px solid rgba(228,87,58,.4);border-radius:3px;padding:2px 6px;line-height:1}
+  color:var(--accent);border:1px solid rgba(var(--accent-rgb),.4);border-radius:3px;padding:2px 6px;line-height:1}
 .outcome__col--hypo .outcome__tag{display:inline-block;margin:0 0 14px}
 
 .outcome__list{margin:0;padding:0;list-style:none}
@@ -253,14 +253,13 @@
 .secnav{position:fixed;left:0;right:0;bottom:18px;z-index:60;display:flex;justify-content:center;
   pointer-events:none;padding:0 16px}
 .secnav__in{position:relative;pointer-events:auto;display:flex;gap:4px;padding:6px;border-radius:999px;
-  background:rgba(255,255,255,.66);-webkit-backdrop-filter:blur(24px) saturate(1.8);
-  backdrop-filter:blur(24px) saturate(1.8);border:1px solid rgba(11,11,12,.09);
-  box-shadow:0 10px 32px rgba(11,11,12,.10),
-             inset 0 1px 0 rgba(255,255,255,.7);max-width:100%;overflow-x:auto;
+  background:var(--glass);-webkit-backdrop-filter:blur(24px) saturate(1.8);
+  backdrop-filter:blur(24px) saturate(1.8);border:1px solid var(--glass-hair);
+  box-shadow:var(--shadow-glass);max-width:100%;overflow-x:auto;
   scrollbar-width:none;-ms-overflow-style:none}
 .secnav__in::-webkit-scrollbar{display:none}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .secnav__in{background:rgba(255,255,255,.95)}
+  .secnav__in{background:var(--glass-solid)}
 }
 
 /* Пилюля навигации центрирована и имеет фиксированную ширину по содержимому
@@ -277,7 +276,7 @@
    Раньше тёмная подложка гасла у одного и загоралась у другого, и переход
    читался как диссолв, а не как перемещение. */
 .secnav__pill{position:absolute;top:6px;left:0;height:calc(100% - 12px);width:0;
-  border-radius:999px;background:var(--dark);pointer-events:none;
+  border-radius:999px;background:var(--contrast);pointer-events:none;
   transform:translateX(0);opacity:0;
   transition:transform .44s cubic-bezier(.22,.8,.2,1),
              width .44s cubic-bezier(.22,.8,.2,1),
@@ -293,7 +292,7 @@
   text-decoration:none;color:var(--ink-2);padding:5px 14px;border-radius:999px;
   transition:color .28s ease;white-space:nowrap}
 .secnav a:hover{color:var(--ink)}
-.secnav a.active{color:var(--on-dark)}
+.secnav a.active{color:var(--on-contrast)}
 @media (prefers-reduced-motion: reduce){
   .secnav__pill{transition:none}
 }
@@ -359,7 +358,7 @@
    таблицей не является, поэтому правило base на него не распространяется. */
 @media (min-width:761px){
   .ivsum__c:last-child{
-    background-image:linear-gradient(rgba(11,11,12,.05),rgba(11,11,12,.05));
+    background-image:linear-gradient(var(--tint-1),var(--tint-1));
     background-size:1px 100%;background-position:left top;background-repeat:no-repeat}
 }
 
@@ -369,7 +368,7 @@
    после перехода таблицы на подложку читался как чужая деталь. */
 .ivsum{display:grid;grid-template-columns:132px minmax(0,1fr) minmax(0,1fr);
   padding-top:26px;
-  background-image:linear-gradient(rgba(11,11,12,.07),rgba(11,11,12,.07));
+  background-image:linear-gradient(var(--tint-2),var(--tint-2));
   background-size:100% 1px;background-position:left top;background-repeat:no-repeat}
 .ivsum__k{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--accent)}
@@ -445,7 +444,7 @@
   .tbl.tbl--market tbody tr{
     padding:22px 20px;margin-bottom:12px;
     background:var(--surface);border:1px solid var(--hair);border-radius:12px;
-    box-shadow:0 1px 2px rgba(11,11,12,.03);background-image:none}
+    box-shadow:0 1px 2px rgba(var(--ink-rgb),.03);background-image:none}
   .tbl.tbl--market tbody tr:last-child{margin-bottom:0}
   .tbl.tbl--market th[scope=row]{width:auto;padding:0 0 18px}
   /* вертикаль колонок из base здесь оставила бы полоску слева у каждого блока */
@@ -490,16 +489,16 @@
    часть, которую шторка и показывает, остаётся целой. */
 .cmp__before{position:absolute;inset:0;z-index:1;
   clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
-.anno__frame .cmp__before img{object-fit:cover;object-position:left top;background:#E9E6E2}
+.anno__frame .cmp__before img{object-fit:cover;object-position:left top;background:var(--placeholder)}
 .cmp__before span{display:none}
-.cmp__before.is-missing{display:flex;align-items:center;justify-content:center;background:#E9E6E2}
+.cmp__before.is-missing{display:flex;align-items:center;justify-content:center;background:var(--placeholder)}
 .cmp__before.is-missing span{display:block;font-family:var(--mono);font-size:11px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--ink-label);white-space:nowrap}
 
 .cmp__tag{position:absolute;top:14px;z-index:2;
   font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
   padding:7px 12px;border-radius:999px;
-  background:rgba(11,11,12,.74);color:var(--on-dark);
+  background:rgba(var(--pin-rgb),.74);color:var(--on-dark);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .cmp__tag{transition:opacity .2s ease,transform .2s ease}
 .cmp__tag--before{left:14px}
@@ -514,9 +513,9 @@
   display:flex;align-items:center;justify-content:center}
 /* ручка — квадрат, тот же словарь, что у частиц */
 .cmp__bar span{display:flex;align-items:center;justify-content:center;
-  width:36px;height:36px;border-radius:8px;background:var(--accent);color:#fff;
+  width:36px;height:36px;border-radius:8px;background:var(--accent);color:var(--on-accent);
   font-family:var(--mono);font-size:13px;line-height:1;
-  box-shadow:0 4px 16px rgba(11,11,12,.3), 0 0 0 4px rgba(255,255,255,.6)}
+  box-shadow:0 4px 16px rgba(var(--pin-rgb),.3), 0 0 0 4px var(--pin-ring-soft)}
 .cmp__bar:focus-visible{outline:none}
 .cmp__bar:focus-visible span{outline:2px solid var(--ink);outline-offset:3px}
 
@@ -543,11 +542,11 @@
   background:var(--surface);border:1.5px solid var(--accent);color:var(--ink);
   text-decoration:none;
   font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
-  box-shadow:0 8px 20px rgba(11,11,12,.06);
+  box-shadow:var(--shadow-3);
   transition:background-color .22s ease,box-shadow .22s ease,transform .22s cubic-bezier(.2,.8,.2,1)}
 .proto-cta:hover,.proto-cta:focus-visible{
   background:var(--accent);transform:translateY(-1px);
-  box-shadow:0 12px 26px rgba(228,87,58,.28)}
+  box-shadow:0 12px 26px rgba(var(--accent-rgb),.28)}
 .proto-cta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .proto-cta__arrow{display:inline-block;font-style:normal;color:var(--accent);
   transition:transform .22s cubic-bezier(.2,.8,.2,1),color .22s ease}
@@ -580,7 +579,7 @@
   margin-inline:auto}
 .anno__frame{position:absolute;inset:0;border-radius:16px;overflow:hidden;
   background:var(--surface);border:1px solid var(--hair);
-  box-shadow:0 18px 44px rgba(11,11,12,.08)}
+  box-shadow:var(--shadow-card)}
 /* курсор и запрет выделения нужны только там, где рамку тянут шторкой */
 .anno__frame.cmp{cursor:ew-resize;touch-action:pan-y;
   -webkit-user-select:none;user-select:none}
@@ -590,16 +589,16 @@
 .hs{position:absolute;width:30px;height:30px;border-radius:50%;transform:translate(-50%,-50%);
   border:0;cursor:pointer;padding:0;
   font-family:var(--mono);font-size:12px;font-weight:400;
-  background:var(--accent);color:#fff;
-  box-shadow:0 2px 10px rgba(11,11,12,.28), 0 0 0 3px rgba(255,255,255,.75);
+  background:var(--accent);color:var(--on-accent);
+  box-shadow:0 2px 10px rgba(var(--pin-rgb),.28), 0 0 0 3px var(--pin-ring);
   animation:hsPulse 2.8s ease-in-out infinite;
   transition:background .2s ease,color .2s ease,transform .2s ease,opacity .28s ease;z-index:3}
 .hs:nth-of-type(2){animation-delay:.35s}
 .hs:nth-of-type(3){animation-delay:.7s}
 .hs:nth-of-type(4){animation-delay:1.05s}
 .hs:hover{transform:translate(-50%,-50%) scale(1.12)}
-.hs.on{background:var(--ink);color:var(--on-dark);animation:none;
-  box-shadow:0 2px 12px rgba(11,11,12,.4), 0 0 0 4px rgba(255,255,255,.9)}
+.hs.on{background:var(--dark);color:var(--on-dark);animation:none;
+  box-shadow:0 2px 12px rgba(var(--pin-rgb),.4), 0 0 0 4px var(--pin-ring-strong)}
 .hs::after{content:"";position:absolute;inset:-9px;border-radius:50%}
 /* точку ещё закрывает старый экран: она принадлежит новому и до него
    шторка не дошла */
@@ -608,8 +607,8 @@
 
 /* медленная пульсация: видно, что точка есть и на неё можно нажать */
 @keyframes hsPulse{
-  0%,100%{box-shadow:0 2px 10px rgba(11,11,12,.28), 0 0 0 3px rgba(255,255,255,.75), 0 0 0 3px rgba(228,87,58,.45)}
-  55%{box-shadow:0 2px 10px rgba(11,11,12,.28), 0 0 0 3px rgba(255,255,255,.75), 0 0 0 13px rgba(228,87,58,0)}
+  0%,100%{box-shadow:0 2px 10px rgba(var(--pin-rgb),.28), 0 0 0 3px var(--pin-ring), 0 0 0 3px var(--accent-ring)}
+  55%{box-shadow:0 2px 10px rgba(var(--pin-rgb),.28), 0 0 0 3px var(--pin-ring), 0 0 0 13px rgba(var(--accent-rgb),0)}
 }
 @media (prefers-reduced-motion: reduce){
   .hs{animation:none}
@@ -626,7 +625,7 @@
     background .18s ease,border-color .18s ease,box-shadow .18s ease}
 .tip.on{opacity:1;visibility:visible}
 .tip.solid{background:var(--surface);border-color:var(--hair);
-  box-shadow:0 20px 50px rgba(11,11,12,.20)}
+  box-shadow:var(--shadow-pop)}
 /* холст живёт ПОД текстом, иначе квадратики сыплются поверх букв */
 .tip__fx{position:absolute;inset:0;width:100%;height:100%;display:block;
   pointer-events:none;border-radius:14px;z-index:1}
@@ -662,7 +661,7 @@
 
 /* ---- увеличенный просмотр макета (своя модалка, не нативный фулскрин) ---- */
 .shade{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;
-  padding:24px;background:rgba(11,11,12,.66);
+  padding:24px;background:var(--scrim);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s}
 .shade.on{opacity:1;visibility:visible}
@@ -677,7 +676,7 @@
 @media (min-width:761px){ .shade .anno__mobile{display:none} }
 /* на тёмной подложке шкала надписей меняется */
 .shade .anno__hint{color:var(--on-dark-3)}
-.shade .anno__nav button{color:var(--on-dark-2);border-color:rgba(237,235,232,.26)}
+.shade .anno__nav button{color:var(--on-dark-2);border-color:rgba(var(--on-dark-rgb),.26)}
 .shade .anno__nav button:hover:not(:disabled){color:var(--on-dark);border-color:var(--on-dark-3)}
 .shade .anno__nav .is-wide{color:var(--on-dark);border-color:var(--on-dark-3)}
 body.shade-open{overflow:hidden}
@@ -778,7 +777,7 @@ body.shade-open{overflow:hidden}
 .flow__frame{position:relative;width:100%;
   aspect-ratio:2200 / 1564;border-radius:16px;overflow:hidden;
   background:var(--surface);border:1px solid var(--hair);
-  box-shadow:0 18px 44px rgba(11,11,12,.08)}
+  box-shadow:var(--shadow-card)}
 .flow__frame img{position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;display:block;opacity:0;transition:opacity .34s ease}
 .flow__frame img.on{opacity:1}
@@ -791,12 +790,12 @@ body.shade-open{overflow:hidden}
 /* вертикальный пунктир из квадратиков — тот же словарь, что у .rule */
 .flow__step::before{content:"";position:absolute;left:12px;top:24px;bottom:0;width:5px;
   background-image:repeating-linear-gradient(to bottom,
-    rgba(11,11,12,.26) 0 5px, transparent 5px 12px)}
+    var(--rule-mid) 0 5px, transparent 5px 12px)}
 .flow__step:last-child::before{display:none}
 /* маркер записи */
 .flow__step::after{content:"";position:absolute;left:8px;top:5px;
   width:13px;height:13px;border-radius:4px;
-  border:1px solid rgba(228,87,58,.45);background:var(--bg);
+  border:1px solid rgba(var(--accent-rgb),.45);background:var(--bg);
   transition:background .22s ease,border-color .22s ease}
 .flow__step.on::after{background:var(--accent);border-color:var(--accent)}
 .flow__step:focus-visible{outline:none}

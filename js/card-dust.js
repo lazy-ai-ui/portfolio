@@ -71,6 +71,7 @@
      за карточкой. Берём из токенов, чтобы не разъехалось при смене темы. */
   var BG = getComputedStyle(document.documentElement)
     .getPropertyValue('--bg').trim() || '#F6F4F1';
+  if (window.Theme) Theme.onChange(function () { BG = Theme.channel('--bg', '#F6F4F1'); });
 
   function init(cv) {
     var ctx = cv.getContext('2d');

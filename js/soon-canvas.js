@@ -16,6 +16,20 @@
 
   var W=0,H=0,dpr=1,P=[],cols=0,rows=0,gap=8,unit=5,fault=0,baseY=0;
 
+  /* Тон частиц берётся из палитры, а не из константы: в тёмной теме канал
+     переворачивается, и чернильная россыпь на чёрном фоне исчезла бы. */
+  var INK=Theme.channel('--ink-rgb','11,11,12');
+  var ACC=Theme.channel('--accent-rgb','228,87,58');
+  /* Перерисовываем тут же, а не ждём следующего кадра: смена темы идёт под
+     View Transitions, и снимок новой страницы снимается сразу после события.
+     Опоздавший канвас попал бы в него старым и мигнул бы уже после перехода. */
+  var repaint=null;
+  Theme.onChange(function(){
+    INK=Theme.channel('--ink-rgb','11,11,12');
+    ACC=Theme.channel('--accent-rgb','228,87,58');
+    if(repaint) repaint();
+  });
+
   /* Длительности фаз, секунды. Держатся вместе, чтобы ритм цикла читался
      из одного места. */
   var T_FORM=1.9, T_HOLD=0.55, T_TENSE=1.05, T_SAG=0.55, T_FALL_MAX=2.2, T_PILE=2.0;
@@ -279,8 +293,8 @@
     if(a<0.012) return;
     var sz=p.edge?unit*0.92:unit;
     ctx.fillStyle=p.a
-      ? 'rgba(228,87,58,'+Math.min(0.8,a+0.28).toFixed(3)+')'
-      : 'rgba(11,11,12,'+a.toFixed(3)+')';
+      ? 'rgba('+ACC+','+Math.min(0.8,a+0.28).toFixed(3)+')'
+      : 'rgba('+INK+','+a.toFixed(3)+')';
     if(Math.abs(p.rot)<0.02){
       ctx.fillRect(p.x-sz/2,p.y-sz/2,sz,sz);
     } else {
@@ -302,14 +316,20 @@
   if(reduce){
     /* без движения показываем собранный квадрат — состояние, к которому
        структура стремится */
-    for(var i=0;i<P.length;i++){
-      var p=P[i]; p.x=p.sx; p.y=p.sy; p.rot=0; p.cur=p.o;
-      drawP(p);
-    }
+    var still=function(){
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<P.length;i++){
+        var p=P[i]; p.x=p.sx; p.y=p.sy; p.rot=0; p.cur=p.o;
+        drawP(p);
+      }
+    };
+    repaint=still;
+    still();
     return;
   }
 
   var startTs=null,prevTs=null,running=false,rafId=0,visible=true,lastT=0;
+  repaint=function(){ if(W) frame(lastT,0); };
   var detT=0,rollT=0;
 
   function loop(ts){

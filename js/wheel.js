@@ -21,6 +21,9 @@
     var now = wh.querySelector('[data-wh-now]');
     var btns = wh.querySelectorAll('[data-wh-dir]');
     var stage = wh.querySelector('.wh__stage');
+    // Кнопка «развернуть» есть не у каждого шага и живёт в ряду навигации,
+    // а не в тексте, поэтому её показывает render(), а не CSS.
+    var mores = wh.querySelectorAll('.wh__nav .wh__more[data-i]');
     var arcs = wh.querySelectorAll('.wh__arc');
     if (!screens.length || !stage) return;
 
@@ -177,6 +180,14 @@
       for (var t = 0; t < texts.length; t++) {
         texts[t].classList.toggle('is-on', t === i);
       }
+      var openable = false;
+      for (var m = 0; m < mores.length; m++) {
+        var mine = +mores[m].getAttribute('data-i') === i;
+        mores[m].hidden = !mine;
+        if (mine) openable = true;
+      }
+      // Курсор говорит, что по макету этого шага можно нажать.
+      wh.classList.toggle('wh--openable', openable);
       if (now) now.textContent = String(i + 1);
       for (var b = 0; b < btns.length; b++) {
         var dir = +btns[b].getAttribute('data-wh-dir');

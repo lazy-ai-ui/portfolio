@@ -3,9 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light only">
-<meta name="supported-color-schemes" content="light">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
 <meta name="theme-color" content="#F6F4F1">
+<!-- Тема ставится до первой отрисовки, иначе страница мигает светлым перед
+     тем, как загрузится js/theme.js. Свой выбор старше системной настройки.
+     Режим (system / light / dark) ставится отдельным атрибутом: по нему CSS
+     выбирает иконку кнопки, и он же отличает «светлую» от «системной, которая
+     сейчас светлая». -->
+<script>(function(){var m='system';try{var s=localStorage.getItem('theme');if(s==='dark'||s==='light')m=s}catch(e){}var r=document.documentElement;r.setAttribute('data-theme',m==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):m);r.setAttribute('data-theme-mode',m)})()</script>
 <title>Nearby&nbsp;— аренда вещей рядом</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/fonts.css">
@@ -18,6 +24,8 @@
 <script>document.documentElement.classList.add('js-rv')</script>
 <!-- без defer намеренно: переход должен встать до первой отрисовки страницы -->
 <script src="js/page-transition.js"></script>
+<!-- до канвасов: они читают каналы палитры при инициализации -->
+<script src="js/theme.js"></script>
 <!-- Vercel Speed Insights: сбор метрик реальных пользователей -->
 <script defer src="/_vercel/speed-insights/script.js"></script>
 <!-- Yandex.Metrika counter -->
@@ -38,14 +46,50 @@
      только link/style/meta, и парсер закрыл бы <head> на этом теге. -->
 <noscript><div><img src="https://mc.yandex.ru/watch/111310110" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-desktop" viewBox="0 0 16 16">
+    <rect x="1.4" y="2.2" width="13.2" height="9" rx="1.5"/><path d="M8 11.2v2.6M5.4 13.8h5.2"/>
+  </symbol>
+  <symbol id="i-phone" viewBox="0 0 16 16">
+    <rect x="4.3" y="1.4" width="7.4" height="13.2" rx="1.9"/><path d="M6.9 12.3h2.2"/>
+  </symbol>
+  <symbol id="i-sun" viewBox="0 0 16 16">
+    <circle cx="8" cy="8" r="3.1"/>
+    <path d="M8 1.1v1.7M8 13.2v1.7M14.9 8h-1.7M2.8 8H1.1M12.9 3.1l-1.2 1.2M4.3 11.7l-1.2 1.2M12.9 12.9l-1.2-1.2M4.3 4.3L3.1 3.1"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 16 16">
+    <path d="M13.6 9.9A5.9 5.9 0 0 1 6.1 2.4 6.1 6.1 0 1 0 13.6 9.9z"/>
+  </symbol>
+</svg>
+
 <div class="navbar" id="navbar">
-  <nav class="nav">
-    <a class="back" href="index.html">← Главная</a>
-    <div class="nav__l">
-      <a href="https://t.me/deadlif1" target="_blank" rel="noopener">Telegram</a>
-      <a href="mailto:new.boxmail666@gmail.com">Email</a>
+  <div class="navbar__in">
+    <nav class="nav">
+      <a class="back" href="index.html">← Главная</a>
+      <div class="nav__l">
+        <a href="https://t.me/deadlif1" target="_blank" rel="noopener">Telegram</a>
+        <a href="mailto:new.boxmail666@gmail.com">Email</a>
+      </div>
+      <button class="nav__theme" type="button" data-theme-toggle aria-label="Переключить тему">
+        <svg class="i--desktop" aria-hidden="true" focusable="false"><use href="#i-desktop"/></svg>
+        <svg class="i--phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg>
+        <svg class="i--sun" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+        <svg class="i--moon" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg>
+      </button>
+    </nav>
+    <div class="themectl" role="group" aria-label="Тема">
+      <span class="themectl__ind" aria-hidden="true"></span>
+      <button class="themectl__b" type="button" data-theme-set="system" aria-pressed="false" aria-label="Тема как в системе">
+        <svg aria-hidden="true" focusable="false"><use href="#i-desktop"/></svg>
+      </button>
+      <button class="themectl__b" type="button" data-theme-set="light" aria-pressed="false" aria-label="Светлая тема">
+        <svg aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+      </button>
+      <button class="themectl__b" type="button" data-theme-set="dark" aria-pressed="false" aria-label="Тёмная тема">
+        <svg aria-hidden="true" focusable="false"><use href="#i-moon"/></svg>
+      </button>
     </div>
-  </nav>
+  </div>
 </div>
 
 <div class="spacer" aria-hidden="true"></div>
@@ -355,8 +399,6 @@
         <p class="tk__fix"><span class="tk__k">Моя поправка</span> Добавить в&nbsp;него комплект, состояние и&nbsp;фотографии. Иначе акт подтверждает только то, что встреча состоялась, но&nbsp;в&nbsp;споре бесполезен.</p>
       </li>
     </ol>
-
-    <p class="lead" style="margin-top:56px">Комплект, состояние, факт встречи. Ровно из-за&nbsp;этого конфликтовали люди в&nbsp;отзывах из&nbsp;первого блока. Именно это место <span class="mark">никто не&nbsp;проектирует</span>.</p>
   </section>
 
   <!-- ── 5. Решения ───────────────────────────────────────────────────── -->
@@ -424,9 +466,6 @@
               <h3 class="wh__t">Карточка</h3>
               <p class="wh__d">Состояние вещи видно ещё до&nbsp;встречи: исправность, комплект и&nbsp;внешние дефекты. Рядом индекс доверия владельца: доля сделок без&nbsp;срывов. Так важные условия становятся известны заранее, а&nbsp;не&nbsp;в&nbsp;последний момент.</p>
               <p class="wh__d wh__d--s">Состояние вещи видно ещё до&nbsp;встречи: исправность, комплект и&nbsp;внешние дефекты. Так важные условия становятся известны заранее, а&nbsp;не&nbsp;в&nbsp;последний момент.</p>
-              <button class="wh__btn wh__more" type="button" data-cf-open
-                data-cf-src="assets/img/nearby/booking-card-full.webp" data-cf-w="804" data-cf-h="4258"
-                data-cf-alt="Карточка товара целиком: галерея, цена, время пешком, описание владельца, блок состояния, профиль владельца с индексом доверия, отзывы и похожие товары рядом">Посмотреть карточку целиком</button>
             </div>
             <div class="wh__text" data-i="2">
               <h3 class="wh__t">Срок</h3>
@@ -450,8 +489,15 @@
             </div>
           </div>
 
+          <!-- Кнопка раскрытия стоит в ряду навигации, между «Назад» и «Далее»:
+               это такое же действие над текущим шагом, а отдельная строка под
+               текстом только разрывала колонку. Появляется на своём шаге —
+               за это отвечает data-i, см. wheel.js. -->
           <div class="wh__nav">
             <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn wh__more" type="button" data-i="1" hidden data-cf-open
+              data-cf-src="assets/img/nearby/booking-card-full.webp" data-cf-w="804" data-cf-h="4258"
+              data-cf-alt="Карточка товара целиком: галерея, цена, время пешком, описание владельца, блок состояния, профиль владельца с индексом доверия, отзывы и похожие товары рядом">Развернуть карточку</button>
             <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>
@@ -534,9 +580,6 @@
               <h3 class="wh__t">Чеклист</h3>
               <p class="wh__d">Комплект из&nbsp;объявления лежит прямо на&nbsp;экране, сверять нужно с&nbsp;ним, а&nbsp;не&nbsp;по&nbsp;памяти: «Комплект полный?» → «Есть замечания» → «Не&nbsp;хватает HDMI кабеля, в&nbsp;объявлении указан». Так проблему фиксируют сразу на&nbsp;встрече, а&nbsp;не&nbsp;обнаруживают через два дня.</p>
               <p class="wh__d wh__d--s">Комплект из&nbsp;объявления лежит прямо на&nbsp;экране, сверять нужно с&nbsp;ним, а&nbsp;не&nbsp;по&nbsp;памяти. Так проблему фиксируют сразу на&nbsp;встрече, а&nbsp;не&nbsp;обнаруживают через два дня.</p>
-              <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
-                data-cf-src="assets/img/nearby/handoff-8-checklist.webp" data-cf-w="804" data-cf-h="2288"
-                data-cf-alt="Чеклист приёмки целиком: состав комплекта из объявления и три вопроса о состоянии, у комплекта отмечено замечание о нехватке HDMI-кабеля">Посмотреть экран целиком</button>
             </div>
             <div class="wh__text" data-i="8">
               <h3 class="wh__t">Сводка</h3>
@@ -552,6 +595,9 @@
 
           <div class="wh__nav">
             <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn wh__more wh__more--tall" type="button" data-i="7" hidden data-cf-open
+              data-cf-src="assets/img/nearby/handoff-8-checklist.webp" data-cf-w="804" data-cf-h="2288"
+              data-cf-alt="Чеклист приёмки целиком: состав комплекта из объявления и три вопроса о состоянии, у комплекта отмечено замечание о нехватке HDMI-кабеля">Развернуть экран</button>
             <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>
@@ -566,9 +612,12 @@
 
     <h2 class="stub__t">При&nbsp;возврате роли меняются местами</h2>
 
-    <p class="lead">При&nbsp;выдаче состояние вещи фиксирует арендатор, потому что принимает чужую вещь. При&nbsp;возврате её принимает владелец, поэтому теперь фиксирует состояние он. Один и&nbsp;тот&nbsp;же принцип работает в&nbsp;обе стороны: состояние фиксирует тот, кто принимает вещь.</p>
+    <!-- Два зеркальных предложения про выдачу и возврат стоят каждое в своей
+         строке: они читаются как пара, и перенос по середине эту пару рвал.
+         Ради этого абзац шире общей меры — см. .lead--pair. -->
+    <p class="lead lead--pair"><span class="nb">При&nbsp;выдаче состояние вещи фиксирует арендатор, потому что принимает чужую вещь.</span> <span class="nb">При&nbsp;возврате её принимает владелец, поэтому теперь фиксирует состояние он.</span> Один и&nbsp;тот&nbsp;же принцип работает в&nbsp;обе стороны: состояние фиксирует тот, <span class="nb">кто принимает вещь.</span></p>
 
-    <p class="lead">Поэтому возврат показан двумя флоу сразу: слева арендатор, справа владелец, шаг общий. Там, где у&nbsp;стороны экран не&nbsp;меняется, она в&nbsp;этот момент ничего не&nbsp;делает.</p>
+    <p class="lead">Поэтому возврат показан двумя флоу сразу: слева арендатор, справа&nbsp;владелец, шаг&nbsp;общий. Там, где у&nbsp;стороны экран не&nbsp;меняется, она в&nbsp;этот момент ничего не&nbsp;делает.</p>
 
     <div class="wh wh--duo" id="wh-return" data-steps="10">
       <div class="wh__stage">
@@ -648,9 +697,6 @@
               <h3 class="wh__t">Чеклист</h3>
               <p class="wh__d">Первые два пункта повторяют проверку комплекта и&nbsp;внешнего вида. Третий теперь сравнивает состояние вещи с&nbsp;тем, что было зафиксировано при&nbsp;выдаче. Рядом остаются фото с&nbsp;выдачи и&nbsp;замечание про&nbsp;HDMI кабель. Владелец проверяет вещь по&nbsp;зафиксированному состоянию, а&nbsp;не&nbsp;по&nbsp;памяти.</p>
               <p class="wh__d wh__d--s">Третий пункт сравнивает состояние вещи с&nbsp;тем, что зафиксировано при&nbsp;выдаче. Рядом остаются фото с&nbsp;выдачи и&nbsp;замечание про&nbsp;HDMI кабель.</p>
-              <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
-                data-cf-src="assets/img/nearby/return-o8-checklist.webp" data-cf-w="804" data-cf-h="2392"
-                data-cf-alt="Чеклист возврата целиком: фото с выдачи, замечание при получении и три вопроса о состоянии, у третьего отмечена появившаяся царапина">Посмотреть экран целиком</button>
             </div>
             <div class="wh__text" data-i="7">
               <h3 class="wh__t">Сводка</h3>
@@ -671,6 +717,9 @@
 
           <div class="wh__nav">
             <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn wh__more wh__more--tall" type="button" data-i="6" hidden data-cf-open
+              data-cf-src="assets/img/nearby/return-o8-checklist.webp" data-cf-w="804" data-cf-h="2392"
+              data-cf-alt="Чеклист возврата целиком: фото с выдачи, замечание при получении и три вопроса о состоянии, у третьего отмечена появившаяся царапина">Развернуть экран</button>
             <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>
@@ -719,22 +768,22 @@
               <h3 class="wh__t">Что мы уже знаем</h3>
               <p class="wh__d">Две даты рядом: «При&nbsp;выдаче · 21.05» и&nbsp;«При&nbsp;возврате · 23.05», с&nbsp;фото и&nbsp;замечаниями обеих сторон. Система показывает, что при&nbsp;выдаче царапины не&nbsp;было, а&nbsp;при&nbsp;возврате она уже появилась. Теперь спор идёт не&nbsp;о&nbsp;факте повреждения, а&nbsp;о&nbsp;том, кто за&nbsp;него отвечает.</p>
               <p class="wh__d wh__d--s">«При&nbsp;выдаче · 21.05» и&nbsp;«При&nbsp;возврате · 23.05» рядом, с&nbsp;фото и&nbsp;замечаниями обеих сторон. Спор идёт не&nbsp;о&nbsp;факте повреждения, а&nbsp;о&nbsp;том, кто за&nbsp;него отвечает.</p>
-              <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
-                data-cf-src="assets/img/nearby/dispute-2-report.webp" data-cf-w="804" data-cf-h="2150"
-                data-cf-alt="Экран спора целиком: что мы уже знаем при выдаче и при возврате, фото, замечания и плашка «без фото доказательств»">Посмотреть экран целиком</button>
             </div>
             <div class="wh__text" data-i="1">
               <h3 class="wh__t">Отправлено</h3>
               <p class="wh__d">Спор уходит в&nbsp;поддержку вместе с&nbsp;фото, чеклистом и&nbsp;замечаниями. Решение принимает человек: сервис собирает факты, но&nbsp;не&nbsp;решает за&nbsp;стороны.</p>
               <p class="wh__d wh__d--s">Спор уходит в&nbsp;поддержку вместе с&nbsp;фото, чеклистом и&nbsp;замечаниями. Решение принимает человек: сервис собирает факты, но&nbsp;не&nbsp;решает за&nbsp;стороны.</p>
-              <button class="wh__btn wh__more wh__more--tall" type="button" data-cf-open
-                data-cf-src="assets/img/nearby/dispute-3-pending.webp" data-cf-w="804" data-cf-h="2602"
-                data-cf-alt="Спор отправлен: материалы обеих сторон, статус рассмотрения и сроки ответа поддержки">Посмотреть экран целиком</button>
             </div>
           </div>
 
           <div class="wh__nav">
             <button class="wh__btn" type="button" data-wh-dir="-1" aria-label="Назад"><span class="wh__btn__t">Назад</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+            <button class="wh__btn wh__more wh__more--tall" type="button" data-i="0" hidden data-cf-open
+              data-cf-src="assets/img/nearby/dispute-2-report.webp" data-cf-w="804" data-cf-h="2150"
+              data-cf-alt="Экран спора целиком: что мы уже знаем при выдаче и при возврате, фото, замечания и плашка «без фото доказательств»">Развернуть экран</button>
+            <button class="wh__btn wh__more wh__more--tall" type="button" data-i="1" hidden data-cf-open
+              data-cf-src="assets/img/nearby/dispute-3-pending.webp" data-cf-w="804" data-cf-h="2602"
+              data-cf-alt="Спор отправлен: материалы обеих сторон, статус рассмотрения и сроки ответа поддержки">Развернуть экран</button>
             <button class="wh__btn" type="button" data-wh-dir="1" aria-label="Далее"><span class="wh__btn__t">Далее</span><svg class="wh__btn__i" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
           </div>
         </div>

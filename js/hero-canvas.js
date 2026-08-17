@@ -16,6 +16,20 @@
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var W=0,H=0,dpr=1,P=[];
 
+  /* Тон частиц берётся из палитры, а не из константы: в тёмной теме канал
+     переворачивается, и чернильная россыпь на чёрном фоне исчезла бы. */
+  var INK=Theme.channel('--ink-rgb','11,11,12');
+  var ACC=Theme.channel('--accent-rgb','228,87,58');
+  /* Перерисовываем тут же, а не ждём следующего кадра: смена темы идёт под
+     View Transitions, и снимок новой страницы снимается сразу после события.
+     Опоздавший канвас попал бы в него старым и мигнул бы уже после перехода. */
+  var repaint=null;
+  Theme.onChange(function(){
+    INK=Theme.channel('--ink-rgb','11,11,12');
+    ACC=Theme.channel('--accent-rgb','228,87,58');
+    if(repaint) repaint();
+  });
+
   /* ---------- описания форм-интерфейсов ---------- */
 
   var DEFS=[
@@ -668,8 +682,8 @@
       if(a<0.012) continue;
 
       ctx.fillStyle=(toTarget&&tgt.a)
-        ? 'rgba(228,87,58,'+Math.min(0.95,a+0.12).toFixed(3)+')'
-        : 'rgba(11,11,12,'+a.toFixed(3)+')';
+        ? 'rgba('+ACC+','+Math.min(0.95,a+0.12).toFixed(3)+')'
+        : 'rgba('+INK+','+a.toFixed(3)+')';
 
       if(Math.abs(p.rot)<0.02){
         ctx.fillRect(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz);
@@ -824,19 +838,24 @@
     size();
 
     if(reduce){
-      var T=restForm.targets,u=restForm.unit;
-      ctx.clearRect(0,0,W,H);
-      for(var i=0;i<T.length;i++){
-        var e=edgeAlpha(T[i].x,T[i].y);
-        ctx.fillStyle=T[i].a?'rgba(228,87,58,'+(0.92*e).toFixed(3)+')'
-                            :'rgba(11,11,12,'+((T[i].edge?0.86:0.72)*e).toFixed(3)+')';
-        ctx.fillRect(T[i].x-u/2,T[i].y-u/2,u,u);
-      }
+      var still=function(){
+        var T=restForm.targets,u=restForm.unit;
+        ctx.clearRect(0,0,W,H);
+        for(var i=0;i<T.length;i++){
+          var e=edgeAlpha(T[i].x,T[i].y);
+          ctx.fillStyle=T[i].a?'rgba('+ACC+','+(0.92*e).toFixed(3)+')'
+                              :'rgba('+INK+','+((T[i].edge?0.86:0.72)*e).toFixed(3)+')';
+          ctx.fillRect(T[i].x-u/2,T[i].y-u/2,u,u);
+        }
+      };
+      repaint=still;
+      still();
       return;
     }
 
     var startTs=null, prevTs=null, running=false, rafId=0, visible=true, kicked=false;
     var wantRest=false, lastT=0;
+    repaint=function(){ if(W) frame(nowT,0); };
 
     function loop(ts){
       /* Время продолжается с того места, где остановилось. При отсчёте заново

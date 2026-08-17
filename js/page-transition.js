@@ -156,8 +156,22 @@
          ставим здесь — на старой странице их ставить бессмысленно.
          pagereveal приходит до первой отрисовки, поэтому снятое здесь полотно
          в снимок VT не попадает. */
+      /* Переход отдаёт три обещания, и отказ у них штатный: мы сами зовём
+         skipTransition, когда точки нет, а браузер отменяет переход, если
+         снимок снимать не с чего — вкладка в фоне, страница ушла раньше
+         времени. Навигацию это не ломает, но необработанный отказ улетает в
+         консоль ошибкой. Принимаем его явно. */
+      function hush(vt){
+        if(!vt) return;
+        var q=function(){};
+        if(vt.ready&&vt.ready.catch) vt.ready.catch(q);
+        if(vt.updateCallbackDone&&vt.updateCallbackDone.catch) vt.updateCallbackDone.catch(q);
+        if(vt.finished&&vt.finished.catch) vt.finished.catch(q);
+      }
+
       window.addEventListener('pagereveal',function(e){
         root.classList.remove('pt-cover');
+        hush(e.viewTransition);
         var p=take();
         if(!p){ if(e.viewTransition) e.viewTransition.skipTransition(); return; }
         setOrigin(p.x,p.y);
@@ -169,6 +183,7 @@
       /* Уход со страницы без нашей точки — «назад», «вперёд», отправка формы:
          анимировать нечего, играть переход из случайного места нельзя. */
       window.addEventListener('pageswap',function(e){
+        hush(e.viewTransition);
         var has=false;
         try{ has=!!sessionStorage.getItem(KEY); }catch(err){}
         if(!has){ if(e.viewTransition) e.viewTransition.skipTransition(); return; }

@@ -48,33 +48,33 @@
   color:var(--ink-3);margin:0 0 12px}
 .project__title{font-family:var(--display);font-weight:600;font-size:clamp(32px,4.4vw,54px);
   letter-spacing:-.03em;line-height:1.02;margin:0 0 14px}
-.project__title--muted{color:rgba(11,11,12,.34)}
-.project__sub{font-size:15px;line-height:1.65;color:rgba(11,11,12,.58);margin:0;text-wrap:pretty}
+.project__title--muted{color:var(--ink-4)}
+.project__sub{font-size:15px;line-height:1.65;color:var(--ink-2);margin:0;text-wrap:pretty}
 .project__cta{display:inline-block;margin-top:22px;font-family:var(--mono);font-size:11px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--ink);text-decoration:none;
-  border-bottom:1px solid rgba(11,11,12,.30);padding-bottom:3px;
+  border-bottom:1px solid rgba(var(--ink-rgb),.30);padding-bottom:3px;
   transition:color .2s,border-color .2s}
 .project__cta:hover,.project__cta:focus-visible{color:var(--accent);border-color:var(--accent)}
 /* Занимает место «Читать кейс», но читается как статус, а не как действие:
    рамка вместо подчёркивания и приглушённый цвет, чтобы не звать на клик. */
 .project__soon{display:inline-block;margin:22px 0 0;font-family:var(--mono);font-size:11px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
-  border:1px solid rgba(11,11,12,.18);border-radius:999px;padding:6px 12px}
+  border:1px solid rgba(var(--ink-rgb),.18);border-radius:999px;padding:6px 12px}
 
 .fan{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;
-  background:#EDEAE6;display:flex;align-items:center;justify-content:center}
-.fan--empty{background:#EFEDEA;border:0;position:relative;overflow:hidden}
+  background:var(--placeholder);display:flex;align-items:center;justify-content:center}
+.fan--empty{background:var(--placeholder-2);border:0;position:relative;overflow:hidden}
 .fan--empty canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* пропорция листа совпадает с макетами (2200×1564), иначе object-fit срезал бы
    края дашборда */
 .sheet{position:absolute;width:72%;aspect-ratio:2200 / 1564;border-radius:10px;overflow:hidden;
-  box-shadow:0 18px 40px rgba(11,11,12,.18), 0 2px 6px rgba(11,11,12,.10);
+  box-shadow:var(--shadow-lift);
   transition:transform .62s cubic-bezier(.19,.9,.22,1);
   will-change:transform;transform-origin:50% 90%}
 .sheet img{width:100%;height:100%;object-fit:cover;display:block}
 /* тёмная лежит ровно под светлой: в покое виден один экран */
-.sheet--dark{background:#16181B;z-index:1}
-.sheet--light{background:#FFFFFF;z-index:2}
+.sheet--dark{background:var(--sheet-dark);z-index:1}
+.sheet--light{background:var(--sheet-light);z-index:2}
 
 /* по наведению тёмная тема выглядывает из-под светлой, а та чуть уходит
    в противоход — иначе движение читается как сдвиг одной картинки */
@@ -92,7 +92,7 @@
    колесике внутри кейса. Он и сообщает главное: за карточкой сценарий,
    а не один экран. */
 .roll{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;
-  background:#EDEAE6;display:flex;align-items:center;justify-content:center}
+  background:var(--placeholder);display:flex;align-items:center;justify-content:center}
 
 .roll__s{position:absolute;margin:0;height:92%;width:auto;aspect-ratio:804 / 1748;
   overflow:hidden;
@@ -100,7 +100,7 @@
      что запечены в экспорт, вертикальный — он же, пересчитанный в проценты
      высоты. Одно значение дало бы эллипс. */
   border-radius:14.55% / 6.69%;
-  box-shadow:0 18px 40px rgba(11,11,12,.18), 0 2px 6px rgba(11,11,12,.10);
+  box-shadow:var(--shadow-lift);
   opacity:0;
   transition:transform .62s cubic-bezier(.19,.9,.22,1),
              opacity .42s ease, filter .42s ease;
@@ -121,7 +121,7 @@
    читалась бы как подпись к картинке, а не как статус работы. */
 .soon{position:absolute;left:18px;top:16px;margin:0;
   font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(11,11,12,.34)}
+  color:var(--ink-4)}
 
 /* без ховера подсказать нечем — показываем вторую тему сразу, но сдержаннее */
 @media (hover:none){
@@ -143,11 +143,11 @@
 /* ---------- about ---------- */
 .about{padding:0 0 140px}
 .about__grid{display:grid;grid-template-columns:1fr 1.25fr;gap:64px;align-items:start}
-.about__photo{aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:#E9E6E2;position:relative}
+.about__photo{aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:var(--placeholder);position:relative}
 .about__photo img{width:100%;height:100%;object-fit:cover;display:block}
 .about__text p{font-size:17px;line-height:1.68;color:var(--ink);margin:0 0 20px;text-wrap:pretty}
 .about__text p:last-of-type{margin-bottom:0}
-.about__text .dim{color:rgba(11,11,12,.58)}
+.about__text .dim{color:var(--ink-2)}
 /* Не сетка равных колонок, а поток по содержимому. На равных долях ширина
    у всех колонок одинаковая, а длина строк — нет: «Глубинные интервью»
    занимало свою колонку целиком, и просвет до «Навыков» съедался почти до
@@ -155,7 +155,7 @@
    одинаковый, но выглядел разным. Колонки по содержимому дают одинаковые
    именно видимые просветы, а излишек ширины честно остаётся справа. */
 .about__meta,.contact__meta{display:flex;flex-wrap:wrap;gap:28px 44px}
-.about__meta{margin-top:40px;padding-top:28px;border-top:1px solid rgba(11,11,12,.12)}
+.about__meta{margin-top:40px;padding-top:28px;border-top:1px solid var(--hair)}
 .about__meta dt,.contact__meta dt{font-family:var(--mono);font-size:10px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--ink-3);margin:0 0 8px}
 .about__meta dd,.contact__meta dd{font-family:var(--mono);font-size:12px;letter-spacing:.06em;
@@ -202,10 +202,10 @@
   font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
   white-space:nowrap;color:var(--ink-2);background:var(--surface);
   border:1px solid var(--hair);border-radius:6px;padding:5px 8px;
-  box-shadow:0 4px 14px rgba(11,11,12,.07)}
+  box-shadow:var(--shadow-2)}
 .copy:hover::after,.copy:focus-visible::after,.copy.is-done::after{
   opacity:1;transform:translateX(-50%) translateY(0)}
-.copy.is-done::after{color:var(--accent);border-color:rgba(228,87,58,.35)}
+.copy.is-done::after{color:var(--accent);border-color:rgba(var(--accent-rgb),.35)}
 
 @media (prefers-reduced-motion: reduce){
   .copy::after{transition:none}

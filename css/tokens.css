@@ -1,21 +1,108 @@
+/* Палитра держится на каналах, а не на готовых цветах. Каждый rgba() в проекте
+   собирается из канала и своей альфы: rgba(var(--ink-rgb),.16). Смена темы
+   переписывает четыре канала, и вместе с ними разом переворачиваются все
+   полупрозрачные линии, заливки и стёкла. Отдельными значениями заданы только
+   тени: на светлом фоне тень живёт на альфе .08, на тёмном её там не видно,
+   поэтому у теней своя пара значений. */
 :root{
+  color-scheme:light dark;
+
+  --ink-rgb:11,11,12;
+  --bg-rgb:246,244,241;
+  --surface-rgb:255,255,255;
+  --accent-rgb:228,87,58;
+  --on-dark-rgb:237,235,232;
+
   --bg:#F6F4F1;
+  --surface:#FFFFFF;
   --ink:#0B0B0C;
-  --ink-2:rgba(11,11,12,.58);
-  --ink-3:rgba(11,11,12,.30);
+  --ink-2:rgba(var(--ink-rgb),.58);
+  --ink-3:rgba(var(--ink-rgb),.30);
   /* Мелкие ярлыки набраны мономаркером в 10–11px, и это не «крупный текст»:
      норма для них 4.5:1, а --ink-3 даёт 2.01:1 на нашем фоне. Поэтому у
      текстовых ярлыков свой тон в 4.9:1, а --ink-3 остаётся чисто
      декоративным — линейки, пунктир, рамки. Тишину ярлыку дальше держат
      кегль, капс и трекинг, а не блёклость. */
-  --ink-label:rgba(11,11,12,.60);
-  --hair:rgba(11,11,12,.12);
-  --surface:#FFFFFF;
+  --ink-label:rgba(var(--ink-rgb),.60);
+  --ink-4:rgba(var(--ink-rgb),.34);
+  --hair:rgba(var(--ink-rgb),.12);
+
+  /* Пунктир и линейки. Три ступени: тихая внутри карточек, обычная на разделах,
+     жирная на служебных врезках. */
+  --rule-soft:rgba(var(--ink-rgb),.16);
+  --rule-mid:rgba(var(--ink-rgb),.26);
+  --rule:rgba(var(--ink-rgb),.30);
+  --rule-strong:rgba(var(--ink-rgb),.45);
+
+  /* Подложки-заливки поверх медиа и кнопок. */
+  --tint-1:rgba(var(--ink-rgb),.05);
+  --tint-2:rgba(var(--ink-rgb),.07);
+
+  /* Стекло: полупрозрачная плашка, солид-запаска для браузеров без backdrop,
+     рамка и внутренний блик. */
+  --glass:rgba(var(--surface-rgb),.66);
+  --glass-solid:rgba(var(--surface-rgb),.95);
+  --glass-hair:rgba(var(--ink-rgb),.09);
+  --glass-sheen:rgba(255,255,255,.7);
+  --nav-glass:rgba(var(--bg-rgb),.62);
+  --nav-glass-solid:rgba(var(--bg-rgb),.94);
+  --nav-hair:rgba(var(--ink-rgb),.08);
+  --nav-sheen:rgba(255,255,255,.55);
+
+  --scrim:rgba(var(--ink-rgb),.66);
+  --scrim-strong:rgba(var(--ink-rgb),.74);
+
+
+  --shadow-0:0 1px 2px rgba(var(--ink-rgb),.03);
+  --shadow-1:0 1px 3px rgba(var(--ink-rgb),.05);
+  --shadow-2:0 4px 14px rgba(var(--ink-rgb),.07);
+  --shadow-3:0 8px 20px rgba(var(--ink-rgb),.06);
+  --shadow-card:0 18px 44px rgba(var(--ink-rgb),.08);
+  --shadow-lift:0 18px 40px rgba(var(--ink-rgb),.18),0 2px 6px rgba(var(--ink-rgb),.10);
+  --shadow-pop:0 20px 50px rgba(var(--ink-rgb),.20);
+  --shadow-modal:0 24px 60px rgba(var(--ink-rgb),.38);
+  --shadow-glass:0 10px 32px rgba(var(--ink-rgb),.10),inset 0 1px 0 var(--glass-sheen);
+  --shadow-nav:0 8px 26px rgba(var(--ink-rgb),.08),inset 0 1px 0 var(--nav-sheen);
+
+  /* Тон, которым закрыт кадр до загрузки картинки и пустая карточка стопки. */
+  --placeholder:#E9E6E2;
+  --placeholder-2:#EFEDEA;
+  /* Стартовый тон россыпи в аннотациях: она сходится к цвету карточки, значит
+     идти должна от тона, который на этом фоне читается как пыль. */
+  --dust-rgb:214,211,207;
+  --sheet-light:#FFFFFF;
+  --sheet-dark:#16181B;
+
+  /* Тёмный блок остаётся тёмным в обеих темах: в светлой он контрастирует с
+     полосой страницы, в тёмной уходит глубже фона и отбивается волосяной
+     рамкой. Тон текста на нём поэтому один и тот же всегда. */
   --dark:#0F1113;
   --on-dark:#EDEBE8;
-  --on-dark-2:rgba(237,235,232,.56);
-  --on-dark-3:rgba(237,235,232,.32);
+
+  /* Выбранный пункт — «пилюля», которая обязана спорить с полосой страницы.
+     Это единственное место, где тон переворачивается вместе с темой: в
+     светлой пилюля тёмная, в тёмной светлая. Оставить её тёмной в тёмной теме
+     значило бы потерять сам признак выбора. */
+  --contrast:#0F1113;
+  --on-contrast:#EDEBE8;
+
+  --on-dark-2:rgba(var(--on-dark-rgb),.56);
+  --on-dark-3:rgba(var(--on-dark-rgb),.32);
+
+  /* Метки, точки и ручка сравнения лежат поверх скриншотов продукта, а
+     скриншоты в тёмной теме остаются светлыми. Поэтому их тон привязан к
+     кадру, а не к теме, и в тёмной не переопределяется. */
+  --pin-rgb:11,11,12;
+  --pin-ring:rgba(255,255,255,.75);
+  --pin-ring-soft:rgba(255,255,255,.6);
+  --pin-ring-strong:rgba(255,255,255,.9);
+
   --accent:#E4573A;
+  --accent-line:rgba(var(--accent-rgb),.42);
+  --accent-line-soft:rgba(var(--accent-rgb),.35);
+  --accent-glow:rgba(var(--accent-rgb),.28);
+  --accent-ring:rgba(var(--accent-rgb),.45);
+  --on-accent:#FFFFFF;
 
   /* Скругление экрана телефона — доля от ширины макета, а не пиксели: все
      экраны экспортируются из Фигмы с одним радиусом (117px при ширине 804px,
@@ -27,4 +114,83 @@
   --display:"Geist","Inter",system-ui,sans-serif;
   --body:"Geist","Inter",system-ui,sans-serif;
   --mono:"Geist Mono",ui-monospace,monospace;
+}
+
+/* Тёмная тема. Атрибут ставит короткий скрипт в <head> каждой страницы: он
+   читает сохранённый выбор, иначе системную настройку. Так тема известна до
+   первой отрисовки и не мигает, и та же ручка работает для переключателя. */
+:root[data-theme="dark"]{
+  /* Земля тёплая, а не синеватая: светлая тема стоит на бумажном #F6F4F1, и
+     холодный графит читался бы как другой сайт. Отсюда R>G>B и в тёмной.
+     Ground взят выше чистой черноты — на #0F1113 страница выглядела глухой,
+     а разница между фоном и поверхностью пропадала. */
+  --ink-rgb:237,235,232;
+  --bg-rgb:26,25,24;
+  --surface-rgb:36,33,32;
+
+  --bg:#1A1918;
+  --surface:#242120;
+  --ink:#EDEBE8;
+
+  /* Светлый текст на тёмном оптически тоньше, поэтому вторичные тона идут на
+     две-четыре сотых выше светлых. Контраст на #1A1918: --ink 14.7:1,
+     --ink-2 6.0:1, --ink-label 6.8:1, --accent 4.8:1. --ink-3 остаётся
+     декоративным. */
+  --ink-2:rgba(var(--ink-rgb),.60);
+  --ink-3:rgba(var(--ink-rgb),.32);
+  --ink-label:rgba(var(--ink-rgb),.64);
+  --ink-4:rgba(var(--ink-rgb),.38);
+  --hair:rgba(var(--ink-rgb),.14);
+
+  --rule-soft:rgba(var(--ink-rgb),.18);
+  --rule-mid:rgba(var(--ink-rgb),.28);
+  --rule:rgba(var(--ink-rgb),.32);
+  --rule-strong:rgba(var(--ink-rgb),.48);
+
+  --tint-1:rgba(var(--ink-rgb),.06);
+  --tint-2:rgba(var(--ink-rgb),.09);
+
+  --glass:rgba(var(--surface-rgb),.72);
+  --glass-solid:rgba(var(--surface-rgb),.96);
+  --glass-hair:rgba(var(--ink-rgb),.10);
+  --glass-sheen:rgba(255,255,255,.06);
+  --nav-glass:rgba(var(--bg-rgb),.68);
+  --nav-glass-solid:rgba(var(--bg-rgb),.96);
+  --nav-hair:rgba(var(--ink-rgb),.09);
+  --nav-sheen:rgba(255,255,255,.05);
+
+  --scrim:rgba(0,0,0,.72);
+  --scrim-strong:rgba(0,0,0,.80);
+
+  --shadow-0:0 1px 2px rgba(0,0,0,.40);
+  --shadow-1:0 1px 3px rgba(0,0,0,.42);
+  --shadow-2:0 4px 14px rgba(0,0,0,.45);
+  --shadow-3:0 8px 20px rgba(0,0,0,.45);
+  --shadow-card:0 18px 44px rgba(0,0,0,.50);
+  --shadow-lift:0 18px 40px rgba(0,0,0,.60),0 2px 6px rgba(0,0,0,.40);
+  --shadow-pop:0 20px 50px rgba(0,0,0,.62);
+  --shadow-modal:0 24px 60px rgba(0,0,0,.70);
+  --shadow-glass:0 10px 32px rgba(0,0,0,.50),inset 0 1px 0 var(--glass-sheen);
+  --shadow-nav:0 8px 26px rgba(0,0,0,.45),inset 0 1px 0 var(--nav-sheen);
+
+  --placeholder:#2B2826;
+  --placeholder-2:#322E2B;
+  --dust-rgb:92,86,82;
+  --sheet-light:#302C2A;
+  --sheet-dark:#121110;
+
+  --dark:#121110;
+  --contrast:#EDEBE8;
+  --on-contrast:#1A1918;
+
+  /* Коралл на тёмном приподнят на пару шагов: тот же цвет, но на светлой
+     бумаге он даёт 3.6:1, а на тёмной земле садился до 4.8:1 и звучал глуше
+     соседнего текста. Подъём возвращает ему первый голос — 5.4:1.
+     Если понадобится вернуть ровно фирменный тон, здесь снимаются две
+     строки, и он унаследуется из светлой темы. */
+  --accent:#EE6144;
+  --accent-rgb:238,97,68;
+
+  --accent-line:rgba(var(--accent-rgb),.50);
+  --accent-line-soft:rgba(var(--accent-rgb),.42);
 }

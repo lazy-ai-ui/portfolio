@@ -110,6 +110,58 @@ html.pt-nav::view-transition-new(root){
 
 @keyframes pt-lit{ from{opacity:.35} to{opacity:1} }
 
+/* --- Смена темы — «новый свет расходится из кнопки» ---------------------- */
+
+/* Словарь тот же, что у перехода между страницами: круг из точки нажатия.
+   Смысл движения другой. Там пространство уходит и приходит, поэтому две фазы,
+   scale и blur. Здесь страница никуда не девается — меняется только свет, и
+   фаза одна: новый снимок раскрывается поверх старого.
+
+   Старый кадр при этом стоит неподвижно. Если анимировать оба, под краем
+   круга начинает уезжать картинка, которая к происходящему уже не относится,
+   и граница читается как склейка двух разных страниц.
+
+   Кривая взята та же, что у закрытия: свет выстреливает из кнопки и гасит
+   инерцию у краёв, а не тормозит равномерно. */
+:root{
+  --tt-dur:560ms;
+  --tt-x:50%;
+  --tt-y:50%;
+  --tt-r:150vmax;
+}
+
+html.tt::view-transition-group(root){ animation:none }
+html.tt::view-transition-image-pair(root){ isolation:auto }
+html.tt::view-transition-old(root){ z-index:1; animation:none }
+html.tt::view-transition-new(root){
+  z-index:2;
+  animation:tt-sweep var(--tt-dur) var(--pt-ease-out) both;
+}
+
+@keyframes tt-sweep{
+  from{ clip-path:circle(0px at var(--tt-x) var(--tt-y)) }
+  to  { clip-path:circle(var(--tt-r) at var(--tt-x) var(--tt-y)) }
+}
+
+/* Запасной путь для браузеров без startViewTransition (сейчас Firefox):
+   снимка страницы взять негде, круг подделать нечем. Тогда честнее не
+   имитировать движение, а мягко перевести сами цвета. Правило универсальное и
+   потому дорогое — оно висит ровно на время смены, класс снимает js/theme.js.
+   Канвасы сюда не попадают: они перерисовываются сразу и меняют тон мгновенно,
+   но это единственный элемент кадра, и на фоне плавных цветов он не спорит. */
+@media (prefers-reduced-motion: no-preference){
+  html.tt-fade,
+  html.tt-fade *,
+  html.tt-fade *::before,
+  html.tt-fade *::after{
+    transition:background-color var(--tt-dur) ease,
+               border-color var(--tt-dur) ease,
+               color var(--tt-dur) ease,
+               box-shadow var(--tt-dur) ease,
+               fill var(--tt-dur) ease !important;
+  }
+}
+
 /* --- Запасной путь: полотно с дыркой ------------------------------------- */
 
 /* Полотно цвета страницы. Дырка (--pt-hole) стягивается в точку клика при
@@ -150,4 +202,5 @@ html.pt-busy body{ pointer-events:none }
   html.pt-cover::before{ display:none }
   html.pt-nav::view-transition-old(root),
   html.pt-nav::view-transition-new(root){ animation:none }
+  html.tt::view-transition-new(root){ animation:none }
 }

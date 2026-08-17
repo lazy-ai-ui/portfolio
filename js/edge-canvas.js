@@ -15,7 +15,19 @@
   var ctx=cv.getContext('2d');
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* геометрия .rule: штрих 5px, период 12px, тон rgba(11,11,12,.30) */
+  /* Тон частиц берётся из палитры, а не из константы: в тёмной теме канал
+     переворачивается, и чернильная россыпь на чёрном фоне исчезла бы. */
+  var INK=Theme.channel('--ink-rgb','11,11,12');
+  /* Перерисовываем тут же, а не ждём следующего кадра: смена темы идёт под
+     View Transitions, и снимок новой страницы снимается сразу после события.
+     Опоздавший канвас попал бы в него старым и мигнул бы уже после перехода. */
+  var repaint=null;
+  Theme.onChange(function(){
+    INK=Theme.channel('--ink-rgb','11,11,12');
+    if(repaint) repaint();
+  });
+
+  /* геометрия .rule: штрих 5px, период 12px, тон var(--rule) */
   var STEP=12, UNIT=5, TOP=0.30;
   /* сколько рядов участвует в осыпании и какая доля клеток в каждом жива */
   var KEEP=[1,0.62,0.34,0.17,0.08,0.03];
@@ -89,7 +101,7 @@
         if(c.back&&t>c.back){ c.on=true; c.back=0; }
         continue;
       }
-      ctx.fillStyle='rgba(11,11,12,'+c.o.toFixed(3)+')';
+      ctx.fillStyle='rgba('+INK+','+c.o.toFixed(3)+')';
       ctx.fillRect(c.x,c.y,UNIT,UNIT);
     }
 
@@ -109,7 +121,7 @@
       var a=d.o*k*k;
       if(a<0.006){ d.live=false; continue; }
 
-      ctx.fillStyle='rgba(11,11,12,'+a.toFixed(3)+')';
+      ctx.fillStyle='rgba('+INK+','+a.toFixed(3)+')';
       if(Math.abs(d.rot)<0.02){
         ctx.fillRect(d.x,d.y,d.sz,d.sz);
       } else {
@@ -128,14 +140,20 @@
   size();
 
   if(reduce){
-    for(var i=0;i<cells.length;i++){
-      ctx.fillStyle='rgba(11,11,12,'+cells[i].o.toFixed(3)+')';
-      ctx.fillRect(cells[i].x,cells[i].y,UNIT,UNIT);
-    }
+    var still=function(){
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<cells.length;i++){
+        ctx.fillStyle='rgba('+INK+','+cells[i].o.toFixed(3)+')';
+        ctx.fillRect(cells[i].x,cells[i].y,UNIT,UNIT);
+      }
+    };
+    repaint=still;
+    still();
     return;
   }
 
   var startTs=null,prevTs=null,running=false,rafId=0,visible=false,lastT=0,detT=0;
+  repaint=function(){ if(W) frame(lastT,0); };
 
   function loop(ts){
     /* время продолжается с того места, где остановилось: иначе сроки
