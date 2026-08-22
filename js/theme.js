@@ -1,9 +1,9 @@
 /* Тема.
 
-   Состояний три, а не два: «как в системе», светлая и тёмная. Системное —
-   не то же самое, что светлое: пока пользователь его не трогал, страница
-   должна ехать за настройкой устройства, в том числе если та переключается
-   по расписанию. Кнопка ходит по кругу система → светлая → тёмная → система.
+   Состояний два: светлое и тёмное. Кнопка ходит между ними, сегментный
+   переключатель показывает оба сразу. Пока выбора не было, страница едет за
+   настройкой устройства — в том числе если та переключается по расписанию;
+   как только выбор сделан, он старше системного и остаётся навсегда.
 
    Сам атрибут ставит короткий инлайновый скрипт в <head> каждой страницы:
    если ждать загрузки этого файла, страница успевает мигнуть светлым. Здесь
@@ -21,23 +21,21 @@
   var cache={};
   var fadeT=0;
 
-  /* Порядок обхода. Светлая перед тёмной, потому что от системной чаще уходят
-     в неё же, а возврат к системной стоит последним: это не «ещё одна тема»,
-     а отказ от выбора. */
-  var ORDER=['system','light','dark'];
+  var ORDER=['light','dark'];
 
   function stored(){
     try{ return localStorage.getItem(KEY); }catch(e){ return null; }
   }
 
+  /* Пока в хранилище пусто, режим — это то, что просит система. Отдельного
+     состояния «как в системе» наружу нет: атрибут всегда светлый или тёмный,
+     иначе значок кнопки не смог бы назвать, что она включит. */
   function mode(){
     var m=stored();
-    return m==='dark'||m==='light'?m:'system';
+    return m==='dark'||m==='light'?m:(mq.matches?'dark':'light');
   }
 
-  function resolve(m){
-    return m==='system'?(mq.matches?'dark':'light'):m;
-  }
+  function resolve(m){ return m==='dark'?'dark':'light'; }
 
   function paintMeta(){
     var bg=getComputedStyle(root).getPropertyValue('--bg').trim();
@@ -47,9 +45,8 @@
 
   /* Кнопка подписывается действием, а не состоянием: «включить тёмную» — это
      то, что произойдёт по нажатию, и скринридер читает её так же, как видящий
-     читает иконку. Возврат к системной назван возвратом, иначе непонятно, чем
-     третье нажатие отличается от первого. */
-  var SAY={system:'Вернуть системную тему',light:'Включить светлую тему',dark:'Включить тёмную тему'};
+     читает иконку. */
+  var SAY={light:'Включить светлую тему',dark:'Включить тёмную тему'};
 
   function label(){
     var m=mode();
@@ -71,11 +68,11 @@
      возврата из этой функции, и всё, что не успело перерисоваться, попадёт в
      снимок старым. Именно поэтому канвасы перерисовываются по theme:change
      тут же, а не на следующем кадре. */
-  function apply(m){
-    try{
-      if(m==='system') localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY,m);
-    }catch(e){}
+  function apply(m,persist){
+    /* Пишем только выбор человека. Ход за системной настройкой в хранилище не
+       попадает: иначе первое же переключение устройства выглядело бы как выбор
+       и страница перестала бы за ним следовать. */
+    if(persist){ try{ localStorage.setItem(KEY,m); }catch(e){} }
     root.setAttribute('data-theme-mode',m);
     root.setAttribute('data-theme',resolve(m));
     cache={};
@@ -99,23 +96,22 @@
     root.style.setProperty('--tt-r',r+'px');
   }
 
-  function animate(m,el){
-    /* Смена режима не всегда меняет картинку: уйти с системной на светлую при
-       светлой системе — это только смена иконки. Гнать ради неё полноэкранный
-       переход незачем. */
-    if(resolve(m)===root.getAttribute('data-theme')||reduceMq.matches){ apply(m); return; }
+  function animate(m,el,persist){
+    /* Нажатие на уже выбранное ничего не меняет: гнать ради него
+       полноэкранный переход незачем. */
+    if(resolve(m)===root.getAttribute('data-theme')||reduceMq.matches){ apply(m,persist); return; }
     origin(el);
 
     if(!document.startViewTransition){
       root.classList.add('tt-fade');
-      apply(m);
+      apply(m,persist);
       clearTimeout(fadeT);
       fadeT=setTimeout(function(){ root.classList.remove('tt-fade'); settleHover(); },900);
       return;
     }
 
     root.classList.add('tt');
-    var t=document.startViewTransition(function(){ apply(m); });
+    var t=document.startViewTransition(function(){ apply(m,persist); });
     var done=function(){ root.classList.remove('tt'); settleHover(); };
 
     /* Браузер пропускает переход, когда снимок снять не с чего: вкладка в
@@ -129,8 +125,9 @@
   }
 
   /* Системную настройку слушаем только пока пользователь не выбрал сам:
-     свой выбор старше системного. */
-  var onSystem=function(){ if(mode()==='system') animate('system',null); };
+     свой выбор старше системного. Признак выбора — запись в хранилище, а не
+     режим: режим теперь всегда светлый или тёмный и о выборе не говорит. */
+  var onSystem=function(){ if(!stored()) animate(mq.matches?'dark':'light',null,false); };
   if(mq.addEventListener) mq.addEventListener('change',onSystem);
   else if(mq.addListener) mq.addListener(onSystem);
 
@@ -180,7 +177,7 @@
     mode:mode,
     /* from — элемент, из которого расходится свет; без него круг идёт из
        центра окна (например, когда тему меняют из консоли). */
-    set:function(m,from){ animate(ORDER.indexOf(m)<0?'system':m,from); },
+    set:function(m,from){ animate(m==='dark'?'dark':'light',from,true); },
     cycle:function(from){ this.set(ORDER[(ORDER.indexOf(mode())+1)%ORDER.length],from); },
     /* Канал палитры строкой «r,g,b» — так его подставляют прямо в rgba(). */
     channel:function(name,fallback){

@@ -7,11 +7,10 @@
 <meta name="supported-color-schemes" content="light dark">
 <meta name="theme-color" content="#F6F4F1">
 <!-- Тема ставится до первой отрисовки, иначе страница мигает светлым перед
-     тем, как загрузится js/theme.js. Свой выбор старше системной настройки.
-     Режим (system / light / dark) ставится отдельным атрибутом: по нему CSS
-     выбирает иконку кнопки, и он же отличает «светлую» от «системной, которая
-     сейчас светлая». -->
-<script>(function(){var m='system';try{var s=localStorage.getItem('theme');if(s==='dark'||s==='light')m=s}catch(e){}var r=document.documentElement;r.setAttribute('data-theme',m==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):m);r.setAttribute('data-theme-mode',m)})()</script>
+     тем, как загрузится js/theme.js. Состояний два — светлое и тёмное. Пока
+     выбора не было, стартовое значение берётся у системы, и js/theme.js
+     продолжает за ней следить; свой выбор старше и остаётся навсегда. -->
+<script>(function(){var s=null;try{s=localStorage.getItem('theme')}catch(e){}var m=(s==='dark'||s==='light')?s:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var r=document.documentElement;r.setAttribute('data-theme',m);r.setAttribute('data-theme-mode',m)})()</script>
 <title>RackTables — дашборд для управления IT-инфраструктурой</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/fonts.css">
@@ -46,12 +45,6 @@
 <noscript><div><img src="https://mc.yandex.ru/watch/111310110" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
 <svg class="sprite" aria-hidden="true" focusable="false">
-  <symbol id="i-desktop" viewBox="0 0 16 16">
-    <rect x="1.4" y="2.2" width="13.2" height="9" rx="1.5"/><path d="M8 11.2v2.6M5.4 13.8h5.2"/>
-  </symbol>
-  <symbol id="i-phone" viewBox="0 0 16 16">
-    <rect x="4.3" y="1.4" width="7.4" height="13.2" rx="1.9"/><path d="M6.9 12.3h2.2"/>
-  </symbol>
   <symbol id="i-sun" viewBox="0 0 16 16">
     <circle cx="8" cy="8" r="3.1"/>
     <path d="M8 1.1v1.7M8 13.2v1.7M14.9 8h-1.7M2.8 8H1.1M12.9 3.1l-1.2 1.2M4.3 11.7l-1.2 1.2M12.9 12.9l-1.2-1.2M4.3 4.3L3.1 3.1"/>
@@ -70,17 +63,12 @@
         <a href="mailto:new.boxmail666@gmail.com">Email</a>
       </div>
       <button class="nav__theme" type="button" data-theme-toggle aria-label="Переключить тему">
-        <svg class="i--desktop" aria-hidden="true" focusable="false"><use href="#i-desktop"/></svg>
-        <svg class="i--phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg>
         <svg class="i--sun" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
         <svg class="i--moon" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg>
       </button>
     </nav>
     <div class="themectl" role="group" aria-label="Тема">
       <span class="themectl__ind" aria-hidden="true"></span>
-      <button class="themectl__b" type="button" data-theme-set="system" aria-pressed="false" aria-label="Тема как в системе">
-        <svg aria-hidden="true" focusable="false"><use href="#i-desktop"/></svg>
-      </button>
       <button class="themectl__b" type="button" data-theme-set="light" aria-pressed="false" aria-label="Светлая тема">
         <svg aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
       </button>

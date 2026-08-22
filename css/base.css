@@ -116,15 +116,18 @@ html.js-rv .rv--in{opacity:1;transform:none}
 .nav__l{display:flex;gap:20px}
 
 /* ---- переключатель темы ----
-   Состояний три: как в системе, светлая, тёмная. Солнце и луна — паттерн,
-   который не надо объяснять, а системное состояние показано самим устройством,
-   с которого страницу открыли. Отсюда четыре рисунка на три состояния.
+   Состояний два: светлое и тёмное. Солнце и луна — паттерн, который не надо
+   объяснять. Третьего, «как в системе», в интерфейсе нет: оно требовало
+   отдельного рисунка, который сам по себе ничего не говорил. Системную
+   настройку страница по-прежнему уважает — та задаёт стартовое состояние и
+   двигает его дальше, пока читатель не выбрал сам, но состоянием кнопки не
+   является.
 
    Управлений два, по способу ввода. Пальцем удобнее одна кнопка, которая
-   перебирает состояния по кругу: три мишени по 18px в навбаре не нажать, а
-   раскрытия по наведению на тач-экране просто нет. Мышью, наоборот, перебор
-   вслепую раздражает — там сегментный переключатель, где все три состояния
-   видны сразу и выбор делается за одно нажатие.
+   перебирает состояния: мишени по 18px в навбаре не нажать, а раскрытия по
+   наведению на тач-экране просто нет. Мышью, наоборот, перебор вслепую
+   раздражает — там сегментный переключатель, где оба состояния видны сразу и
+   выбор делается за одно нажатие.
 
    Высота обоих гасится отрицательным полем: пилюля навбара обязана совпадать
    по высоте с пилюлей статуса на главной, и лишние пиксели развели бы их. Поле
@@ -161,19 +164,8 @@ html.js-rv .rv--in{opacity:1;transform:none}
   transition:opacity .2s ease, transform .34s var(--pt-ease-out)}
 
 :root[data-theme-mode="light"] .nav__theme .i--sun,
-:root[data-theme-mode="dark"] .nav__theme .i--moon,
-:root[data-theme-mode="system"] .nav__theme .i--desktop{
+:root[data-theme-mode="dark"] .nav__theme .i--moon{
   opacity:1;transform:none;transition-delay:.09s}
-
-/* «Как в системе» рисуем тем устройством, с которого пришли: на телефоне
-   монитор не объясняет ничего. Различаем по указателю, а не по ширине окна —
-   узкое окно на десктопе остаётся десктопом. */
-@media (pointer: coarse){
-  :root[data-theme-mode="system"] .nav__theme .i--desktop{
-    opacity:0;transform:scale(.4) rotate(-110deg);transition-delay:0s}
-  :root[data-theme-mode="system"] .nav__theme .i--phone{
-    opacity:1;transform:none;transition-delay:.09s}
-}
 
 /* --- сегментный переключатель (мышь) ---
    Отдельная пилюля рядом с навбаром, а не внутри него. Внутри она заставляла
@@ -225,9 +217,8 @@ html.js-rv .rv--in{opacity:1;transform:none}
   :root[data-theme-mode] .themectl.is-open{--open:1}
   :root[data-theme-mode] .themectl:has(:focus-visible){--open:1}
 
-  :root[data-theme-mode="system"] .themectl{--seg:0}
-  :root[data-theme-mode="light"] .themectl{--seg:1}
-  :root[data-theme-mode="dark"] .themectl{--seg:2}
+  :root[data-theme-mode="light"] .themectl{--seg:0}
+  :root[data-theme-mode="dark"] .themectl{--seg:1}
 
   /* Подложка выбранного — та же, что под активным разделом внизу кейса. В
      свёрнутом виде сдвиг обнуляется вместе с --open: сегмент там ровно один и
@@ -258,8 +249,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
      Опознаётся по атрибуту темы на <html>, а не по aria-pressed — атрибут
      стоит с инлайнового скрипта, то есть до первой отрисовки, а aria-pressed
      расставит js/theme.js уже после загрузки, и на первом кадре схлопнулись бы
-     все три. */
-  :root[data-theme-mode="system"] .themectl__b[data-theme-set="system"],
+     оба. */
   :root[data-theme-mode="light"] .themectl__b[data-theme-set="light"],
   :root[data-theme-mode="dark"] .themectl__b[data-theme-set="dark"]{
     width:var(--tc-seg);opacity:1;color:var(--on-contrast)}
