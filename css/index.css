@@ -142,7 +142,7 @@
 
 /* ---------- about ---------- */
 .about{padding:0 0 140px}
-.about__grid{display:grid;grid-template-columns:1fr 1.25fr;gap:64px;align-items:start}
+.about__grid{display:grid;grid-template-columns:.35fr 1.9fr;gap:64px;align-items:start}
 .about__photo{aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:var(--placeholder);position:relative}
 .about__photo img{width:100%;height:100%;object-fit:cover;display:block}
 .about__text p{font-size:17px;line-height:1.68;color:var(--ink);margin:0 0 20px;text-wrap:pretty}
@@ -164,7 +164,7 @@
 @media (max-width:900px){
   .about{padding-bottom:88px}
   .about__grid{grid-template-columns:1fr;gap:32px}
-  .about__photo{max-width:280px}
+  .about__photo{max-width:98px}
   .about__text p{font-size:16px}
 }
 
@@ -181,9 +181,13 @@
 .contact__meta dd a:hover,.contact__meta dd a:focus-visible{color:var(--accent);border-color:var(--accent)}
 
 /* Телеграм и почта живут одной строкой: это один способ связи, а не два
-   разных раздела. Разделитель — та же точка, что в «Самара · GMT+4». */
+   разных раздела. Разделитель — та же точка, что в строке времени. */
 .contact__line{display:flex;align-items:center;flex-wrap:wrap;gap:0 10px}
 .contact__sep{color:var(--ink-3)}
+
+/* Часы обновляются каждую минуту, поэтому цифры держим одной ширины:
+   иначе строка справа от времени дёргается на смене часа. */
+.clock{font-variant-numeric:tabular-nums}
 
 /* Кнопка копирования: иконка без рамки и фона, чтобы она читалась как
    служебный жест рядом с адресом, а не как второе действие наравне с ним. */
