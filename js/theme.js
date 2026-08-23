@@ -106,7 +106,7 @@
       root.classList.add('tt-fade');
       apply(m,persist);
       clearTimeout(fadeT);
-      fadeT=setTimeout(function(){ root.classList.remove('tt-fade'); settleHover(); },900);
+      fadeT=setTimeout(function(){ root.classList.remove('tt-fade'); settleHover(); },1100);
       return;
     }
 
