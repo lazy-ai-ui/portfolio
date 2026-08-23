@@ -84,14 +84,12 @@
   <div class="spacer" aria-hidden="true"></div>
 
   <header class="hero">
-    <div class="stage">
-      <!-- Канвас — фоновый слой: он ниже текста по z-index и не ловит курсор,
-           поэтому заголовок остаётся обычной разметкой. Смысла для скринридера в узоре нет, отсюда aria-hidden. -->
-      <canvas id="fig" aria-hidden="true"></canvas>
+    <!-- Надпись живёт на канвасе и недоступна ни скринридеру, ни поиску,
+         поэтому настоящий h1 остаётся в разметке — визуально скрытым. -->
+    <h1 class="sr-only">Product Designer — Фирдавс</h1>
 
-      <div class="hero__over">
-        <h1 class="hero__title">Product Designer</h1>
-      </div>
+    <div class="stage">
+      <canvas id="fig" aria-label="Облако частиц собирается в надпись Product Designer и в схемы интерфейсов"></canvas>
     </div>
   </header>
 
@@ -254,7 +252,7 @@
 </div>
 
 <script src="js/reveal.js"></script>
-<script src="js/hero-fish.js"></script>
+<script src="js/hero-canvas.js"></script>
 <script src="js/navbar.js"></script>
 <script src="js/soon-canvas.js"></script>
 <script src="js/roll.js"></script>
