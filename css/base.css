@@ -76,7 +76,8 @@ html.js-rv .rv--in{opacity:1;transform:none}
    пилюли разъезжаются на пару пикселей, что видно сразу. line-height задан
    явно по той же причине: у ссылки он был `normal`, у статуса — 1, и при
    одинаковом padding пилюли всё равно отличались бы на три пикселя. */
-:root{--pill-py:11px;--pill-px:20px;--pill-fs:11px;--pill-lh:1.25}
+:root{--pill-py:11px;--pill-px:20px;--pill-fs:11px;--pill-lh:1.25;
+       --pill-h:calc(var(--pill-py) * 2 + var(--pill-fs) * var(--pill-lh) + 2px)}
 @media (max-width:520px){
   :root{--pill-py:10px;--pill-px:16px;--pill-fs:10px}
 }
@@ -84,6 +85,10 @@ html.js-rv .rv--in{opacity:1;transform:none}
 /* ---- плавающий навбар ---- */
 .navbar{position:fixed;top:14px;left:0;right:0;z-index:50;
   display:flex;justify-content:center;pointer-events:none;
+  /* Поля с обеих сторон резервируют место под кнопку темы, стоящую в правом
+     углу: навбар остаётся ровно по центру экрана, но перестаёт доезжать до
+     кнопки на узких телефонах. На мыши кнопки нет — там резерв снимается. */
+  padding-inline:calc(var(--pill-h) + 20px);
   transition:transform .42s cubic-bezier(.2,.8,.2,1), opacity .3s ease}
 .navbar.hidden{transform:translateY(calc(-100% - 22px));opacity:0}
 /* Обёртка нужна ровно за тем, чтобы переключателю темы было от чего вставать
@@ -102,7 +107,8 @@ html.js-rv .rv--in{opacity:1;transform:none}
   box-shadow:var(--shadow-nav)}
 /* если браузер не умеет backdrop-filter — возвращаем плотный фон */
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .nav{background:var(--nav-glass-solid)}
+  .nav,
+  :root[data-theme-mode] .nav__theme{background:var(--nav-glass-solid)}
 }
 .nav a{position:relative;
   font-family:var(--mono);font-size:var(--pill-fs);line-height:var(--pill-lh);
@@ -142,14 +148,26 @@ html.js-rv .rv--in{opacity:1;transform:none}
 
 /* --- кнопка перебора (палец) --- */
 :root[data-theme-mode] .nav__theme{
-  position:relative;flex:none;display:flex;align-items:center;justify-content:center;
-  width:18px;height:18px;margin-left:-10px;padding:0;border:0;background:none;
-  /* Коробка кнопки центрируется флексом, но на глаз этого мало: у строки
-     сплошной капс, его видимая масса стоит выше середины строки, а значок
-     центрирован по своей коробке. Отсюда поправка на пиксель вверх. */
-  margin-block:calc((var(--pill-fs) * var(--pill-lh) - 18px) / 2);
-  transform:translateY(-1px);
+  /* Своя пилюля в правом углу, а не значок внутри навбара. Внутри он стоял
+     вплотную к последней ссылке, и пальцем в него попадали мимо неё. Отсчёт
+     идёт от .navbar: тот растянут во всю ширину и уезжает вверх вместе со
+     страницей, поэтому кнопка прячется и возвращается заодно с навбаром. */
+  /* 20px — тот же отступ, что у .wrap: кнопка встаёт по краю контента. */
+  position:absolute;right:20px;top:0;
+  display:flex;align-items:center;justify-content:center;
+  width:var(--pill-h);height:var(--pill-h);
+  padding:0;border-radius:999px;
+  background:var(--nav-glass);
+  -webkit-backdrop-filter:blur(22px) saturate(1.8);
+  backdrop-filter:blur(22px) saturate(1.8);
+  border:1px solid var(--nav-hair);
+  box-shadow:var(--shadow-nav);
+  pointer-events:auto;
   color:var(--ink-label);cursor:pointer;transition:color .2s ease}
+/* Пилюля ростом с навбар — 34px, а палец просит 44. Разницу добираем
+   прозрачной каймой, а не размером: круг рядом с навбаром должен совпадать
+   с ним по высоте. */
+.nav__theme::after{content:'';position:absolute;inset:-5px;border-radius:999px}
 .nav__theme:focus-visible{color:var(--ink);outline:none}
 @media (hover: hover){
   .nav__theme:hover{color:var(--ink)}
@@ -161,7 +179,11 @@ html.js-rv .rv--in{opacity:1;transform:none}
    приезжает оттуда же с небольшой задержкой — иначе они накладываются в
    середине и на полкадра видно оба. */
 .nav__theme svg{
-  position:absolute;top:0;left:0;width:18px;height:18px;
+  /* Значки лежат стопкой поверх друг друга, поэтому не в потоке: центруем их
+     по коробке пилюли отрицательным полем, чтобы transform остался свободен
+     под саму смену. */
+  position:absolute;top:50%;left:50%;margin:-9px 0 0 -9px;
+  width:18px;height:18px;
   fill:none;stroke:currentColor;stroke-width:1.2;
   stroke-linecap:round;stroke-linejoin:round;
   opacity:0;transform:scale(.4) rotate(-110deg);
@@ -187,6 +209,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
    Ниже 760px переключатель уступает место кнопке перебора: навбар по центру,
    пилюля справа от него, и в узком окне раскрытая пилюля уехала бы за край. */
 @media (hover: hover) and (pointer: fine) and (min-width: 760px){
+  .navbar{padding-inline:0}
   :root[data-theme-mode] .nav__theme{display:none}
 
   :root[data-theme-mode] .themectl{
@@ -194,7 +217,7 @@ html.js-rv .rv--in{opacity:1;transform:none}
     --tc-seg:24px;
     position:absolute;left:100%;top:0;
     display:flex;align-items:stretch;
-    height:calc(var(--pill-py) * 2 + var(--pill-fs) * var(--pill-lh) + 2px);
+    height:var(--pill-h);
     margin-left:10px;padding:6px;border-radius:999px;
     background:var(--nav-glass);
     -webkit-backdrop-filter:blur(22px) saturate(1.8);

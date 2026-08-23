@@ -64,10 +64,6 @@
         <div class="nav__l">
           <a href="#work">Проекты</a><a href="#about">Обо мне</a><a href="#contact">Контакты</a>
         </div>
-        <button class="nav__theme" type="button" data-theme-toggle aria-label="Переключить тему">
-          <svg class="i--sun" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
-          <svg class="i--moon" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg>
-        </button>
       </nav>
       <div class="themectl" role="group" aria-label="Тема">
         <span class="themectl__ind" aria-hidden="true"></span>
@@ -79,6 +75,13 @@
         </button>
       </div>
     </div>
+    <!-- Переключатель темы вынесен из пилюли навбара: на телефоне он стоял
+         вплотную к «Контактам», и мимо ссылки попадали в него. Отдельная
+         круглая пилюля в правом углу промахом уже ничему не мешает. -->
+    <button class="nav__theme" type="button" data-theme-toggle aria-label="Переключить тему">
+      <svg class="i--sun" aria-hidden="true" focusable="false"><use href="#i-sun"/></svg>
+      <svg class="i--moon" aria-hidden="true" focusable="false"><use href="#i-moon"/></svg>
+    </button>
   </div>
 
   <div class="spacer" aria-hidden="true"></div>
