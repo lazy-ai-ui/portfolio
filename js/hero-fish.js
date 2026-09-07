@@ -16,13 +16,17 @@
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var CX=200,CY=195;            /* центр вращения косяка внутри квадрата */
-  var W=0,H=0,dpr=1,raf=0,visible=true;
+  var W=0,H=0,dpr=1,raf=0,visible=true,busy=false;
   var t=0;
 
   /* Тон линий берётся из палитры: на светлой теме чернильный, на тёмной
      светлый. Иначе точки исчезали бы на фоне при переключении темы. */
   var INK=Theme.channel('--ink-rgb','11,11,12');
-  Theme.onChange(function(){ INK=Theme.channel('--ink-rgb','11,11,12'); if(reduce) frame(); });
+  /* Перерисовываем тут же, а не ждём следующего кадра: смена темы идёт под
+     View Transitions, и снимок новой страницы снимается сразу после события.
+     Опоздавший канвас попал бы в него старым и сменил бы тон рывком уже после
+     перехода — со стороны это читается как дёрганая анимация. */
+  Theme.onChange(function(){ INK=Theme.channel('--ink-rgb','11,11,12'); frame(); });
 
   /* Точек тем меньше, чем меньше экран: на телефоне десять тысяч точек за кадр
      упираются в кадровый бюджет, а разница на глаз почти не видна. */
@@ -74,10 +78,24 @@
     raf=0;
     t+=Math.PI/240*0.7;      /* на 30% медленнее исходной миниатюры */
     frame();
-    if(visible && !reduce) raf=requestAnimationFrame(loop);
+    if(visible && !busy && !reduce) raf=requestAnimationFrame(loop);
   }
-  function start(){ if(!raf && visible && !reduce) raf=requestAnimationFrame(loop); }
+  function start(){ if(!raf && visible && !busy && !reduce) raf=requestAnimationFrame(loop); }
   function stop(){ if(raf){ cancelAnimationFrame(raf); raf=0; } }
+
+  /* На время смены темы кадры не считаем. Страница в этот момент показана
+     снимками View Transitions, живой канвас всё равно не виден, а десять тысяч
+     точек за кадр отнимают время у самого перехода — он и начинал дёргаться.
+     Признак перехода — класс tt, его ставит и снимает js/theme.js. */
+  var htmlCls=document.documentElement;
+  if(window.MutationObserver){
+    new MutationObserver(function(){
+      var on=htmlCls.classList.contains('tt');
+      if(on===busy) return;
+      busy=on;
+      if(busy) stop(); else start();
+    }).observe(htmlCls,{attributes:true,attributeFilter:['class']});
+  }
 
   /* Пока первый экран прокручен, считать кадры незачем — узор всё равно никто
      не видит, а батарея на нём тратится вполне настоящая. */
