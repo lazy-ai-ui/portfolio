@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/((?!maintenance\\.html$|favicon\\.svg$|assets/fonts/|_vercel/).*)",
+      "destination": "/maintenance.html",
+      "permanent": false
+    }
+  ]
+}
